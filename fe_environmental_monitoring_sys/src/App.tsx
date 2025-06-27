@@ -1,11 +1,15 @@
-import { Button } from "@/components/ui/button"
+import Header from "./components/layout/Header";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <Button variant="default" className="text-black">Nút ShadCN</Button>
+    <div className="h-screen flex flex-col">
+      <Header />
+      <main className="max-w-8xl py-15 h-screen">
+        <Outlet />
+      </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
