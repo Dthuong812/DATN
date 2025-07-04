@@ -1,14 +1,22 @@
 import Sidebar from "@/components/layout/SideBar";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-export default function AdminPage() {
-    return (
-        <div className="h-full flex flex-col">
-        <Sidebar/>
-        <main className="max-w-8xl py-15">
-            <Outlet />
-        </main>
-        </div>
+interface AdminContextType {
+  isCollapsed: boolean;
+}
 
-    );
+export default function AdminPage() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <div className="h-screen flex overflow-hidden ">
+      <div className={isCollapsed ? "w-20" : "w-72"}>
+        <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      </div>
+      <div className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+        <Outlet context={{ isCollapsed } as AdminContextType} />
+      </div>
+    </div>
+  );
 }

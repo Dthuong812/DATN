@@ -13,6 +13,7 @@ import ReportPage from "./page/ReportPage";
 import LogsPage from "./page/LogsPage";
 import UserPage from "./page/UserPage";
 import { LoginPage } from "./page/LoginPage";
+import DashboardPage from "./page/DashboardPage";
 
 
 const router = createBrowserRouter([
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
         path: "admin",
         element: <AdminPage/>,
         children: [
+          {
+            index: true, 
+            element: <DashboardPage />,
+          },
             {
                 path: "realtime",
                 element: <RealTimePage/>,
