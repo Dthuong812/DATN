@@ -9,189 +9,41 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const data = [
-  {
-    time: "23:41",
-    temperature: 35,
-    humidity: 50,
-    pm25: 5,
-    aqi: 85,
-  },
-  {
-    time: "23:42",
-    temperature: 35,
-    humidity: 51,
-    pm25: 3,
-    aqi: 82,
-  },
-  {
-    time: "23:43",
-    temperature: 35,
-    humidity: 52,
-    pm25: 4,
-    aqi: 78,
-  },
-  {
-    time: "23:44",
-    temperature: 35,
-    humidity: 53,
-    pm25: 2,
-    aqi: 75,
-  },
-  {
-    time: "23:45",
-    temperature: 35,
-    humidity: 54,
-    pm25: 3,
-    aqi: 80,
-  },
-  {
-    time: "23:41",
-    temperature: 35,
-    humidity: 50,
-    pm25: 5,
-    aqi: 85,
-  },
-  {
-    time: "23:42",
-    temperature: 35,
-    humidity: 51,
-    pm25: 3,
-    aqi: 82,
-  },
-  {
-    time: "23:43",
-    temperature: 35,
-    humidity: 52,
-    pm25: 4,
-    aqi: 78,
-  },
-  {
-    time: "23:44",
-    temperature: 35,
-    humidity: 53,
-    pm25: 2,
-    aqi: 75,
-  },
-  {
-    time: "23:45",
-    temperature: 35,
-    humidity: 54,
-    pm25: 3,
-    aqi: 80,
-  },
-  {
-    time: "23:41",
-    temperature: 35,
-    humidity: 50,
-    pm25: 5,
-    aqi: 85,
-  },
-  {
-    time: "23:42",
-    temperature: 35,
-    humidity: 51,
-    pm25: 3,
-    aqi: 82,
-  },
-  {
-    time: "23:43",
-    temperature: 35,
-    humidity: 52,
-    pm25: 4,
-    aqi: 78,
-  },
-  {
-    time: "23:44",
-    temperature: 35,
-    humidity: 53,
-    pm25: 2,
-    aqi: 75,
-  },
-  {
-    time: "23:45",
-    temperature: 35,
-    humidity: 54,
-    pm25: 3,
-    aqi: 80,
-  },
-  {
-    time: "23:41",
-    temperature: 35,
-    humidity: 50,
-    pm25: 5,
-    aqi: 85,
-  },
-  {
-    time: "23:42",
-    temperature: 35,
-    humidity: 51,
-    pm25: 3,
-    aqi: 82,
-  },
-  {
-    time: "23:43",
-    temperature: 35,
-    humidity: 52,
-    pm25: 4,
-    aqi: 78,
-  },
-  {
-    time: "23:44",
-    temperature: 35,
-    humidity: 53,
-    pm25: 2,
-    aqi: 75,
-  },
-  {
-    time: "23:45",
-    temperature: 35,
-    humidity: 54,
-    pm25: 3,
-    aqi: 80,
-  },
-  {
-    time: "23:41",
-    temperature: 35,
-    humidity: 50,
-    pm25: 5,
-    aqi: 85,
-  },
-  {
-    time: "23:42",
-    temperature: 35,
-    humidity: 51,
-    pm25: 3,
-    aqi: 82,
-  },
-  {
-    time: "23:43",
-    temperature: 35,
-    humidity: 52,
-    pm25: 4,
-    aqi: 78,
-  },
-  {
-    time: "23:44",
-    temperature: 35,
-    humidity: 53,
-    pm25: 2,
-    aqi: 75,
-  },
-  {
-    time: "23:45",
-    temperature: 35,
-    humidity: 54,
-    pm25: 3,
-    aqi: 80,
-  },
-];
 
-export default function SensorChart() {
+
+export default function SensorChart( ) {
+  const data = [
+    { time: "00:00", temperature: 25, humidity: 60, pm25: 35, aqi: 50 },
+    { time: "01:00", temperature: 26, humidity: 62, pm25: 40, aqi: 55 },
+    { time: "02:00", temperature: 24, humidity: 58, pm25: 30, aqi: 45 },
+    { time: "00:00", temperature: 25, humidity: 60, pm25: 35, aqi: 50 },
+    { time: "01:00", temperature: 26, humidity: 62, pm25: 40, aqi: 55 },
+    { time: "02:00", temperature: 24, humidity: 58, pm25: 30, aqi: 45 },
+    { time: "00:00", temperature: 25, humidity: 60, pm25: 35, aqi: 50 },
+    { time: "01:00", temperature: 26, humidity: 62, pm25: 40, aqi: 55 },
+    { time: "02:00", temperature: 24, humidity: 58, pm25: 30, aqi: 45 },
+    { time: "00:00", temperature: 25, humidity: 60, pm25: 35, aqi: 50 },
+    { time: "01:00", temperature: 26, humidity: 62, pm25: 40, aqi: 55 },
+    { time: "02:00", temperature: 24, humidity: 58, pm25: 30, aqi: 45 },
+    { time: "01:00", temperature: 26, humidity: 62, pm25: 40, aqi: 55 },
+    { time: "02:00", temperature: 24, humidity: 58, pm25: 30, aqi: 45 },
+    { time: "00:00", temperature: 25, humidity: 60, pm25: 35, aqi: 50 },
+    { time: "01:00", temperature: 26, humidity: 62, pm25: 40, aqi: 55 },
+    { time: "02:00", temperature: 24, humidity: 58, pm25: 30, aqi: 45 },
+  ];
+
+  const mockData = data.map((entry) => ({
+    ...entry,
+    temperature: entry.temperature + Math.random(), 
+    humidity: entry.humidity + Math.random(),
+    pm25: entry.pm25 + Math.random(),
+    aqi: entry.aqi + Math.random(),
+  }));
+
   return (
     <div className="w-full md:min-w-[700px] h-full border rounded-md bg-white shadow mt-4 p-4">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+      <ResponsiveContainer width="100%" height={500}>
+        <LineChart data={mockData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="time" />
           <YAxis />
