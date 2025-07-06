@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <nav
-      className="fixed top-0 w-full bg-white shadow-sm border-b z-50"
+      className="fixed top-0 w-full bg-white shadow-sm border-b z-500000"
       aria-label="Main Navigation"
     >
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">

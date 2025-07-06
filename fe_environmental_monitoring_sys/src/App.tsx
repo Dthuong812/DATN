@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="h-screen flex flex-col">
       <Header />
-      <main className="max-w-8xl py-15 h-screen">
+      <main className="max-w-8xl mt-[60px] h-[calc(100vh-60px)] overflow-hidden">
         <Outlet />
       </main>
     </div>

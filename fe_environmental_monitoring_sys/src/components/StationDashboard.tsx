@@ -16,7 +16,7 @@ export default function StationDashboard() {
   const [selectedStation, setSelectedStation] = useState<Station | null>(stations[0]); 
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 pt-4 mb-6">
       <div className="col-span-1 space-y-4">
         <StationList stations={stations} onSelect={setSelectedStation} />
         <StationDetail station={selectedStation} />
