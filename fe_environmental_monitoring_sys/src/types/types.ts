@@ -19,4 +19,5 @@ export interface SensorData {
   temperature: number;
   humidity: number;
   timestamp: string;
+  stationId: string;
 }
