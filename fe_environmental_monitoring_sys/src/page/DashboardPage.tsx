@@ -26,7 +26,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col h-full overflow-auto scrollbar-hide">
+    <div className="flex flex-col h-full overflow-auto scrollbar-hide px-6">
       <InfoCard isCollapsed={false} />
       <div className="py-4">
         <ActivityAlert alerts={alerts} />
