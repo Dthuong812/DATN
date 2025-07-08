@@ -26,7 +26,7 @@ export default function StationListModal({
 }: StationListModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full md:min-w-5xl p-4 h-full max-h-[80vh] overflow-y-auto">
+      <DialogContent className="w-full md:min-w-5xl p-4 h-full max-h-[80vh] overflow-y-auto z-[999999999]">
         <DialogHeader className=" flex  mb-4">
           <DialogTitle>Danh sách các trạm</DialogTitle>
 

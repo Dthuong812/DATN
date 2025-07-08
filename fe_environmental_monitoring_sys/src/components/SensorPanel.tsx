@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import {  CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -425,7 +425,6 @@ export default function SensorPanel() {
   const totalPages = Math.ceil(currentSensorData.length / ITEMS_PER_PAGE);
 
   return (
-    <Card className="border shadow rounded-xl h-full md:min-h-[61px] bg-white">
       <CardContent>
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
 
@@ -502,6 +501,5 @@ export default function SensorPanel() {
           </div>
         )}
       </CardContent>
-    </Card>
   );
 }
