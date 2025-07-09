@@ -21,3 +21,12 @@ export interface SensorData {
   timestamp: string;
   stationId: string;
 }
+export interface User {
+  id: number;
+  userName: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  isDieuHanh: boolean;
+  active: boolean;
+}

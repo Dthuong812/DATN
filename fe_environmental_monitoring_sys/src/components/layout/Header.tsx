@@ -23,10 +23,12 @@ export default function Header() {
           <div className="flex items-center space-x-3">
             <Leaf className="h-8 w-8 text-green-600" />
             <div>
-              <h1 className="text-xl font-bold text-gray-900">EcoMonitor</h1>
+            <Link to="/" >
+              <h1 className="text-xl font-bold text-green-600">EcoMonitor</h1>
               <p className="text-xs text-gray-500">
                 Giám sát môi trường thông minh
               </p>
+            </Link>
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-4">

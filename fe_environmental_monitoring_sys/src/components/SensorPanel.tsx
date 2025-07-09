@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {  CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "./ui/button";
+import Pagination from "./Pagination";
 
 interface Station {
   id: string;
@@ -275,7 +275,7 @@ const sensorData: SensorData[] = [
     humidity: 71,
     stationId: "station2",
   },
-  
+
   {
     id: "35",
     timestamp: "2025-07-07 10:10:00",
@@ -425,81 +425,63 @@ export default function SensorPanel() {
   const totalPages = Math.ceil(currentSensorData.length / ITEMS_PER_PAGE);
 
   return (
-      <CardContent>
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
-
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-600 mb-1">
-              Chọn trạm
-            </label>
-            <Select
-              value={selectedStationId}
-              onValueChange={handleStationChange}
-            >
-              <SelectTrigger className="w-full md:w-64">
-                <SelectValue placeholder="Chọn trạm" />
-              </SelectTrigger>
-              <SelectContent>
-                {filteredStations.map((station) => (
-                  <SelectItem key={station.id} value={station.id}>
-                    {station.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="overflow-auto rounded-lg border shadow-sm p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Thời gian</TableHead>
-                <TableHead>Nhiệt độ (°C)</TableHead>
-                <TableHead>Độ ẩm (%)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedData.map((data) => (
-                <TableRow key={data.id}>
-                  <TableCell>{data.timestamp}</TableCell>
-                  <TableCell>{data.temperature}</TableCell>
-                  <TableCell>{data.humidity}</TableCell>
-                </TableRow>
+    <CardContent>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-600 mb-1">
+            Chọn trạm
+          </label>
+          <Select value={selectedStationId} onValueChange={handleStationChange}>
+            <SelectTrigger className="w-full md:w-64">
+              <SelectValue placeholder="Chọn trạm" />
+            </SelectTrigger>
+            <SelectContent>
+              {filteredStations.map((station) => (
+                <SelectItem key={station.id} value={station.id}>
+                  {station.name}
+                </SelectItem>
               ))}
-              {paginatedData.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-gray-500">
-                    Không có dữ liệu cho trạm này
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+            </SelectContent>
+          </Select>
         </div>
+      </div>
 
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-between items-center mt-4">
-            <Button
-              variant="outline"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-            >
-              ← Trang trước
-            </Button>
-            <span className="text-sm text-gray-600">
-              Trang {currentPage} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-            >
-              Trang sau →
-            </Button>
-          </div>
-        )}
-      </CardContent>
+      <div className="overflow-auto rounded-lg border shadow-sm p-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Thời gian</TableHead>
+              <TableHead>Nhiệt độ (°C)</TableHead>
+              <TableHead>Độ ẩm (%)</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedData.map((data) => (
+              <TableRow key={data.id}>
+                <TableCell>{data.timestamp}</TableCell>
+                <TableCell>{data.temperature}</TableCell>
+                <TableCell>{data.humidity}</TableCell>
+              </TableRow>
+            ))}
+            {paginatedData.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-gray-500">
+                  Không có dữ liệu cho trạm này
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      )}
+    </CardContent>
   );
 }

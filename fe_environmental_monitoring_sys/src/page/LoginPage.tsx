@@ -22,7 +22,9 @@ export function LoginPage({
         <a href="#" className="flex items-center gap-2 self-center font-medium">
           <Leaf className="h-8 w-8 text-green-600" />
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            EcoMonitor
+            <Link to="/" className="text-green-700 ">
+              EcoMonitor
+            </Link>
           </h1>
         </a>
         <div className={cn("flex flex-col gap-6", className)} {...props}>

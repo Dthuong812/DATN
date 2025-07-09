@@ -1,11 +1,15 @@
+import LogTable from "@/components/LogTable";
+
+const dummyLogs = [
+  { id: 1, timestamp: "2025-07-03 19:00", user: "admin", action: "Đăng nhập hệ thống" },
+  { id: 2, timestamp: "2025-07-03 19:10", user: "admin", action: "Thêm thiết bị mới" },
+  { id: 3, timestamp: "2025-07-03 19:15", user: "user01", action: "Xem nhật ký hệ thống" },
+];
+
 export default function LogsPage() {
-    return (
-        <div className="max-w-4xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-4">Trang Nhật Ký</h1>
-            <p className="text-gray-700 mb-4">
-                Đây là trang nhật ký, nơi bạn có thể xem và quản lý các nhật ký hệ thống.
-            </p>
-            {/* Thêm nội dung nhật ký ở đây */}
-        </div>
-    );  
+  return (
+    <div className="max-w-8xl mx-auto p-6">
+      <LogTable logs={dummyLogs} />
+    </div>
+  );
 }

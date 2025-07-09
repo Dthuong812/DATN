@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { useState } from "react";
+import Pagination from "./Pagination";
 
 interface Device {
   id: number;
@@ -64,7 +65,7 @@ export default function SensorDeviceTable({ devices }: Props) {
           Thêm thiết bị
         </Button>
       </div>
-      <div className="flex-1  rounded-xl border overflow-auto h-full scrollbar-hide ">
+      <div className="flex-1  rounded-xl border overflow-auto h-full scrollbar-hide  bg-white shadow p-4">
         <Table className="min-w-[1000px] ">
           <TableHeader>
             <TableRow className="sticky top-0  bg-white border-b">
@@ -81,10 +82,12 @@ export default function SensorDeviceTable({ devices }: Props) {
             </TableRow>
           </TableHeader>
 
-          <TableBody >
+          <TableBody>
             {paginatedDevices.map((device, index) => (
               <TableRow key={device.id} className="pl-2">
-                <TableCell>{(currentPage - 1) * pageSize + index + 1}</TableCell>
+                <TableCell>
+                  {(currentPage - 1) * pageSize + index + 1}
+                </TableCell>
                 <TableCell>{device.name}</TableCell>
                 <TableCell>{device.type}</TableCell>
                 <TableCell>{device.location}</TableCell>
@@ -93,7 +96,7 @@ export default function SensorDeviceTable({ devices }: Props) {
                 <TableCell>{device.location}</TableCell>
                 <TableCell>{device.name}</TableCell>
                 <TableCell>{device.type}</TableCell>
-        
+
                 <TableCell>
                   <div className="flex justify-center gap-2">
                     <Button
@@ -118,28 +121,11 @@ export default function SensorDeviceTable({ devices }: Props) {
         </Table>
       </div>
 
-      <div className="flex justify-between items-center border-none pt-3">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          ← Trước
-        </Button>
-        <span className="text-sm font-medium text-gray-700">
-          Trang {currentPage} / {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          Sau →
-        </Button>
-      </div>
-
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
