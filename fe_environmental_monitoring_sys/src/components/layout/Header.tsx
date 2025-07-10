@@ -1,6 +1,9 @@
-import { Leaf, Settings, Bell, UserCircle } from "lucide-react";
+import { Leaf, 
+  // Settings, Bell, UserCircle 
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "../ui/button";
 
 export default function Header() {
   const location = useLocation();
@@ -48,14 +51,14 @@ export default function Header() {
             ))}
 
             {/* {token && ( */}
-            <Link
+            {/* <Link
               to="/admin"
-              className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"
+              className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-semibold"
               title="Admin"
             >
-              <Settings className="w-5 h-5" />
+              Quản lý
             </Link>
-            {/* )} */}
+          
 
             <Link
               to="/notifications"
@@ -71,7 +74,20 @@ export default function Header() {
               title="Tài khoản"
             >
               <UserCircle className="w-8 h-8 text-gray-600 dark:text-gray-300" />
-            </Link>
+            </Link> */}
+              {/* )} */}
+            <Button
+              variant="ghost"
+              className="p-2  text-white hover:text-green-600 dark:hover:text-green-400 bg-green-600 cursor-pointer"
+              onClick={
+                () => {
+                  window.location.href = "/login";
+                }
+              }
+            >
+              Đăng nhập
+            
+            </Button>
           </div>
         </div>
       </div>
