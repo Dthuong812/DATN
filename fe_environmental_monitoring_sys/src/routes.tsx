@@ -14,6 +14,8 @@ import LogsPage from "./page/LogsPage";
 import UserPage from "./page/UserPage";
 import { LoginPage } from "./page/LoginPage";
 import DashboardPage from "./page/DashboardPage";
+import SettingsPage from "./page/SettingPage";
+import HelpPage from "./page/HelpPage";
 
 
 const router = createBrowserRouter([
@@ -39,6 +41,7 @@ const router = createBrowserRouter([
         path: "contact",
         element: <ContactPage/>,
       },
+     
       {
         path: "admin",
         element: <AdminPage/>,
@@ -70,6 +73,14 @@ const router = createBrowserRouter([
               {
                 path: "user",
                 element: <UserPage/>,
+              },
+              {
+                path: "settings",
+                element: <SettingsPage/>,
+              },
+              {
+                path: "help",
+                element: <HelpPage/>,
               },
         ]
       },
