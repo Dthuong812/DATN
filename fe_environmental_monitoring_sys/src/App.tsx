@@ -1,11 +1,18 @@
-import { Button } from "@/components/ui/button"
+import Header from "./components/layout/Header";
+import { Outlet } from "react-router-dom";
+import "./App.css"; 
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <Button variant="default" className="text-black">Nút ShadCN</Button>
+    <div className="h-screen flex flex-col">
+       <Toaster richColors position="top-center" />
+      <Header />
+      <main className="max-w-8xl mt-[60px] h-[calc(100vh-60px)] overflow-hidden">
+        <Outlet />
+      </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
