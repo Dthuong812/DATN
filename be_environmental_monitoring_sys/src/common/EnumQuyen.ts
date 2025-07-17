@@ -1,0 +1,10 @@
+export enum EnumQuyen
+{
+    CREATE="CREATE",
+    READ="READ",
+    UPDATE="UPDATE",
+    DELETE="DELETE",
+    APPROVE="APPROVE",
+    CANCEL="CANCEL",
+    CONFIRM="CONFIRM"
+}
