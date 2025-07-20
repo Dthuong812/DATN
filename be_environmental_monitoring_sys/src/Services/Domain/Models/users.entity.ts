@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("Users",{schema:"eco_monitor"})
-export class User {
+@Entity("Users",{schema:"eco_monitoring"})
+export class UserEntity {
     @PrimaryGeneratedColumn({ type: 'int', })
     Id: number;
     @Column("varchar",{ unique: true, length: 50 })

@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-@Entity("UserRoleAssignments",{schema:"eco_monitor"})
-export class UserRoleAssignments {
+@Entity("UserRoleAssignments",{schema:"eco_monitoring"})
+export class UserRoleAssignmentsEntity {
     @PrimaryGeneratedColumn({ type: 'int', })
     Id: number;
     @Column("int",{ nullable: true })
