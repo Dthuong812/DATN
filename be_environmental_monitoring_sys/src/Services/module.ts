@@ -5,19 +5,30 @@ import { UserController } from './Api/UserController';
 import { UserService } from './Application/Services/UserService';
 import { UserRepsitory } from './Infrastructure/Repository/UserRepository';
 import { UserDao } from './Infrastructure/Dao/UserDao';
+import { AuthController } from './Api/AuthController';
+import { AuthService } from './Application/Services/AuthService';
+import CaptchaService from './Application/Services/CaptchaService';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '15m' },
+    }),
   ],
   controllers: [
-    UserController
+    UserController,
+    AuthController,
   ],
   providers: [
     UserService,
     UserRepsitory,
     UserDao,
 
+    AuthService,
+    CaptchaService,
   ],
 })
 export class AppModule {}
