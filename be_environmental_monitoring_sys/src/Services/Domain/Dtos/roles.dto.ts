@@ -1,4 +1,4 @@
-export class RoleDto{
+export class RolesDto{
     Id: number;
     Code: string;
     Name: string;

@@ -39,4 +39,5 @@ export enum ErrorCode {
   VALID_IN_DTO=-999,
   SERVER_ERROR=-500,
   UPLOAD_ERROR=-600,
+
 }

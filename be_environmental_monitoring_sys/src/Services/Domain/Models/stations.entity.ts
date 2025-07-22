@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Stations", { schema: "eco_monitoring" })
 export class StationsEnity {
@@ -22,8 +22,8 @@ export class StationsEnity {
     CreatedBy: number;
     @Column("int", { nullable: true })
     UpdatedBy: number;
-    @Column("datetime", { nullable: true })
-    DeletedAt: Date;
+    @DeleteDateColumn()
+    DeletedAt?: Date
     @Column("int", { nullable: true })
     DeletedBy: number;
     @Column("int", { nullable: true })
