@@ -52,7 +52,14 @@ async function bootstrap() {
     .setTitle('EcoMonitor API')
     .setDescription('API documentation for EcoMonitor Environmental Monitoring System')
     .setVersion('1.0')
-    .addBearerAuth() 
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'JWT', 
+    ) 
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -28,3 +28,9 @@ export class AuthDto {
   
   recaptchaToken:string
 }
+export type JWTpayload = {
+  sub: number;
+  iat: string;
+  exp: string;
+  permissions: Array<string>
+};

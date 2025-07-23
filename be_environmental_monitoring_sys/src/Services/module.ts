@@ -8,7 +8,11 @@ import { UserDao } from './Infrastructure/Dao/UserDao';
 import { AuthController } from './Api/AuthController';
 import { AuthService } from './Application/Services/AuthService';
 import CaptchaService from './Application/Services/CaptchaService';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessGuard } from 'src/common/guards';
+import { AccessStrategy } from 'src/common/strategies/AccessStrategy';
+import { RefreshStrategy } from 'src/common/strategies/RefreshStrategy';
 
 @Module({
   imports: [
@@ -24,11 +28,18 @@ import { JwtModule } from '@nestjs/jwt';
   ],
   providers: [
     UserService,
+    JwtService,
     UserRepsitory,
     UserDao,
 
     AuthService,
     CaptchaService,
+    AccessStrategy,
+    RefreshStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: AccessGuard,
+    },
   ],
 })
 export class AppModule {}

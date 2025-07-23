@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Type } from "class-transformer"
-import { IsDate, IsNotEmpty, IsNumber, IsString, Matches, MinLength } from "class-validator"
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, IsStrongPassword, Matches, MinLength } from "class-validator"
 
 export class UserDto {
     Id : number
@@ -61,15 +61,16 @@ export class PayLoadCreateUserDto{
     @IsNotEmpty()
     Active: number;
 
-    @ApiProperty({ description: "Người tạo" })
+    @IsOptional()
+    @IsNumber()
     @IsNotEmpty()
-    CreatedBy: number;
+    CreatedBy?: number;
 
-    @ApiProperty({ description: "Ngày tạo" })
+    @IsOptional()
     @Type(() => Date)
     @IsDate()
     @IsNotEmpty()
-    CreatedAt: Date = new Date();
+    CreatedAt?: Date = new Date();
 }
 export class PayLoadUpdateUserDto{
     @ApiProperty({ description: "Tên đăng nhập" })
@@ -78,12 +79,13 @@ export class PayLoadUpdateUserDto{
     UserName: string;
 
     @ApiProperty({ description: "Mật khẩu" })
+    @IsOptional()
     @IsString()
     @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
     @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/, {
       message: 'Mật khẩu phải chứa chữ hoa, chữ thường và số',
     })
-    PassWord: string;
+    PassWord?: string;
 
     @ApiProperty({ description: "Họ và tên" })
     @IsNotEmpty()
@@ -112,14 +114,78 @@ export class PayLoadUpdateUserDto{
     @IsNotEmpty()
     Active: number;
 
-    @ApiProperty({ description: "Người sửa" })
+    @IsOptional()
     @IsNotEmpty()
     @IsNumber()
-    UpdatedBy: number;
+    UpdatedBy?: number;
 
-    @ApiProperty({ description: "Ngày sửa" })
+    @IsOptional()
     @Type(() => Date)
     @IsDate()
-    @IsNotEmpty()
-    UpdatedAt: Date = new Date();
+    UpdatedAt?: Date = new Date();
+}
+export class ResetPasswordDto {
+  @ApiProperty({ required: false }) 
+  @IsString()
+  @IsNotEmpty()
+  @IsStrongPassword(
+    {
+      minLength: 6,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+    {
+      message:
+        'Mật khẩu phải có ít nhất 6 ký tự, 1 chữ thường, 1 chữ hoa, 1 sô và 1 ký tự đặc biệt',
+    },
+  )
+  PassWord: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
+  UpdatedBy?: number;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @IsNotEmpty()
+  UpdatedAt?: Date = new Date();
+}
+export class ChangePasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: "Mật khẩu cũ" })
+  OldPassWord: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsStrongPassword(
+    {
+      minLength: 12,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+    {
+      message:
+        'Mật khẩu phải có ít nhất 6 ký tự, 1 chữ thường, 1 chữ hoa, 1 sô và 1 ký tự đặc biệt',
+    },
+  )
+  @ApiProperty({ description: "Mật khẩu mới" })
+  PassWord: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: "Nhập lại mật khẩu" })
+  PassWordAgain: string;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  ChangePasswordAt?: Date;
+
 }

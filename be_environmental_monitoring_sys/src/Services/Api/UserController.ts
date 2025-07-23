@@ -2,37 +2,43 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestj
 import { Result } from "ioredis";
 import { ResultResponse } from "src/common/ResultResponse";
 import { UserService } from "../Application/Services/UserService";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { PayLoadCreateUserDto, PayLoadUpdateUserDto } from "../Domain/Dtos/users.dto";
+import { GetCurrentUserId } from "src/common/decorators";
 
 @Controller("/users")
 export class UserController{
     constructor(
         private readonly userService: UserService, 
     ){}
+
     @Get()
+    @ApiBearerAuth('JWT')
     @ApiOperation({ summary: 'Lấy danh sách tất cả người dùng' })
     async getAll(): Promise<ResultResponse> {
       return await this.userService.getAllUsers();
     }
+
     @Post()
+    @ApiBearerAuth('JWT')
     @ApiOperation({ summary: 'Tạo người dùng mới' })
-    async createUser(@Body() userDto: PayLoadCreateUserDto): Promise<ResultResponse> {
-        return await this.userService.createUser(userDto);
+    async createUser(@Body() userDto: PayLoadCreateUserDto, @GetCurrentUserId() authId:number) : Promise<ResultResponse> {
+        return await this.userService.createUser(userDto,authId);
     }
+
     @Patch("/:Id")
+    @ApiBearerAuth('JWT')
     @ApiOperation({ summary: 'Cập nhật thông tin người dùng' })
     async updateUser(@Param("Id") Id: number,
-      @Body() userDto: PayLoadUpdateUserDto): Promise<ResultResponse> {
-        return await this.userService.updateUser(Id,userDto);
+      @Body() userDto: PayLoadUpdateUserDto , @GetCurrentUserId() authId:number): Promise<ResultResponse> {
+        return await this.userService.updateUser(Id,userDto,authId);
     }
+
     @Delete("/:Id")
+    @ApiBearerAuth('JWT')
     @ApiOperation({ summary: 'Xóa người dùng' })
     async deleteUser(@Param("Id") Id: number): Promise<ResultResponse> {
-        console.log("Id", Id);
-
-        const reesult = await this.userService.softDelete({ Id });
-        console.log("reesult", reesult);
-        return reesult;
+        const result = await this.userService.softDelete({ Id});
+        return result;
     }
 }
