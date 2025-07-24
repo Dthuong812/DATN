@@ -32,7 +32,7 @@ export class AuthService {
     private readonly captchaService: CaptchaService,
     private readonly userRepository: UserRepsitory,
     private readonly mail: MailService,
-    private readonly telegramService: TelegramService,
+    private readonly telegramService: TelegramService
   ) {}
   getIpv4(req: Request) {
     const clientIp = requestIp.getClientIp(req);
@@ -303,55 +303,127 @@ export class AuthService {
 
     return res;
   }
-async forgotPassword(payload: ForgotPassWordDto): Promise<ResultResponse> {
-  const res = new ResultResponse(0, "", null);
-  try {
-    const userUpdate = await this.userRepository.getAll();
-    if (!userUpdate || userUpdate.length === 0) {
-      res.Status = ErrorCode.USER_NOT_FOUND;
-      res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
-      return res;
+  async forgotPassword(payload: ForgotPassWordDto): Promise<ResultResponse> {
+    const res = new ResultResponse(0, "", null);
+    try {
+      const userUpdate = await this.userRepository.getAll();
+      if (!userUpdate || userUpdate.length === 0) {
+        res.Status = ErrorCode.USER_NOT_FOUND;
+        res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
+        return res;
+      }
+      const user = userUpdate.find((u) => u.UserName === payload.UserName);
+
+      const rawPassword = generatePassword(12, {
+        includeLowercase: true,
+        includeSpecialChars: true,
+        includeNumbers: true,
+        includeUppercase: true,
+      });
+
+      if (payload.Email) {
+        await this.mail.sendMailCreateUser(payload.Email, rawPassword);
+      } else if (payload.Phone) {
+        await this.telegramService.sendMessage(rawPassword);
+      }
+
+      const hashedPassword = await argon2.hash(rawPassword);
+      const updateData: UserEntity = {
+        ...user,
+        PassWord: hashedPassword,
+        UpdatedAt: new Date(),
+        UpdatedBy: user.Id,
+      };
+      const result = await this.userRepository.update(
+        { Id: user.Id },
+        updateData
+      );
+
+      if (result) {
+        res.Data = result;
+        res.Status = ErrorCode.SUCCESS;
+      } else {
+        res.Status = ErrorCode.SAVE_FAIL;
+        res.Message = "Lấy lại mật khẩu thất bại";
+      }
+    } catch (error) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = error.message;
     }
-    const user = userUpdate.find(
-      (u) =>
-        u.UserName === payload.UserName
-    );
-
-    const rawPassword = generatePassword(12, {
-      includeLowercase: true,
-      includeSpecialChars: true,
-      includeNumbers: true,
-      includeUppercase: true,
-    });
-
-    if (payload.Email) {
-      await this.mail.sendMailCreateUser(payload.Email, rawPassword);
-    } else if (payload.Phone) {
-      await this.telegramService.sendMessage(rawPassword);
-    }
-
-    const hashedPassword = await argon2.hash(rawPassword);
-    const updateData: UserEntity = {
-      ...user,
-      PassWord: hashedPassword,
-      UpdatedAt: new Date(),
-      UpdatedBy: user.Id,
-    };
-    const result = await this.userRepository.update({ Id: user.Id }, updateData);
-
-    if (result) {
-      res.Data = result;
-      res.Status = ErrorCode.SUCCESS;
-    } else {
-      res.Status = ErrorCode.SAVE_FAIL;
-      res.Message = "Lấy lại mật khẩu thất bại";
-    }
-
-  } catch (error) {
-    res.Status = ErrorCode.EXCEPTION;
-    res.Message = error.message;
+    return res;
   }
-  return res;
-}
-
+  async LockUser(Id: number, authId: number): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const item = await this.userRepository.getById(Id);
+      if (!item) {
+        res.Status = ErrorCode.NOT_FOUND_ID;
+        res.Message = "Không tìm thấy người dùng";
+        return res;
+      }
+  
+      if (item.Active === 3) {
+        res.Status = ErrorCode.EDIT_FAIL;
+        res.Message = "Người dùng đã bị khóa trước đó";
+        return res;
+      }
+  
+      const ItemUpdate: UserEntity = {
+        ...item,
+        Active: 3,
+        UpdatedAt: new Date(),
+        UpdatedBy: authId,
+      };
+  
+      const resultUpdate = await this.userRepository.update({ Id }, ItemUpdate);
+      if (resultUpdate) {
+        res.Status = ErrorCode.SUCCESS;
+        res.Message = "Khóa người dùng thành công";
+      } else {
+        res.Status = ErrorCode.EDIT_FAIL;
+        res.Message = "Khóa người dùng thất bại";
+      }
+    } catch (err) {
+      res.Message = err.message;
+    }
+    return res;
+  }
+  
+  async UnLockUser(Id: number, authId: number): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const item = await this.userRepository.getById(Id);
+      
+      if (!item) {
+        res.Status = ErrorCode.NOT_FOUND_ID;
+        res.Message = "Không tìm thấy người dùng";
+        return res;
+      }
+  
+      if (item.Active === 1) {
+        res.Status = ErrorCode.EDIT_FAIL;
+        res.Message = "Người dùng đã được mở khóa trước đó";
+        return res;
+      }
+  
+      const ItemUpdate: UserEntity = {
+        ...item,
+        Active: 1,
+        UpdatedAt: new Date(),
+        UpdatedBy: authId,
+      };
+  
+      const resultUpdate = await this.userRepository.update({ Id }, ItemUpdate);
+      if (resultUpdate) {
+        res.Status = ErrorCode.SUCCESS;
+        res.Message = "Mở khóa người dùng thành công";
+      } else {
+        res.Status = ErrorCode.EDIT_FAIL;
+        res.Message = "Mở khóa người dùng thất bại";
+      }
+    } catch (err) {
+      res.Message = err.message;
+    }
+    return res;
+  }
 }
