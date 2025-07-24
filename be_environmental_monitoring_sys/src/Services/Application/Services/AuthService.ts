@@ -1,4 +1,4 @@
-import { User } from './../../../../../fe_environmental_monitoring_sys/src/types/types';
+import { User } from "./../../../../../fe_environmental_monitoring_sys/src/types/types";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -13,8 +13,15 @@ import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { ErrorManage } from "src/common/ErrorCode/ErrorManager";
 import { refreshDto } from "src/Services/Domain/Dtos/refesh.dto";
 import { UserRepsitory } from "src/Services/Infrastructure/Repository/UserRepository";
-import { ChangePasswordDto, ResetPasswordDto } from "src/Services/Domain/Dtos/users.dto";
+import {
+  ChangePasswordDto,
+  ForgotPassWordDto,
+  ResetPasswordDto,
+} from "src/Services/Domain/Dtos/users.dto";
 import { UserEntity } from "src/Services/Domain/Models/users.entity";
+import { generatePassword } from "src/common/Util";
+import { MailService } from "./MailService";
+import { TelegramService } from "./TelegramService";
 
 @Injectable()
 export class AuthService {
@@ -23,7 +30,9 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly userService: UserService,
     private readonly captchaService: CaptchaService,
-    private readonly userRepository: UserRepsitory
+    private readonly userRepository: UserRepsitory,
+    private readonly mail: MailService,
+    private readonly telegramService: TelegramService,
   ) {}
   getIpv4(req: Request) {
     const clientIp = requestIp.getClientIp(req);
@@ -38,12 +47,12 @@ export class AuthService {
   }
   checkIsMustChangePassword = (latestChangePasswordAt: Date) => {
     const expiresChangePasswordIn =
-      parseInt(this.configService.get('EXPIRES_CHANGE_PASSWORD_IN')) ?? 0;
+      parseInt(this.configService.get("EXPIRES_CHANGE_PASSWORD_IN")) ?? 0;
     const dayjsNow = dayjs();
     const time =
       expiresChangePasswordIn > 0
-        ? dayjsNow.subtract(expiresChangePasswordIn, 'day')
-        : dayjsNow.subtract(1, 'minute');
+        ? dayjsNow.subtract(expiresChangePasswordIn, "day")
+        : dayjsNow.subtract(1, "minute");
     return dayjs(latestChangePasswordAt) < time;
   };
 
@@ -170,13 +179,12 @@ export class AuthService {
     try {
       const payloadItem: JWTpayload = await this.jwtService.verifyAsync(
         payload.refresh_token,
-      {
-        secret: this.configService.get("REFRESH_SECRET"),
-      }
-    );
+        {
+          secret: this.configService.get("REFRESH_SECRET"),
+        }
+      );
 
       const userResponse = await this.userService.getById(payloadItem.sub);
-      console.log("userResponse", userResponse);
       const user = userResponse.Data;
       if (!user) {
         res.Status = ErrorCode.USER_NOT_FOUND;
@@ -240,8 +248,8 @@ export class AuthService {
     return res;
   }
   async ChangePassword(payload: ChangePasswordDto, userId: number) {
-    const res = new ResultResponse(0, '', null);
-  
+    const res = new ResultResponse(0, "", null);
+
     if (!payload) {
       res.Status = ErrorCode.NOT_DTO;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.NOT_DTO);
@@ -249,50 +257,101 @@ export class AuthService {
     }
     // 2. Tìm người dùng
     const userupdate = await this.userRepository.getById(userId);
-    if (!userupdate ) {
+    if (!userupdate) {
       res.Status = ErrorCode.USER_NOT_FOUND;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
       return res;
     }
     const user = userupdate as UserEntity;
-  
-    const passwordMatches = await argon2.verify(user.PassWord, payload.OldPassWord);
+
+    const passwordMatches = await argon2.verify(
+      user.PassWord,
+      payload.OldPassWord
+    );
     if (!passwordMatches) {
       res.Status = ErrorCode.WRONG_PASSWORD;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.WRONG_PASSWORD);
       return res;
     }
-  
 
     if (payload.PassWord === payload.OldPassWord) {
       res.Status = ErrorCode.NOT_CHANGE_PASS;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.NOT_CHANGE_PASS);
       return res;
     }
-  
 
     if (payload.PassWord !== payload.PassWordAgain) {
       res.Status = ErrorCode.AGAIN_PASS_ERROR;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.AGAIN_PASS_ERROR);
       return res;
     }
-  
 
     const password_hash = await argon2.hash(payload.PassWord);
     user.PassWord = password_hash;
-    user.UpdatedBy= userId;
+    user.UpdatedBy = userId;
     user.ChangePasswordAt = new Date();
     user.UpdatedAt = new Date();
-  
+
     const param = { Id: user.Id };
     const updateuser = await this.userRepository.update(param, user);
-  
+
     if (updateuser) {
       res.Status = ErrorCode.CHANGE_PASS_SUCCESS;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.CHANGE_PASS_SUCCESS);
       res.Data = updateuser;
     }
-  
+
     return res;
   }
+async forgotPassword(payload: ForgotPassWordDto): Promise<ResultResponse> {
+  const res = new ResultResponse(0, "", null);
+  try {
+    const userUpdate = await this.userRepository.getAll();
+    if (!userUpdate || userUpdate.length === 0) {
+      res.Status = ErrorCode.USER_NOT_FOUND;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
+      return res;
+    }
+    const user = userUpdate.find(
+      (u) =>
+        u.UserName === payload.UserName
+    );
+
+    const rawPassword = generatePassword(12, {
+      includeLowercase: true,
+      includeSpecialChars: true,
+      includeNumbers: true,
+      includeUppercase: true,
+    });
+
+    if (payload.Email) {
+      await this.mail.sendMailCreateUser(payload.Email, rawPassword);
+    } else if (payload.Phone) {
+      await this.telegramService.sendMessage(rawPassword);
+    }
+
+    const hashedPassword = await argon2.hash(rawPassword);
+    const updateData: UserEntity = {
+      ...user,
+      PassWord: hashedPassword,
+      UpdatedAt: new Date(),
+      UpdatedBy: user.Id,
+    };
+    const result = await this.userRepository.update({ Id: user.Id }, updateData);
+
+    if (result) {
+      res.Data = result;
+      res.Status = ErrorCode.SUCCESS;
+    } else {
+      res.Status = ErrorCode.SAVE_FAIL;
+      res.Message = "Lấy lại mật khẩu thất bại";
+    }
+
+  } catch (error) {
+    res.Status = ErrorCode.EXCEPTION;
+    res.Message = error.message;
+  }
+  return res;
+}
+
 }

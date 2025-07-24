@@ -5,7 +5,7 @@ import { AuthDto } from "../Domain/Dtos/auth.dto";
 import { ResultResponse } from "src/common/ResultResponse";
 import { refreshDto } from "../Domain/Dtos/refesh.dto";
 import { Payload } from "@nestjs/microservices";
-import { ChangePasswordDto, ResetPasswordDto } from "../Domain/Dtos/users.dto";
+import { ChangePasswordDto, ForgotPassWordDto, ResetPasswordDto } from "../Domain/Dtos/users.dto";
 import { GetCurrentUserId, Public } from "src/common/decorators";
 
 @Controller("auth")
@@ -45,4 +45,13 @@ export class AuthController {
     console.log(authId)
     return await this.authService.ChangePassword(payload,authId)
   }
+  @Public()
+  @Patch("/forgot-password")
+  @ApiOperation({ summary: "Quên mật khẩu" })
+  @ApiBearerAuth('JWT')
+  async forgotPassword(@Body() payload: ForgotPassWordDto): Promise<ResultResponse> {
+  {
+    return await this.authService.forgotPassword(payload);
+  }
+}
 }

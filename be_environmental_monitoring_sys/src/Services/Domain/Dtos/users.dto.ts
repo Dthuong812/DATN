@@ -189,3 +189,21 @@ export class ChangePasswordDto {
   ChangePasswordAt?: Date;
 
 }
+export class ForgotPassWordDto
+{
+    @ApiProperty({ description: "Tên đăng nhập" })
+    @IsNotEmpty()
+    @IsString()
+    @IsOptional() 
+    UserName:string;
+    @ApiProperty({ description: "Email" })
+    @IsNotEmpty()
+    @IsString()
+    @IsOptional() 
+    Email?:string;
+    @ApiProperty({ description: "Phone" })
+    @IsNotEmpty()
+    @IsString()
+    @IsOptional() 
+    Phone?:string;
+}

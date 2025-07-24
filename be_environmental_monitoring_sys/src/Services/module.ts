@@ -1,6 +1,6 @@
 import { User } from './../../../fe_environmental_monitoring_sys/src/types/types';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './Api/UserController';
 import { UserService } from './Application/Services/UserService';
 import { UserRepsitory } from './Infrastructure/Repository/UserRepository';
@@ -13,6 +13,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessGuard } from 'src/common/guards';
 import { AccessStrategy } from 'src/common/strategies/AccessStrategy';
 import { RefreshStrategy } from 'src/common/strategies/RefreshStrategy';
+import { MailService } from './Application/Services/MailService';
+import { TelegramService } from './Application/Services/TelegramService';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -21,6 +24,21 @@ import { RefreshStrategy } from 'src/common/strategies/RefreshStrategy';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '15m' },
     }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get("MAIL_HOST"),
+          secure: true,
+          port: 465,
+          auth: {
+            user: configService.get("MAIL_USER"),
+            pass: configService.get("MAIL_PASS"),
+          },
+        },
+      }),
+      inject: [ConfigService],
+    })
   ],
   controllers: [
     UserController,
@@ -36,6 +54,8 @@ import { RefreshStrategy } from 'src/common/strategies/RefreshStrategy';
     CaptchaService,
     AccessStrategy,
     RefreshStrategy,
+    MailService,
+    TelegramService,
     {
       provide: APP_GUARD,
       useClass: AccessGuard,
