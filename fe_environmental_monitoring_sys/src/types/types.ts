@@ -30,3 +30,25 @@ export interface User {
   isDieuHanh: boolean;
   active: boolean;
 }
+
+export interface LoginPayload {
+  Email: string;
+  PassWord: string;
+}
+export interface LoginResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    UserId: number;
+    UserName: string;
+    Location_Id: number;
+    IsManagement: number;
+    access_token: string;
+    refresh_token: string;
+    exp_refresh: number;
+
+  };
+}
+export interface JWT {
+  token: string;
+}
