@@ -8,7 +8,6 @@ import ContactPage from "./page/ContactPage";
 import AdminPage from "./page/AdminPage";
 import RealTimePage from "./page/RealTimePage";
 import StationPage from "./page/StationPage";
-import SernsorsPage from "./page/SersorsPage";
 import ReportPage from "./page/ReportPage";
 import LogsPage from "./page/LogsPage";
 import UserPage from "./page/UserPage";
@@ -16,11 +15,17 @@ import { LoginPage } from "./page/LoginPage";
 import DashboardPage from "./page/DashboardPage";
 import SettingsPage from "./page/SettingPage";
 import HelpPage from "./page/HelpPage";
+import SensorsPage from "./page/SensorsPage";
+import ProfilePage from "./page/ProfilePage";
+import { ForgotPasswordPage } from "./page/ForgotPassWordPage";
+
 
 
 const router = createBrowserRouter([
     {path: "/login",
         element: <LoginPage />, },
+    {path: "/forgot-password",
+        element: <ForgotPasswordPage />, },
   {
     path: "/",
     element: <App />, 
@@ -41,6 +46,10 @@ const router = createBrowserRouter([
         path: "contact",
         element: <ContactPage/>,
       },
+      {
+        path: "profile",
+        element: <ProfilePage/>,
+      },
      
       {
         path: "admin",
@@ -60,7 +69,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "sensors",
-                element: <SernsorsPage/>,
+                element: <SensorsPage/>,
               },
               {
                 path: "report",

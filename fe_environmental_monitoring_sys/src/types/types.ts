@@ -52,3 +52,11 @@ export interface LoginResponse {
 export interface JWT {
   token: string;
 }
+
+export interface ForgotPayload {
+  Email: string;
+}
+export interface ForgotResponse {
+  Status: number;
+  Message: string;
+}

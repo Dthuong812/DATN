@@ -16,7 +16,7 @@ import type { AppDispatch, RootState } from "@/store";
 import { useEffect, useState } from "react";
 
 import { toast } from "sonner";
-import { loginUser } from "@/store/slices/authSlice";
+import { loginUser } from "@/store/middleware/auth.middleware";
 
 export function LoginPage({
   className,
@@ -89,7 +89,7 @@ export function LoginPage({
                           to="/forgot-password"
                           className="ml-auto text-sm underline-offset-4 hover:underline"
                         >
-                          Quên mật khẩu ?
+                          Quên mật khẩu?
                         </Link>
                       </div>
                       <Input
