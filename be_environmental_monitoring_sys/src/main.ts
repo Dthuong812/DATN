@@ -15,7 +15,7 @@ import { FunctionsEntity } from './Services/Domain/Models/functions.entity';
 import { PermissionsEntity } from './Services/Domain/Models/permissions.entity';
 import { LocationsEntity } from './Services/Domain/Models/locations.entity';
 import { SensorsEntity } from './Services/Domain/Models/sensors.entity';
-import { StationsEnity } from './Services/Domain/Models/stations.entity';
+import { StationsEntity } from './Services/Domain/Models/stations.entity';
 import { LogTypesEntity } from './Services/Domain/Models/log_types.entity';
 import { LogsEntity } from './Services/Domain/Models/logs.entity';
 import { UserRoleAssignmentsEntity } from './Services/Domain/Models/user_role_assignments.entity';
@@ -64,6 +64,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); 
+  app.enableCors({
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: false,
+  });
 
   const port = process.env.PORT || 4000;
   await app.listen(port);

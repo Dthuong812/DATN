@@ -6,4 +6,5 @@ export class UserDao extends CoreDaoBase<UserEntity, UserDto> {
     constructor() {
       super(UserEntity);
     }
-  }
+    
+}

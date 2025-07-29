@@ -1,7 +1,7 @@
 import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Stations", { schema: "eco_monitoring" })
-export class StationsEnity {
+export class StationsEntity {
     @PrimaryGeneratedColumn({ type: 'int' })
     Id: number;
     @Column("varchar", { length: 150, nullable: true })

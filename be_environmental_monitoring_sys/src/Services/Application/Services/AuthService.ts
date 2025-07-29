@@ -312,7 +312,7 @@ export class AuthService {
         res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
         return res;
       }
-      const user = userUpdate.find((u) => u.UserName === payload.UserName);
+      const user = userUpdate.find((u) => u.Email === payload.Email || u.Phone === payload.Phone || u.UserName === payload.UserName);
 
       const rawPassword = generatePassword(12, {
         includeLowercase: true,

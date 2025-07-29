@@ -1,4 +1,4 @@
-import { User } from './../../../fe_environmental_monitoring_sys/src/types/types';
+import { User, Station } from './../../../fe_environmental_monitoring_sys/src/types/types';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './Api/UserController';
@@ -16,6 +16,10 @@ import { RefreshStrategy } from 'src/common/strategies/RefreshStrategy';
 import { MailService } from './Application/Services/MailService';
 import { TelegramService } from './Application/Services/TelegramService';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { StationsController } from './Api/StationsController';
+import { StationsService } from './Application/Services/StationsService';
+import { StationsRepository } from './Infrastructure/Repository/StationsRepository';
+import { StationsDao } from './Infrastructure/Dao/StationsDao';
 
 @Module({
   imports: [
@@ -43,6 +47,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
   controllers: [
     UserController,
     AuthController,
+    StationsController
   ],
   providers: [
     UserService,
@@ -56,6 +61,15 @@ import { MailerModule } from '@nestjs-modules/mailer';
     RefreshStrategy,
     MailService,
     TelegramService,
+
+    StationsService,
+    StationsRepository, 
+    StationsDao,
+
+    {
+      provide: APP_GUARD,
+      useClass: AccessGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: AccessGuard,

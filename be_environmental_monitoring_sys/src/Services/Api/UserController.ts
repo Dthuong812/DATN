@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
-import { Result } from "ioredis";
 import { ResultResponse } from "src/common/ResultResponse";
 import { UserService } from "../Application/Services/UserService";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
