@@ -1,14 +1,7 @@
-import {type JWT, type LoginResponse, } from "@/types/types";
+import {type AsyncState, type JWT, type LoginResponse, } from "@/types/types";
 import {  createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { forgotPassword, loginUser } from "../middleware/auth.middleware";
 
-
-interface AsyncState {
-  isLoading: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-  error?: string | null;
-}
 
 interface AuthState extends AsyncState {
   user?: LoginResponse | null;
@@ -81,7 +74,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.forgotSuccess = false;
-        state.error = action.payload || "Khôi phục mật khẩu thất bại!";
+        state.error = action.payload || "Email không hợp lệ!";
       });
   },
 });

@@ -1,6 +1,6 @@
 import type { ForgotPayload, ForgotResponse, LoginPayload, LoginResponse } from "@/types/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import authService from "../Services/auth.service";
+import authService from "../../services/auth.service";
 
 export const loginUser = createAsyncThunk<
   LoginResponse,
@@ -25,7 +25,7 @@ export const forgotPassword = createAsyncThunk<
     return result;
   }
   catch{
-    return rejectWithValue("Khôi phục mật khẩu thất bại!");
+    return rejectWithValue("Email không hợp lệ!");
   }
 }
 );

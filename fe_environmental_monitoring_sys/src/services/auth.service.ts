@@ -1,5 +1,5 @@
 import type { ForgotPayload, LoginPayload } from "@/types/types";
-import api from "../AxiosCustom";
+import api from "../store/AxiosCustom";
 
 
 const login= async (payload: LoginPayload) => {

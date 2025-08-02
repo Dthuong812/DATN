@@ -1,9 +1,4 @@
-export interface Station {
-  name: string;
-  location: string;
-  status: "Hoạt động" | "Bảo trì";
-  aqi: number;
-}
+
 export interface PollutionStation {
   name: string;
   lat: number;
@@ -30,7 +25,13 @@ export interface User {
   isDieuHanh: boolean;
   active: boolean;
 }
-
+///
+export interface AsyncState {
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  error?: string | null;
+}
 export interface LoginPayload {
   Email: string;
   PassWord: string;
@@ -59,4 +60,36 @@ export interface ForgotPayload {
 export interface ForgotResponse {
   Status: number;
   Message: string;
+}
+
+export interface StationsResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Stations: Station[];
+  };
+}
+
+export interface Station {
+  Id: number;
+  Name: string;
+  Address: string;
+  Lat: number;
+  Lng: number;
+  Location_Id: number;
+  Status: number;
+  CreatedAt: Date;
+  CreatedBy: string;
+  UpdatedBy: string;
+  UpdatedAt: Date;
+}
+
+
+export interface StationFormValues {
+  Name: string;
+  Address: string;
+  LocationId: number;
+  Lat: number;
+  Lng: number;
+  Status: number;
 }
