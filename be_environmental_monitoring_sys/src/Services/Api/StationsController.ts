@@ -84,4 +84,14 @@ export class StationsController {
   async getAll(): Promise<ResultResponse> {
     return await this.StationsService.getAllStations();
   }
+
+  @Get("/:Id")
+  @ApiBearerAuth("JWT")
+  @ApiOperation({ summary: "Lấy thông tin trạm theo Id" })
+  async getById(
+    @Param("Id") Id: number
+  ): Promise<ResultResponse> {
+    return await this.StationsService.getStationById(Id);
+  }
+  
 }

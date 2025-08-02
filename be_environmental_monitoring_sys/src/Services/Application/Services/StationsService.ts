@@ -233,4 +233,23 @@ export class StationsService {
         }
         return res;
     }
+
+    async getStationById(Id: number): Promise<ResultResponse> {
+        const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+        try {
+            const station = await this.stationsRepository.getById(Id);
+            if (!station) {
+                res.Status = ErrorCode.NOT_FOUND_ID;
+                res.Message = "Không tìm thấy trạm";
+                return res;
+            }
+            res.Status = ErrorCode.SUCCESS;
+            res.Message = "Xử lí thành công";
+            res.Data = station;
+        } catch (error) {
+            res.Status = ErrorCode.EXCEPTION;
+            res.Message = error.message;
+        }
+        return res;
+    }
 }

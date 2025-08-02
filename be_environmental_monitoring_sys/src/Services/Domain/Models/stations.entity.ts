@@ -10,9 +10,9 @@ export class StationsEntity {
     Address: string;
     @Column("int", { nullable: true })
     LocationId: number;
-    @Column("int", { nullable: true })
+    @Column({ type: 'decimal', precision: 10, scale: 8 })
     Lat: number;
-    @Column("int", { nullable: true })
+    @Column({ type: 'decimal', precision: 10, scale: 8 })
     Lng: number;
     @Column("datetime", { nullable: true })
     CreatedAt: Date;
