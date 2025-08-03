@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {  Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import L from "leaflet";
 // import { toast } from "sonner";
-import DrawerDetailStation from "../DrawerDetailStation";
+import { DrawerDetailStation } from "./DrawerDetailStation";
 import "leaflet/dist/leaflet.css";
 import { useGetStationsQuery } from "@/services/stations.service";
 import type { Station } from "@/types/types";
+import { UpdateStationModal } from "./UpdateStationModal";
+import { DeleteStationButton } from "./DeleteStationButton";
 
 const greenIcon = new L.Icon({
   iconUrl:
@@ -30,17 +26,26 @@ const greyIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-
 export default function MapStationPage({
   setViewMode,
 }: {
   setViewMode: (mode: "map" | "table") => void;
 }) {
-  const { data } = useGetStationsQuery({});
+  const { data, refetch } = useGetStationsQuery({});
   const stations = data?.Data ?? [];
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const handleViewDetails = () => {
-    setIsDrawerOpen(true);
+  const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null);
+  const [selectedStationId, setSelectedStationId] = useState<number | null>(
+    null
+  );
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleViewDetails = (station: Station) => {
+    setSelectedStation(station);
+    setDetailDrawerOpen(true);
+  };
+  const handleEdit = (id: number) => {
+    setSelectedStationId(id);
+    setModalOpen(true);
   };
   function CustomZoomControl() {
     const map = useMap();
@@ -55,7 +60,6 @@ export default function MapStationPage({
 
     return null;
   }
- 
 
   return (
     <div className="relative max-w-8xl mx-auto h-full w-full overflow-auto scrollbar-hide z-0">
@@ -84,23 +88,35 @@ export default function MapStationPage({
                     <p className="font-bold">{station.Name}</p>
                     <p>{station.Address}</p>
                     <p>Thiết bị: 1</p>
-                    <p>Trạng thái: {station.Status}</p>
+                    <p
+                      className={`w-fit mt-2 px-2 py-1 rounded-md ${
+                        station.Status === 1 ? "bg-green-100 text-green-900" : "bg-gray-100 text-red-900"
+                      }`}
+                    >
+                      {station.Status === 1 ? "Hoạt động" : "Không hoạt động"}
+                    </p>
                     <div className="flex flex-col items-center">
                       <Button
                         size="sm"
                         variant="secondary"
-                        onClick={() => handleViewDetails()}
+                        onClick={() => handleViewDetails(station)}
                         className="text-xs px-2 py-1 w-40"
                       >
                         Thông tin chi tiết
                       </Button>
                       <div className="flex gap-2 mt-2 flex-wrap justify-center">
-                        <Button size="icon" variant="outline">
+                        <Button
+                          className="cursor-pointer"
+                          size="icon"
+                          variant="outline"
+                          onClick={() => handleEdit(station.Id)}
+                        >
                           <Pencil size={16} />
                         </Button>
-                        <Button size="icon" variant="destructive">
-                          <Trash2 size={16} />
-                        </Button>
+                        <DeleteStationButton
+                          id={station.Id}
+                          refetch={refetch}
+                        />
                       </div>
                     </div>
                   </div>
@@ -110,12 +126,11 @@ export default function MapStationPage({
           </MapContainer>
         </div>
       </CardContent>
-
       <DrawerDetailStation
-        open={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        open={detailDrawerOpen}
+        onClose={() => setDetailDrawerOpen(false)}
+        station={selectedStation}
       />
-
       <div className="absolute bottom-4 right-4 z-[1000] bg-white shadow-md rounded-lg p-4 text-sm space-y-2 w-40">
         <p className="font-semibold text-base">Thống kê </p>
         <div className="flex justify-between">
@@ -125,9 +140,9 @@ export default function MapStationPage({
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Bảo trì</span>
+          <span className="text-gray-500">Không hoạt động</span>
           <span className="font-medium">
-          {stations.filter((s: Station) => s.Status === 0).length}
+            {stations.filter((s: Station) => s.Status === 0).length}
           </span>
         </div>
         <div
@@ -138,6 +153,11 @@ export default function MapStationPage({
           <span>{stations.length}</span>
         </div>
       </div>
+      <UpdateStationModal
+        stationId={selectedStationId}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
     </div>
   );
 }

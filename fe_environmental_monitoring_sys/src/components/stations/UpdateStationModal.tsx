@@ -28,10 +28,10 @@ export function UpdateStationModal({
 }: UpdateStationModalProps) {
   const [formData, setFormData] = useState<Partial<Station>>({});
 
-  const { data: stationData, isSuccess } = useGetStationByIdQuery(stationId!, {
+  const { data : stationList, isSuccess } = useGetStationByIdQuery(stationId!, {
     skip: !stationId,
   });
-
+  const stationData = stationList?.Data;
   const [updateStation, { isLoading }] = useUpdateStationMutation();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function UpdateStationModal({
   }, [stationData, isSuccess]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     const parsedValue =
@@ -66,20 +66,19 @@ export function UpdateStationModal({
       await updateStation({ id: stationId, ...formData }).unwrap();
       toast.success("Cập nhật thành công");
       onClose();
-    } catch (error) {
-      console.error("Update failed", error);
+    } catch{
       toast.error("Cập nhật thất bại");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] mt-10">
         <DialogHeader>
           <DialogTitle>Chỉnh sửa trạm</DialogTitle>
         </DialogHeader>
 
-        <div className="grid gap-4 py-2">
+        <div className="grid gap-4 ">
           <div className="grid gap-2">
             <Label htmlFor="Name">Tên trạm</Label>
             <Input
@@ -89,6 +88,7 @@ export function UpdateStationModal({
               onChange={handleChange}
             />
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="Address">Địa chỉ</Label>
             <Input
@@ -98,6 +98,7 @@ export function UpdateStationModal({
               onChange={handleChange}
             />
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="LocationId">Khu vực (LocationId)</Label>
             <Input
@@ -108,43 +109,53 @@ export function UpdateStationModal({
               onChange={handleChange}
             />
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="Lat">Vĩ độ (Lat)</Label>
             <Input
               id="Lat"
               name="Lat"
               type="number"
+              step="any"
               value={formData.Lat ?? ""}
               onChange={handleChange}
             />
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="Lng">Kinh độ (Lng)</Label>
             <Input
               id="Lng"
               name="Lng"
               type="number"
+              step="any"
               value={formData.Lng ?? ""}
               onChange={handleChange}
             />
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="Status">Trạng thái</Label>
-            <Input
+            <select
               id="Status"
               name="Status"
-              type="number"
-              value={formData.Status ?? ""}
+              value={formData.Status ?? 0}
               onChange={handleChange}
-            />
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+                ring-offset-background placeholder:text-muted-foreground focus:outline-none
+                focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value={0}>Không hoạt động</option>
+              <option value={1}>Hoạt động</option>
+            </select>
           </div>
         </div>
 
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
+        <div className="flex justify-end space-x-2  ">
+          <Button variant="outline" onClick={onClose} className="cursor-pointer">
             Hủy
           </Button>
-          <Button onClick={handleSubmit} disabled={isLoading}>
+          <Button onClick={handleSubmit} disabled={isLoading} className="bg-green-800 hover:bg-green-700 cursor-pointer">
             {isLoading ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </div>

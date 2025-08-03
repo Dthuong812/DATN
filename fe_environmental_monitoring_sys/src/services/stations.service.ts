@@ -34,7 +34,7 @@ export const stationsApi = createApi({
     updateStation: builder.mutation({
       query: ({ id, ...updatedStation }) => ({
         url: `/stations/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: updatedStation,
       }),
       invalidatesTags: ['Station'],
@@ -50,7 +50,7 @@ export const stationsApi = createApi({
 
     getStationById: builder.query({
       query: (id) => `/stations/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Station', id }],
+      providesTags: (_, __, id) => [{ type: 'Station', id }],
     }),
 
     importStations: builder.mutation({

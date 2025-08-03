@@ -46,8 +46,8 @@ export function AddStationModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={onClose} >
+      <DialogContent className="sm:max-w-[500px] mt-10">
         <DialogHeader>
           <DialogTitle>Thêm trạm dừng</DialogTitle>
         </DialogHeader>

@@ -9,6 +9,8 @@ import { AddStationModal } from "./AddStationModal";
 import { DeleteStationButton } from "./DeleteStationButton";
 import { UpdateStationModal } from "./UpdateStationModal";
 import { ImportStationModal } from "./ImportStationModal";
+import { DrawerDetailStation } from "./DrawerDetailStation";
+
 
 export default function StationTableView({
   setViewMode,
@@ -24,7 +26,8 @@ export default function StationTableView({
   );
   const [modalOpen, setModalOpen] = useState(false);
   const [isOpen, setOpen] = useState(false);
-
+  const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const handleEdit = (id: number) => {
     setSelectedStationId(id);
     setModalOpen(true);
@@ -35,7 +38,10 @@ export default function StationTableView({
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
-
+  const handleRowClick = (station: Station) => {
+    setSelectedStation(station);
+    setDetailDrawerOpen(true);
+  };
   if (isFetching) return <p className="text-center p-4">Đang tải dữ liệu...</p>;
 
   return (
@@ -52,7 +58,7 @@ export default function StationTableView({
           <Button
             variant="secondary"
             onClick={() => setOpen(true)}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 cursor-pointer hover:bg-gray-200"
           >
             <Upload size={16} /> Import
           </Button>
@@ -78,6 +84,7 @@ export default function StationTableView({
                 "Khu vực",
                 "Kinh độ",
                 "Vĩ độ",
+                "Trạng thái",
                 "Người tạo",
                 "Ngày tạo",
                 "Người sửa",
@@ -86,7 +93,7 @@ export default function StationTableView({
               ].map((header) => (
                 <th
                   key={header}
-                  className="px-4 py-3 text-nowrap font-semibold"
+                  className="px-2 py-3 text-nowrap font-semibold"
                 >
                   {header}
                 </th>
@@ -97,36 +104,50 @@ export default function StationTableView({
             {paginatedStations.map((station: Station) => (
               <tr
                 key={station.Id}
-                className="hover:bg-gray-50 transition duration-200"
+                className="hover:bg-gray-50 transition duration-200 cursor-pointer"
+                
               >
-                <td className="px-4 py-3">{station.Name}</td>
-                <td className="px-4 py-3 max-w-[140px] whitespace-normal break-words">
+                <td className="px-2 py-1" onClick={() => handleRowClick(station)}>{station.Name}</td>
+                <td className="px-2 py-1 max-w-[140px] whitespace-normal break-words">
                   {station.Address}
                 </td>
-                <td className="px-4 py-3">{station.Location_Id}</td>
-                <td className="px-4 py-3">{station.Lat}</td>
-                <td className="px-4 py-3">{station.Lng}</td>
-                <td className="px-4 py-3">{station.CreatedBy}</td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-1">{station.Location_Id}</td>
+                <td className="px-2 py-1">{station.Lat}</td>
+                <td className="px-2 py-1">{station.Lng}</td>
+                <td className="px-2 py-1">
+                  <div className="flex items-center gap-1.5 justify-center ">
+                    <span
+                      className={`h-3 w-3 rounded-full ${
+                        station.Status === 1 ? "bg-green-500" : "bg-gray-500"
+                      }`}
+                    ></span>
+                  </div>
+                </td>
+
+                <td className="px-2 py-1">{station.CreatedBy}</td>
+                <td className="px-2 py-1">
                   {station.CreatedAt
                     ? format(new Date(station.CreatedAt), "HH:mm dd/MM/yyyy ")
                     : ""}
                 </td>
-                <td className="px-4 py-3">{station.UpdatedBy}</td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-1">{station.UpdatedBy}</td>
+                <td className="px-2 py-1">
                   {station.UpdatedAt
                     ? format(new Date(station.UpdatedAt), "HH:mm dd/MM/yyyy ")
                     : ""}
                 </td>
-                <td className="px-4 py-3 text-center space-x-2">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => handleEdit(station.Id)}
-                  >
-                    <Pencil size={16} />
-                  </Button>
-                  <DeleteStationButton id={station.Id} refetch={refetch} />
+                <td className="px-2 py-1 text-center">
+                  <div className="flex justify-center flex-wrap gap-1">
+                    <Button
+                      className="cursor-pointer"
+                      size="icon"
+                      variant="outline"
+                      onClick={() => handleEdit(station.Id)}
+                    >
+                      <Pencil size={16} />
+                    </Button>
+                    <DeleteStationButton id={station.Id} refetch={refetch} />
+                  </div>
                 </td>
               </tr>
             ))}
@@ -148,6 +169,11 @@ export default function StationTableView({
         stationId={selectedStationId}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
+      />
+      <DrawerDetailStation
+        open={detailDrawerOpen}
+        onClose={() => setDetailDrawerOpen(false)}
+        station={selectedStation}
       />
     </div>
   );
