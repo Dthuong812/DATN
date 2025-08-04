@@ -1,3 +1,4 @@
+import { LocationsRepository } from './Infrastructure/Repository/LocationsRepository';
 import { User, Station } from './../../../fe_environmental_monitoring_sys/src/types/types';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -20,6 +21,9 @@ import { StationsController } from './Api/StationsController';
 import { StationsService } from './Application/Services/StationsService';
 import { StationsRepository } from './Infrastructure/Repository/StationsRepository';
 import { StationsDao } from './Infrastructure/Dao/StationsDao';
+import { LocationsService } from './Application/Services/LocationService';
+import { LocationsDao } from './Infrastructure/Dao/LocationsDao';
+import { LocationsController } from './Api/LocationsController';
 
 @Module({
   imports: [
@@ -47,7 +51,8 @@ import { StationsDao } from './Infrastructure/Dao/StationsDao';
   controllers: [
     UserController,
     AuthController,
-    StationsController
+    StationsController,
+    LocationsController
   ],
   providers: [
     UserService,
@@ -65,6 +70,10 @@ import { StationsDao } from './Infrastructure/Dao/StationsDao';
     StationsService,
     StationsRepository, 
     StationsDao,
+
+    LocationsService,
+    LocationsDao,
+    LocationsRepository,
 
     {
       provide: APP_GUARD,

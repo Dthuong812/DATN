@@ -10,12 +10,14 @@ import * as fs from 'fs';
 import * as XLSX from 'xlsx';
 import * as path from 'path';
 import { In } from "typeorm";
+import { LocationsRepository } from "src/Services/Infrastructure/Repository/LocationsRepository";
 
 @Injectable()
 export class StationsService {
     constructor(
         private readonly stationsRepository: StationsRepository,
         private readonly userService: UserService, 
+        private readonly LocationsRepository: LocationsRepository
     )
     {}
     async importFromFile(file: Express.Multer.File ,authId: number) {
@@ -104,7 +106,6 @@ export class StationsService {
             payload.CreatedAt = new Date();
             payload.CreatedBy = authId;
             const createdStation = await this.stationsRepository.create( Mapper.mapDtoToEntity(payload, StationsEntity));
-            console.log("Trạm mới được tạo:", createdStation);
     
             res.Status = ErrorCode.SUCCESS;
             res.Message = "Tạo thành công";
@@ -209,11 +210,13 @@ export class StationsService {
                     station.UpdatedBy = updatedByUser.UserName;
                 }
             }); 
+            const LocationList = await this.LocationsRepository.getAll();
+            const locationMap = new Map(LocationList.map(loc => [loc.Id, loc.Name]));
             const result = stations.map(station => ({
                 Id: station.Id,
                 Name: station.Name,
                 Address: station.Address,
-                LocationId: station.LocationId,
+                LocationId: locationMap.get(station.LocationId),
                 Lat: station.Lat,
                 Lng: station.Lng,
                 CreatedAt: station.CreatedAt,
@@ -223,7 +226,7 @@ export class StationsService {
                 DeletedAt: station.DeletedAt,
                 DeletedBy: station.DeletedBy,
                 Status: station.Status
-            }))           
+            }))       
             res.Status = ErrorCode.SUCCESS;
             res.Message = "Xử lí thành công";
             res.Data = result;
@@ -243,9 +246,26 @@ export class StationsService {
                 res.Message = "Không tìm thấy trạm";
                 return res;
             }
+            const LocationList = await this.LocationsRepository.getAll();
+            const locationMap = new Map(LocationList.map(loc => [loc.Id, loc.Name]));
+            const result = {
+                Id: station.Id,
+                Name: station.Name,
+                Address: station.Address,
+                LocationId: locationMap.get(station.LocationId),
+                Lat: station.Lat,
+                Lng: station.Lng,
+                CreatedAt: station.CreatedAt,
+                UpdatedAt: station.UpdatedAt,
+                CreatedBy: station.CreatedBy,
+                UpdatedBy: station.UpdatedBy,
+                DeletedAt: station.DeletedAt,
+                DeletedBy: station.DeletedBy,
+                Status: station.Status
+            };
             res.Status = ErrorCode.SUCCESS;
             res.Message = "Xử lí thành công";
-            res.Data = station;
+            res.Data = result;
         } catch (error) {
             res.Status = ErrorCode.EXCEPTION;
             res.Message = error.message;
