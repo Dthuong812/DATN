@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAddStationMutation } from "@/services/stations.service";
 import { toast } from "sonner";
-import type { StationFormValues } from "@/types/types";
+import type { Location, StationFormValues } from "@/types/types";
+import { useGetLocationsQuery } from "@/services/location.service";
 
 interface AddStationModalProps {
   open: boolean;
@@ -32,7 +33,8 @@ export function AddStationModal({
   } = useForm<StationFormValues>();
 
   const [addStation, { isLoading }] = useAddStationMutation();
-
+  const { data: listLocation } = useGetLocationsQuery({});
+  const locations = listLocation?.Data;
   const onSubmit = async (data: StationFormValues) => {
     try {
       await addStation(data).unwrap();
@@ -46,57 +48,65 @@ export function AddStationModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose} >
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] mt-10">
         <DialogHeader>
           <DialogTitle>Thêm trạm dừng</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
           <div className="grid gap-2">
             <Label htmlFor="Name">Tên trạm</Label>
             <Input
               id="Name"
               placeholder="Tên trạm"
-              {...register("Name", { required: "Tên trạm không được bỏ trống" })}
+              {...register("Name", {
+                required: "Tên trạm không được bỏ trống",
+              })}
             />
             {errors.Name && (
               <p className="text-sm text-red-600">{errors.Name.message}</p>
             )}
           </div>
 
-
           <div className="grid gap-2">
             <Label htmlFor="Address">Địa chỉ</Label>
             <Input
               id="Address"
               placeholder="Địa chỉ"
-              {...register("Address", { required: "Địa chỉ không được bỏ trống" })}
+              {...register("Address", {
+                required: "Địa chỉ không được bỏ trống",
+              })}
             />
             {errors.Address && (
               <p className="text-sm text-red-600">{errors.Address.message}</p>
             )}
           </div>
 
-
           <div className="grid gap-2">
-            <Label htmlFor="LocationId">ID Khu vực</Label>
-            <Input
+            <Label htmlFor="LocationId">Khu vực</Label>
+
+            <select
               id="LocationId"
-              type="number"
-              placeholder="ID Khu vực"
               {...register("LocationId", {
+                required: "Vui lòng chọn khu vực",
                 valueAsNumber: true,
-                required: "ID khu vực là bắt buộc",
-                min: { value: 1, message: "ID phải lớn hơn 0" },
               })}
-            />
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+                ring-offset-background placeholder:text-muted-foreground focus:outline-none
+                focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="">-- Chọn khu vực --</option>
+              {locations?.map((loc: Location) => (
+                <option key={loc.Id} value={loc.Id}>
+                  {loc.Name}
+                </option>
+              ))}
+            </select>
             {errors.LocationId && (
               <p className="text-sm text-red-600">{errors.LocationId.message}</p>
             )}
           </div>
-
 
           <div className="grid gap-2">
             <Label htmlFor="Lat">Vĩ độ (Lat)</Label>
@@ -115,7 +125,6 @@ export function AddStationModal({
             )}
           </div>
 
-
           <div className="grid gap-2">
             <Label htmlFor="Lng">Kinh độ (Lng)</Label>
             <Input
@@ -133,14 +142,13 @@ export function AddStationModal({
             )}
           </div>
 
-
           <div className="grid gap-2">
             <Label htmlFor="Status">Trạng thái</Label>
             <select
               id="Status"
               defaultValue={0}
               {...register("Status", { valueAsNumber: true })}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
                 ring-offset-background placeholder:text-muted-foreground focus:outline-none
                 focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >

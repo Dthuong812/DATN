@@ -111,7 +111,7 @@ export default function StationTableView({
                 <td className="px-2 py-1 max-w-[140px] whitespace-normal break-words">
                   {station.Address}
                 </td>
-                <td className="px-2 py-1">{station.Location_Id}</td>
+                <td className="px-2 py-1">{station.LocationId}</td>
                 <td className="px-2 py-1">{station.Lat}</td>
                 <td className="px-2 py-1">{station.Lng}</td>
                 <td className="px-2 py-1">

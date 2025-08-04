@@ -1,4 +1,3 @@
-
 export interface PollutionStation {
   name: string;
   lat: number;
@@ -76,7 +75,7 @@ export interface Station {
   Address: string;
   Lat: number;
   Lng: number;
-  Location_Id: number;
+  LocationId: string;
   Status: number;
   CreatedAt: Date;
   CreatedBy: string;
@@ -92,4 +91,18 @@ export interface StationFormValues {
   Lat: number;
   Lng: number;
   Status: number;
+}
+
+export interface Location {
+  Id: number;
+  Name: string;
+  CreatedAt: Date;
+}
+
+export interface LocationsResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Locations: Location[];
+  };
 }
