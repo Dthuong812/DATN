@@ -1,0 +1,59 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { useDeleteLocationMutation } from "@/services/location.service";
+
+export function DeleteLocationButton({
+  id,
+  refetch,
+}: {
+  id: number;
+  refetch: () => void;
+}) {
+  const [deleteLocation] = useDeleteLocationMutation();
+  const handleDelete = async () => {
+    try {
+      const res = await deleteLocation(id).unwrap();
+      if (res.Status === 1) {
+        toast.success("Xoá thành công!");
+        refetch();
+      } else {
+        toast.error("Xoá thất bại: " + res.Message);
+      }
+    } catch {
+      toast.error("Lỗi xoá trạm.");
+    }
+  };
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button className="text-red-600 bg-white hover:bg-gray-100 border border-gray-200 w-9 h-9 p-0 cursor-pointer">
+            <Trash2 size={16} />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Bạn chắc chắn muốn xoá khu vực này?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Hành động này không thể hoàn tác. Dữ liệu khu vực và trạm liên quan sẽ bị xoá vĩnh viễn.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="cursor-pointer">Huỷ</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} className="bg-green-800 hover:bg-red-500 cursor-pointer">Xoá</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

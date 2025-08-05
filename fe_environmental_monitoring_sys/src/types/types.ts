@@ -97,6 +97,7 @@ export interface Location {
   Id: number;
   Name: string;
   CreatedAt: Date;
+  TotalStations: number;
 }
 
 export interface LocationsResponse {
@@ -105,4 +106,8 @@ export interface LocationsResponse {
   Data: {
     Locations: Location[];
   };
+}
+
+export interface LocationFormValues {
+  Name: string;
 }

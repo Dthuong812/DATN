@@ -18,6 +18,7 @@ import HelpPage from "./page/HelpPage";
 import SensorsPage from "./page/SensorsPage";
 import ProfilePage from "./page/ProfilePage";
 import { ForgotPasswordPage } from "./page/ForgotPassWordPage";
+import LocationPage from "./page/LocationPage";
 
 
 
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
               {
                 path: "help",
                 element: <HelpPage/>,
+              },
+              {
+                path: "location",
+                element: <LocationPage/>,
               },
         ]
       },

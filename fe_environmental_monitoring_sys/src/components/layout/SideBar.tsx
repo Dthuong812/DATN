@@ -10,6 +10,7 @@ import {
   ChartColumnIncreasing,
   ChevronRight,
   ChevronLeft,
+  LocateIcon,
 } from "lucide-react";
 
 
@@ -30,6 +31,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
     { href: "/admin/sensors", label: "Thiết bị", icon: ChartCandlestick },
     { href: "/admin/report", label: "Báo cáo", icon: FilePlus2 },
     { href: "/admin/logs", label: "Logs", icon: ScanEye },
+    { href: "/admin/location", label: "Khu vực", icon: LocateIcon},
     { href: "/admin/user", label: "Người dùng", icon: Users },
   ];
 
