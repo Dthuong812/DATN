@@ -9,7 +9,10 @@ import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { Mapper } from "src/Services/Domain/Mapper/Mapper";
 import { StationsRepository } from "src/Services/Infrastructure/Repository/StationsRepository";
-
+import path from "path";
+import * as XLSX from 'xlsx';
+import * as fs from 'fs';
+import { LocationsEntity } from "src/Services/Domain/Models/locations.entity";
 @Injectable()
 export class LocationsService {
   constructor(
@@ -155,5 +158,53 @@ export class LocationsService {
       res.Message = error.message;
     }
     return res;
+  }
+  async importFromFile(file: Express.Multer.File) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    let rawData: any[] = [];
+
+    try {
+      if (ext === ".xlsx" || ext === ".csv") {
+        const workbook = XLSX.readFile(file.path);
+        const sheetName = workbook.SheetNames[0];
+        rawData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      } else if (ext === ".json") {
+        const content = fs.readFileSync(file.path, "utf-8");
+        rawData = JSON.parse(content);
+      } else {
+        throw new Error(
+          "Chỉ hỗ trợ file Excel (.xlsx), CSV (.csv), hoặc JSON (.json)"
+        );
+      }
+
+      const results = [];
+
+      for (const record of rawData) {
+        try {
+          const payload: PayloadCreateLocationDto = {
+            Name: record.Name,
+            CreatedAt: new Date(),
+          };
+
+          const entity = Mapper.mapDtoToEntity(payload, LocationsEntity);
+          const savedEntity = await this.LocationsRepository.create(entity);
+
+          results.push({ success: true, data: savedEntity, payload });
+        } catch (err) {
+          results.push({ success: false, error: err.message, payload: record });
+        }
+      }
+
+      fs.unlinkSync(file.path);
+
+      return {
+        success: true,
+        imported: results.filter((r) => r.success).length,
+        failed: results.filter((r) => !r.success).length,
+        results,
+      };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 }
