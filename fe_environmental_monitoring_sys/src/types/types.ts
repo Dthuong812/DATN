@@ -111,3 +111,14 @@ export interface LocationsResponse {
 export interface LocationFormValues {
   Name: string;
 }
+export interface LocationDetail {
+  Status: number;
+  Message: string;
+  Data: {
+    Id: number;
+    Name: string;
+    CreatedAt: Date;
+    TotalStations: number;
+    Stations: Station[];
+  };
+}
