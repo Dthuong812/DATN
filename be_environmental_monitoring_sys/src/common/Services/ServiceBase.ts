@@ -203,4 +203,28 @@ export class ServiceBase<TEntity, TDto> implements IServiceBase<TEntity, TDto> {
     }
     return res;
   }
+
+  async markAsDeleted(condition: { Id: number }, deletedBy: number): Promise<ResultResponse> {
+    const res = new ResultResponse(0, "", null);
+  
+    const findOne = await this._repository.getById(condition.Id);
+    if (!findOne) {
+      res.Status = ErrorCode.NOT_FOUND_ID;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.NOT_FOUND_ID);
+      return res;
+    }
+  
+    const result = await this._repository.markAsDeleted(condition, deletedBy);
+  
+    if (result) {
+      res.Status = ErrorCode.DELETE_SUCCESS;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.DELETE_SUCCESS);
+    } else {
+      res.Status = ErrorCode.DELETE_FAIL;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.DELETE_FAIL);
+    }
+  
+    return res;
+  }
+  
 }

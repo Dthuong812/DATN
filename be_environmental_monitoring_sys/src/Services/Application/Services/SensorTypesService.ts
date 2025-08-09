@@ -4,14 +4,18 @@ import { ResultResponse } from "src/common/ResultResponse";
 import {
   payLoadCreateSensorTypeDto,
   payLoadUpdateSensorTypeDto,
+  SensorTypesDto,
 } from "src/Services/Domain/Dtos/sersor_types.dto";
 import { Mapper } from "src/Services/Domain/Mapper/Mapper";
 import { SensorsTypesEntity } from "src/Services/Domain/Models/sensor_types.entity";
 import { SensorTypesRepository } from "src/Services/Infrastructure/Repository/SensorTypesRepository";
+import { CoreServiceBase } from "./CoreServiceBase";
 
 @Injectable()
-export class SensorTypesService {
-  constructor(private readonly SensorTypesRepository: SensorTypesRepository) {}
+export class SensorTypesService extends CoreServiceBase<SensorsTypesEntity, SensorTypesDto> {
+  constructor(private readonly SensorTypesRepository: SensorTypesRepository) {
+    super(SensorTypesRepository);
+  }
   async getAllSensorTypes(): Promise<ResultResponse> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {

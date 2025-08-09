@@ -1,5 +1,5 @@
 import { LocationsRepository } from './Infrastructure/Repository/LocationsRepository';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './Api/UserController';
 import { UserService } from './Application/Services/UserService';
@@ -27,6 +27,11 @@ import { SensorTypesController } from './Api/SensorTypesController';
 import { SensorTypesService } from './Application/Services/SensorTypesService';
 import { SensorTypesRepository } from './Infrastructure/Repository/SensorTypesRepository';
 import { SensorTypesDao } from './Infrastructure/Dao/SensorTypesDao';
+import { SensorsController } from './Api/SensorsController';
+import { SensorsService } from './Application/Services/SensorsService';
+import { SensorsRepository } from './Infrastructure/Repository/SensorsRepository';
+import { SensorsDao } from './Infrastructure/Dao/SensorsDao';
+import { mergeIdIntoBody } from './middleware/merge-id-into-body.middleware';
 
 @Module({
   imports: [
@@ -56,7 +61,8 @@ import { SensorTypesDao } from './Infrastructure/Dao/SensorTypesDao';
     AuthController,
     StationsController,
     LocationsController,
-    SensorTypesController
+    SensorTypesController,
+    SensorsController
   ],
   providers: [
     UserService,
@@ -83,6 +89,10 @@ import { SensorTypesDao } from './Infrastructure/Dao/SensorTypesDao';
     SensorTypesRepository,
     SensorTypesDao,
 
+    SensorsService,
+    SensorsRepository,
+    SensorsDao,
+
     {
       provide: 'USER_REPOSITORY',
       useClass: UserRepsitory,
@@ -100,10 +110,16 @@ import { SensorTypesDao } from './Infrastructure/Dao/SensorTypesDao';
       provide: APP_GUARD,
       useClass: AccessGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: AccessGuard,
-    },
+
   ],
+  
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(mergeIdIntoBody)
+      .forRoutes(
+        { path: '/:resource/:Id', method: RequestMethod.PATCH },
+      );
+  }
+}

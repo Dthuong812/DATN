@@ -230,4 +230,19 @@ export abstract class RepositoryBase<TEntity, TDto>
     const item = await this._daos[0].softDelete(condition);
     return item;
   }
+  async markAsDeleted(condition: object, deletedBy?: number): Promise<number> {
+    try {
+      await this._daos[0].update(condition, {
+        DeletedBy: deletedBy,
+        DeletedAt: new Date()
+      });
+  
+      return 1;
+    } catch (err) {
+      console.error("Mark as deleted error:", err);
+      return 0;
+    }
+  }
+  
+
 }

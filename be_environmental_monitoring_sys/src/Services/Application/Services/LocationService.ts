@@ -13,12 +13,15 @@ import path from "path";
 import * as XLSX from 'xlsx';
 import * as fs from 'fs';
 import { LocationsEntity } from "src/Services/Domain/Models/locations.entity";
+import { CoreServiceBase } from "./CoreServiceBase";
 @Injectable()
-export class LocationsService {
+export class LocationsService extends CoreServiceBase<LocationsEntity, LocationsDto> {
   constructor(
     private readonly LocationsRepository: LocationsRepository,
     private readonly stationsRepository: StationsRepository
-  ) {}
+  ) {
+    super(LocationsRepository);
+  }
   async createLocation(
     payload: PayloadCreateLocationDto
   ): Promise<ResultResponse> {
