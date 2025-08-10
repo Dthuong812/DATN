@@ -12,7 +12,7 @@ import {
 import { StationsService } from "../Application/Services/StationsService";
 import { ApiBearerAuth, ApiBody, ApiOperation } from "@nestjs/swagger";
 import {
-    DeleteMultipleStationsDto,
+
   PayLoadCreateStationDto,
   PayLoadUpdateStationDto,
 } from "../Domain/Dtos/stations.dto";
@@ -23,7 +23,7 @@ import { extname } from "path";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("/stations")
-export class StationsController {
+export class StationsController  {
   constructor(private readonly StationsService: StationsService) {}
   @Post("import")
   @UseInterceptors(
@@ -54,7 +54,8 @@ export class StationsController {
     @Body() payload: PayLoadCreateStationDto,
     @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {
-    return await this.StationsService.createStation(payload, authId);
+    const pl = { ...payload, CreatedBy: authId, CreatedAt: new Date() , Status: 0 };
+    return await this.StationsService.create(pl);
   }
 
   @Patch("/:Id")
@@ -65,7 +66,9 @@ export class StationsController {
     @Body() payload: PayLoadUpdateStationDto,
     @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {
-    return await this.StationsService.updateStation(Id, payload, authId);
+    payload.Id = Id;
+    const pl = { ...payload, UpdatedBy: authId, UpdatedAt: new Date() };
+    return await this.StationsService.update({ Id }, pl);
   }
 
   @Delete("/:Id")

@@ -13,7 +13,7 @@ import { SensorsEntity } from "../Models/sensors.entity";
 export class SensorsDto {
   Id: number;
   Name: string;
-  StationId: number;
+  DeviceId: number;
   TypeId: number;
   Series: string;
   NhaSX: string;
@@ -33,8 +33,8 @@ export class PayLoadCreateSensorDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @ApiProperty({ description: "ID Trạm" })
-  StationId: number;
+  @ApiProperty({ description: "ID Thiết bị" })
+  DeviceId: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -82,8 +82,8 @@ export class PayLoadUpdateSensorDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @ApiProperty({ description: "ID Trạm" })
-  StationId: number;
+  @ApiProperty({ description: "ID Thiết bị" })
+  DeviceId: number;
 
   @IsNotEmpty()
   @IsNumber()

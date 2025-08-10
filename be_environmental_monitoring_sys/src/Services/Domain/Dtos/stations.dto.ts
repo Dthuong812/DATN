@@ -10,6 +10,8 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
+import { IsUnique } from "src/Services/decorators/is-unique.decorator";
+import { StationsEntity } from "../Models/stations.entity";
 
 export class StationsDto {
   Id: number;
@@ -30,6 +32,7 @@ export class PayLoadCreateStationDto {
   @ApiProperty({ description: "Tên trạm" })
   @IsNotEmpty()
   @IsString()
+  @IsUnique(StationsEntity, "Name", { message: "Tên trạm đã tồn tại" })
   Name: string;
 
   @ApiProperty({ description: "Địa chỉ trạm" })
@@ -45,11 +48,13 @@ export class PayLoadCreateStationDto {
   @ApiProperty({ description: "Vĩ độ" })
   @IsNumber()
   @IsNotEmpty()
+  @IsUnique(StationsEntity, "Lat", { message: "Vĩ độ đã tồn tại" })
   Lat: number;
 
   @ApiProperty({ description: "Kinh độ" })
   @IsNumber()
   @IsNotEmpty()
+  @IsUnique(StationsEntity, "Lng", { message: "Kinh độ đã tồn tại" })
   Lng: number;
 
   @ApiProperty({ description: "Trạng thái" })
@@ -69,9 +74,13 @@ export class PayLoadCreateStationDto {
   CreatedAt?: Date = new Date();
 }
 export class PayLoadUpdateStationDto {
+  @IsOptional()
+  Id?: number;
+
   @ApiProperty({ description: "Tên trạm" })
   @IsNotEmpty()
   @IsOptional()
+  @IsUnique(StationsEntity, "Name", { message: "Tên trạm đã tồn tại" })
   Name?: string;
 
   @ApiProperty({ description: "Địa chỉ trạm" })
@@ -87,17 +96,14 @@ export class PayLoadUpdateStationDto {
   @ApiProperty({ description: "Vĩ độ" })
   @IsNumber()
   @IsOptional()
+  @IsUnique(StationsEntity, "Lat", { message: "Vĩ độ đã tồn tại" })
   Lat?: number;
 
   @ApiProperty({ description: "Kinh độ" })
   @IsNumber()
   @IsOptional()
+  @IsUnique(StationsEntity, "Lng", { message: "Kinh độ đã tồn tại" })
   Lng?: number;
-
-  @ApiProperty({ description: "Trạng thái" })
-  @IsOptional()
-  Status?: number;
-
 
   @IsOptional()
   @IsNumber()
@@ -109,11 +115,4 @@ export class PayLoadUpdateStationDto {
   @IsDate()
   @IsNotEmpty()
   UpdatedAt?: Date = new Date();
-}
-export class DeleteMultipleStationsDto {
-  @IsArray()
-  @ArrayNotEmpty()
-  @Type(() => Number)
-  @IsInt({ each: true })
-  ids: number[];
 }

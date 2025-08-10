@@ -32,6 +32,12 @@ import { SensorsService } from './Application/Services/SensorsService';
 import { SensorsRepository } from './Infrastructure/Repository/SensorsRepository';
 import { SensorsDao } from './Infrastructure/Dao/SensorsDao';
 import { mergeIdIntoBody } from './middleware/merge-id-into-body.middleware';
+import { DevicesController } from './Api/DevicesController';
+import { DevicesRepository } from './Infrastructure/Repository/DevicesRepository';
+import { DevicesService } from './Application/Services/DevicesService';
+import { DevicesDao } from './Infrastructure/Dao/DevicesDao';
+import { SensorsDataRepository } from './Infrastructure/Repository/SensorsDattaRepository';
+import { SensorsDataDao } from './Infrastructure/Dao/SensorsDataDao';
 
 @Module({
   imports: [
@@ -62,7 +68,9 @@ import { mergeIdIntoBody } from './middleware/merge-id-into-body.middleware';
     StationsController,
     LocationsController,
     SensorTypesController,
-    SensorsController
+    SensorsController,
+    DevicesController,
+
   ],
   providers: [
     UserService,
@@ -93,6 +101,12 @@ import { mergeIdIntoBody } from './middleware/merge-id-into-body.middleware';
     SensorsRepository,
     SensorsDao,
 
+    DevicesRepository,
+    DevicesDao,
+    DevicesService,
+
+    SensorsDataRepository,
+    SensorsDataDao,
     {
       provide: 'USER_REPOSITORY',
       useClass: UserRepsitory,

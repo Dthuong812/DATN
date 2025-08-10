@@ -3,29 +3,29 @@ import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 @Entity("Stations", { schema: "eco_monitoring" })
 export class StationsEntity {
     @PrimaryGeneratedColumn({ type: 'int' })
-    Id: number;
+    Id?: number;
     @Column("varchar", { length: 150, nullable: true })
-    Name: string;
+    Name?: string;
     @Column("varchar", { length: 255, nullable: true })
-    Address: string;
+    Address?: string;
     @Column("int", { nullable: true })
-    LocationId: number;
+    LocationId?: number;
     @Column({ type: 'decimal', precision: 10, scale: 8 })
-    Lat: number;
+    Lat?: number;
     @Column({ type: 'decimal', precision: 10, scale: 8 })
-    Lng: number;
+    Lng?: number;
     @Column("datetime", { nullable: true })
-    CreatedAt: Date;
+    CreatedAt?: Date;
     @Column("datetime", { nullable: true })
-    UpdatedAt: Date;
+    UpdatedAt?: Date;
     @Column("int", { nullable: true })
-    CreatedBy: number;
+    CreatedBy?: number;
     @Column("int", { nullable: true })
-    UpdatedBy: number;
+    UpdatedBy?: number;
     @DeleteDateColumn()
     DeletedAt?: Date
     @Column("int", { nullable: true })
-    DeletedBy: number;
+    DeletedBy?: number;
     @Column("int", { nullable: true })
-    Status: number;
+    Status?: number;
 }

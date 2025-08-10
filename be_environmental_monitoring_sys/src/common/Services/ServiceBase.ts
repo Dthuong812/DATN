@@ -227,4 +227,22 @@ export class ServiceBase<TEntity, TDto> implements IServiceBase<TEntity, TDto> {
     return res;
   }
   
+  async markManyAsDeleted(conditions: { Id: number }[], deletedBy: number): Promise<boolean> {
+    try {
+      for (const condition of conditions) {
+        const item = await this._repository.getById(condition.Id);
+        if (!item) continue;
+
+        (item as any).DeletedAt = new Date();
+        (item as any).DeletedBy = deletedBy;
+        await this._repository.update({ Id: condition.Id }, item);
+        await this._repository.markAsDeleted(condition, deletedBy);
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+  
 }

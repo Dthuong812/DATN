@@ -4,13 +4,17 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { LocationsService } from "../Application/Services/LocationService";
-import { PayloadCreateLocationDto } from "../Domain/Dtos/locations.dto";
+import {
+  PayloadCreateLocationDto,
+  PayloadUpdateLocationDto,
+} from "../Domain/Dtos/locations.dto";
 import { ResultResponse } from "src/common/ResultResponse";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -27,7 +31,7 @@ export class LocationsController {
   async createLocation(
     @Body() payload: PayloadCreateLocationDto
   ): Promise<ResultResponse> {
-    return await this.LocationsService.createLocation(payload);
+    return await this.LocationsService.create(payload);
   }
 
   @Get()
@@ -59,31 +63,30 @@ export class LocationsController {
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Cập nhật khu vực theo Id" })
   async updateLocation(
-    @Param("Id") Id: number,
-    @Body() payload: PayloadCreateLocationDto
+    @Param("Id", ParseIntPipe) Id: number,
+    @Body() payload: PayloadUpdateLocationDto
   ): Promise<ResultResponse> {
-    return await this.LocationsService.updateLocation(Id, payload);
+    payload.Id = Id;
+    const pl = { ...payload };
+    return await this.LocationsService.update({ Id }, pl);
   }
 
   @Post("import")
-    @UseInterceptors(
-      FileInterceptor("file", {
-        storage: diskStorage({
-          destination: "./uploads",
-          filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now();
-            cb(
-              null,
-              `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`
-            );
-          },
-        }),
-      })
-    )
-    async import(
-      @UploadedFile() file: Express.Multer.File,
-    ) {
-      return this.LocationsService.importFromFile(file);
-    }
-  
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now();
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`
+          );
+        },
+      }),
+    })
+  )
+  async import(@UploadedFile() file: Express.Multer.File) {
+    return this.LocationsService.importFromFile(file);
+  }
 }

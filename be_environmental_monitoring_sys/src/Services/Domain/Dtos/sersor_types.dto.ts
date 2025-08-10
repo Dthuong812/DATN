@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsUnique } from "src/Services/decorators/is-unique.decorator";
+import { SensorsTypesEntity } from "../Models/sensor_types.entity";
 
 export class SensorTypesDto {
   Id: number;
@@ -21,6 +23,7 @@ export class payLoadCreateSensorTypeDto {
   @ApiProperty({ description: "Tên loại thiết bị" })
   @IsNotEmpty()
   @IsString()
+  @IsUnique(SensorsTypesEntity, "Name", { message: "Tên loại thiết bị đã tồn tại" })
   Name: string;
 
   @ApiProperty({ description: "Mô tả loại thiết bị" })
@@ -55,9 +58,13 @@ export class payLoadCreateSensorTypeDto {
   CreatedAt?: Date = new Date();
 }
 export class payLoadUpdateSensorTypeDto {
+  @IsOptional()
+  Id?: number;
+
   @ApiProperty({ description: "Tên loại thiết bị" })
   @IsNotEmpty()
   @IsString()
+  @IsUnique(SensorsTypesEntity, "Name", { message: "Tên loại thiết bị đã tồn tại" })
   Name: string;
 
   @ApiProperty({ description: "Mô tả loại thiết bị" })

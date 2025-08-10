@@ -19,7 +19,6 @@ import { StationsEntity } from './Services/Domain/Models/stations.entity';
 import { LogTypesEntity } from './Services/Domain/Models/log_types.entity';
 import { LogsEntity } from './Services/Domain/Models/logs.entity';
 import { UserRoleAssignmentsEntity } from './Services/Domain/Models/user_role_assignments.entity';
-import { SensorDataEntity } from './Services/Domain/Models/sensor_data.entity';
 
 
 dotenv.config();

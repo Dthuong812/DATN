@@ -5,8 +5,7 @@ import {
   Between,
   SelectQueryBuilder,
   FindOptionsSelect,
-  EntityMetadata,
-} from 'typeorm';
+  EntityMetadata, DeepPartial } from 'typeorm';
 import { IDaoBase } from '../Dao/Interfaces/IDaoBase';
 import { IRepsitoryBase } from './Interfaces/IRepositoryBase';
 import { DaoBase } from '../Dao/DaoBase';
@@ -243,6 +242,37 @@ export abstract class RepositoryBase<TEntity, TDto>
       return 0;
     }
   }
+  async markManyAsDeleted(conditions: Partial<TEntity>[], deletedBy: number): Promise<boolean> {
+    try {
+      for (const condition of conditions) {
+        await this._daos[0].update(condition, {
+          DeletedAt: new Date(),
+          DeletedBy: deletedBy,
+        });
+      }
+      return true;
+    } catch (error) {
+      console.error("markManyAsDeleted error:", error);
+      return false;
+    }
+  }
+  async updateMany(
+    condition: Partial<TEntity>,
+    updateData: DeepPartial<TEntity>
+  ): Promise<number> {
+    try {
+      const result = await this._daos[0]._repository
+        .createQueryBuilder()
+        .update()
+        .set(updateData)
+        .where(condition)
+        .execute();
   
-
+      return result.affected ?? 0;
+    } catch (error) {
+      console.error("updateMany error:", error);
+      throw error;
+    }
+  }
+  
 }

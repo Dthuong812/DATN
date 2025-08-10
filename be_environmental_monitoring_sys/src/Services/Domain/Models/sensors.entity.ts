@@ -7,7 +7,7 @@ export class SensorsEntity {
     @Column("varchar", { length: 100 })
     Name?:string;
     @Column("int")   
-    StationId?: number;
+    DeviceId?: number;
     @Column("int")
     TypeId?: number;
     @Column("varchar", { length: 100 })

@@ -23,7 +23,7 @@ export class SensorsController {
   constructor(private SensorsService: SensorsService) {}
 
   @Post()
-  @ApiOperation({ summary: "Tạo thiết bị mới" })
+  @ApiOperation({ summary: "Tạo cảm biến mới" })
   async createSensor(
     @Body() payload: PayLoadCreateSensorDto,
     @GetCurrentUserId() authId: number
@@ -33,21 +33,20 @@ export class SensorsController {
   }
 
   @Patch("/:Id")
-  @ApiOperation({ summary: "Cập nhật thiết bị" })
+  @ApiOperation({ summary: "Cập nhật cảm biến" })
   async updateSensorType(
     @Body() payload: PayLoadUpdateSensorDto,
     @Param("Id", ParseIntPipe) Id: number,
     @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {
     payload.Id = Id;
-    console.log("Update Sensor Payload:", payload);
     const pl = { ...payload, UpdatedBy: authId, UpdatedAt: new Date() };
     return this.SensorsService.update({ Id }, pl);
   }
 
 
   @Delete("/:Id")
-  @ApiOperation({ summary: "Xóa thiết bị" })
+  @ApiOperation({ summary: "Xóa cảm biến" })
   async deleteSensor(
     @Param("Id", ParseIntPipe) Id: number,
     @GetCurrentUserId() authId: number
@@ -56,13 +55,13 @@ export class SensorsController {
   }
   
   @Get()
-  @ApiOperation({ summary: "Lấy danh sách thiết bị" })
+  @ApiOperation({ summary: "Lấy danh sách cảm biến" })
   async getAllSensors(): Promise<ResultResponse> {
     return this.SensorsService.getAllSensors();
   }
 
   @Get("/:Id")
-  @ApiOperation({ summary: "Lấy thông tin thiết bị" })
+  @ApiOperation({ summary: "Lấy thông tin cảm biến" })
   async getSensorById(
     @Param("Id", ParseIntPipe) Id: number
   ): Promise<ResultResponse> {

@@ -22,35 +22,6 @@ export class LocationsService extends CoreServiceBase<LocationsEntity, Locations
   ) {
     super(LocationsRepository);
   }
-  async createLocation(
-    payload: PayloadCreateLocationDto
-  ): Promise<ResultResponse> {
-    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
-    try {
-      if (!payload) {
-        res.Status = ErrorCode.SAVE_FAIL;
-        res.Message = "Thông tin không hợp lệ";
-        return res;
-      }
-      const loacations = await this.LocationsRepository.getAll();
-      if (loacations.some((location) => location.Name === payload.Name)) {
-        res.Status = ErrorCode.SAVE_FAIL;
-        res.Message = "Tên khu vực đã tồn tại";
-        return res;
-      }
-      payload.CreatedAt = new Date();
-      const location = await this.LocationsRepository.create(
-        Mapper.mapDtoToEntity(payload, LocationsDto)
-      );
-      res.Status = ErrorCode.SUCCESS;
-      res.Message = "Tạo thành công";
-      res.Data = location;
-    } catch (error) {
-      res.Status = ErrorCode.EXCEPTION;
-      res.Message = error.message;
-    }
-    return res;
-  }
   async getAllLocations(): Promise<ResultResponse> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {
@@ -112,7 +83,11 @@ export class LocationsService extends CoreServiceBase<LocationsEntity, Locations
         return res;
       }
       await this.LocationsRepository.delete({ Id });
-      await this.stationsRepository.softDelete({ LocationId: Id });
+      await this.stationsRepository.updateMany(
+        { LocationId: Id },
+        { LocationId: null }
+      );
+
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xóa thành công";
     } catch (error) {
@@ -121,47 +96,7 @@ export class LocationsService extends CoreServiceBase<LocationsEntity, Locations
     }
     return res;
   }
-  async updateLocation(
-    Id: number,
-    payload: PayloadUpdateLocationDto
-  ): Promise<ResultResponse> {
-    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
-    try {
-      if (!payload) {
-        res.Status = ErrorCode.SAVE_FAIL;
-        res.Message = "Thông tin không hợp lệ";
-        return res;
-      }
-      const existingLocation = await this.LocationsRepository.getById(Id);
-      if (!existingLocation) {
-        res.Status = ErrorCode.NOT_FOUND_ID;
-        res.Message = "Không tìm thấy khu vực";
-        return res;
-      }
-      const locations = await this.LocationsRepository.getAll();
-      if (
-        locations.some(
-          (location) => location.Name === payload.Name && location.Id !== Id
-        )
-      ) {
-        res.Status = ErrorCode.SAVE_FAIL;
-        res.Message = "Tên khu vực đã tồn tại";
-        return res;
-      }
 
-      const updatedLocation = await this.LocationsRepository.update(
-        { Id },
-        Mapper.mapDtoToEntity(payload, LocationsDto)
-      );
-      res.Status = ErrorCode.SUCCESS;
-      res.Message = "Cập nhật thành công";
-      res.Data = updatedLocation;
-    } catch (error) {
-      res.Status = ErrorCode.EXCEPTION;
-      res.Message = error.message;
-    }
-    return res;
-  }
   async importFromFile(file: Express.Multer.File) {
     const ext = path.extname(file.originalname).toLowerCase();
     let rawData: any[] = [];

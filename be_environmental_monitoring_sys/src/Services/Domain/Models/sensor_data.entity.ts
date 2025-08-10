@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("SensorData",{schema: "eco_monitoring"})
-export class SensorDataEntity { 
+@Entity("SensorsData",{schema: "eco_monitoring"})
+export class SensorsDataEntity { 
     @PrimaryGeneratedColumn({ type: 'int', name: 'Id' })    
     Id: number;
     @Column({ type: 'int' })

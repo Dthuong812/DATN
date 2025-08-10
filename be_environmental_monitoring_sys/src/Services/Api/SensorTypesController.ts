@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
 import { SensorTypesService } from "../Application/Services/SensorTypesService";
 import { payLoadCreateSensorTypeDto, payLoadUpdateSensorTypeDto } from "../Domain/Dtos/sersor_types.dto";
 import { ResultResponse } from "src/common/ResultResponse";
@@ -15,7 +15,8 @@ export class SensorTypesController {
     @Body() payload: payLoadCreateSensorTypeDto,
     @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {
-    return this.SensorTypesService.createSensorType(payload,authId);
+    const pl = { ...payload, CreatedBy: authId, CreatedAt: new Date() };
+    return this.SensorTypesService.create(pl);
   }
 
   @Get()
@@ -24,20 +25,22 @@ export class SensorTypesController {
   async getAllSensorTypes(): Promise<ResultResponse> {
     return this.SensorTypesService.getAllSensorTypes();
   }
+  
   @Patch("/:Id")
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Cập nhật loại thiết bị" })
   async updateSensorType(
-    @Param("Id") Id: number,
+    @Param("Id", ParseIntPipe) Id: number,
     @Body() payload: payLoadUpdateSensorTypeDto,
     @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {
-    return this.SensorTypesService.updateSensorType(Id, payload , authId);
+    payload.Id = Id;
+    const pl = { ...payload, UpdatedBy: authId, UpdatedAt: new Date() };
+    return this.SensorTypesService.update({Id}, pl);
   }
   @Delete("/:Id")
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Xoá loại thiết bị" })
-
   async deleteSensorType(@Param("Id") Id: number,
     @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {

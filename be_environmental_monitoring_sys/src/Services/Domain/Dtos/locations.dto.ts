@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsUnique } from "src/Services/decorators/is-unique.decorator";
+import { LocationsEntity } from "../Models/locations.entity";
 
 export class LocationsDto {
   Id: number;
@@ -12,6 +14,7 @@ export class PayloadCreateLocationDto {
   @ApiProperty({ description: "Tên khu vực" })
   @IsString()
   @IsNotEmpty()
+  @IsUnique(LocationsEntity, "Name", { message: "Tên khu vực đã tồn tại" })
   Name: string;
 
   @IsOptional()
@@ -22,8 +25,12 @@ export class PayloadCreateLocationDto {
 }
 
 export class PayloadUpdateLocationDto {
+  @IsOptional()
+  Id?: number;
+
   @ApiProperty({ description: "Tên khu vực" })
   @IsString()
   @IsNotEmpty()
+  @IsUnique(LocationsEntity, "Name", { message: "Tên khu vực đã tồn tại" })
   Name: string;
 }

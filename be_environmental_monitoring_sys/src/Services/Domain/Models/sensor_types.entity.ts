@@ -3,27 +3,27 @@ import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 @Entity("SensorTypes",{schema: " eco_monitoring" })
 export class SensorsTypesEntity {
     @PrimaryGeneratedColumn({ type: "int", name: "Id" })
-    Id: number;
+    Id?: number;
     @Column("varchar", { name: "Name", length: 100 })
-    Name: string;
+    Name?: string;
     @Column({ type: 'text' })
-    Description: string;
+    Description?: string;
     @Column("varchar", { name: "Unit", length: 50 })
-    Unit: string;
+    Unit?: string;
     @Column("int",)
-    Min_Value: number;
+    Min_Value?: number;
     @Column("int",)
-    Max_Value: number;
+    Max_Value?: number;
     @Column("datetime", { nullable: true})
-    CreatedAt: Date;
+    CreatedAt?: Date;
     @Column("datetime", { nullable: true})
-    UpdatedAt: Date;
+    UpdatedAt?: Date;
     @Column("int", { nullable: true} )
-    CreatedBy: number;
+    CreatedBy?: number;
     @Column("int", { nullable: true})
-    UpdatedBy: number;
+    UpdatedBy?: number;
     @DeleteDateColumn()
     DeletedAt?: Date
     @Column("int", { nullable: true})
-    DeletedBy: number;
+    DeletedBy?: number;
 }
