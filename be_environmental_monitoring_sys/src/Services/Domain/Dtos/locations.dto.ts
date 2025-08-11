@@ -8,6 +8,7 @@ export class LocationsDto {
   Id: number;
   Name: string;
   CreatedAt: Date;
+  DeletedAt: Date;
 }
 
 export class PayloadCreateLocationDto {

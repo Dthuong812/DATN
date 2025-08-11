@@ -3,22 +3,29 @@ import { LocationsRepository } from "src/Services/Infrastructure/Repository/Loca
 import {
   LocationsDto,
   PayloadCreateLocationDto,
-  PayloadUpdateLocationDto,
 } from "src/Services/Domain/Dtos/locations.dto";
 import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { Mapper } from "src/Services/Domain/Mapper/Mapper";
 import { StationsRepository } from "src/Services/Infrastructure/Repository/StationsRepository";
 import path from "path";
-import * as XLSX from 'xlsx';
-import * as fs from 'fs';
+import * as XLSX from "xlsx";
+import * as fs from "fs";
 import { LocationsEntity } from "src/Services/Domain/Models/locations.entity";
 import { CoreServiceBase } from "./CoreServiceBase";
+import { DevicesRepository } from "src/Services/Infrastructure/Repository/DevicesRepository";
+import { SensorsRepository } from "src/Services/Infrastructure/Repository/SensorsRepository";
+import { In } from "typeorm";
 @Injectable()
-export class LocationsService extends CoreServiceBase<LocationsEntity, LocationsDto> {
+export class LocationsService extends CoreServiceBase<
+  LocationsEntity,
+  LocationsDto
+> {
   constructor(
     private readonly LocationsRepository: LocationsRepository,
-    private readonly stationsRepository: StationsRepository
+    private readonly stationsRepository: StationsRepository,
+    private readonly DevicesRepository: DevicesRepository,
+    private readonly SensorsRepository: SensorsRepository
   ) {
     super(LocationsRepository);
   }
@@ -73,7 +80,7 @@ export class LocationsService extends CoreServiceBase<LocationsEntity, Locations
     return res;
   }
 
-  async deleteLocation(Id: number): Promise<ResultResponse> {
+  async deleteLocation(Id: number, authId: number): Promise<ResultResponse> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {
       const location = await this.LocationsRepository.getById(Id);
@@ -82,12 +89,44 @@ export class LocationsService extends CoreServiceBase<LocationsEntity, Locations
         res.Message = "Không tìm thấy khu vực";
         return res;
       }
-      await this.LocationsRepository.delete({ Id });
-      await this.stationsRepository.updateMany(
-        { LocationId: Id },
-        { LocationId: null }
-      );
-
+      await this.LocationsRepository.softDelete({ Id });
+      const stations = await this.stationsRepository.getAll({
+        where: { LocationId: Id }
+      });
+      
+      for (const station of stations) {
+        await this.stationsRepository.update(
+          { Id: station.Id },
+          { DeletedAt: new Date(), DeletedBy: authId }
+        );
+      }
+      const stationIds = stations.map(s => s.Id);
+      const devices = await this.DevicesRepository.getAll({
+        where: { StationId: In(stationIds) }
+      });
+      const deviceIds = devices.map(d => d.Id);
+      
+      for (const device of devices) {
+        await this.DevicesRepository.update(
+          { Id: device.Id },
+          {
+            StationId: null,
+            Status: 0,
+            UpdatedBy: authId,
+            UpdatedAt: new Date()
+          }
+        );
+      }
+      for (const deviceId of deviceIds) {
+        await this.SensorsRepository.update(
+          { DeviceId: deviceId },
+          {
+            Status: 0,
+            UpdatedBy: authId,
+            UpdatedAt: new Date()
+          }
+        );
+      }
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xóa thành công";
     } catch (error) {

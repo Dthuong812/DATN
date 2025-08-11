@@ -56,7 +56,7 @@ export class SensorTypesService extends CoreServiceBase<
       await this.SensorTypesRepository.markAsDeleted({ Id }, authId);
       await this.SensorsRepository.updateMany(
         { TypeId: Id },
-        { TypeId: null }
+        { TypeId: null ,UpdatedBy: authId, UpdatedAt: new Date() }
       );
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xóa thành công";

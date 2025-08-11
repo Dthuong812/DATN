@@ -108,7 +108,7 @@ export class StationsService extends CoreServiceBase<
 
         await this.DevicesRepository.updateMany(
           { StationId: Id },
-          { StationId: null, Status: 0, UpdatedBy: authId }
+          { StationId: null, Status: 0, UpdatedBy: authId, UpdatedAt: new Date() }
         );
         await this.SensorsRepository.updateMany(
           { DeviceId: In(deviceIds) } as any,
@@ -139,19 +139,8 @@ export class StationsService extends CoreServiceBase<
         LocationList.map((loc) => [loc.Id, loc.Name])
       );
       const result = {
-        Id: station.Id,
-        Name: station.Name,
-        Address: station.Address,
-        LocationId: locationMap.get(station.LocationId),
-        Lat: station.Lat,
-        Lng: station.Lng,
-        CreatedAt: station.CreatedAt,
-        UpdatedAt: station.UpdatedAt,
-        CreatedBy: station.CreatedBy,
-        UpdatedBy: station.UpdatedBy,
-        DeletedAt: station.DeletedAt,
-        DeletedBy: station.DeletedBy,
-        Status: station.Status,
+        ...station,
+        LocationName: locationMap.get(station.LocationId),
       };
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";
@@ -171,19 +160,8 @@ export class StationsService extends CoreServiceBase<
         LocationList.map((loc) => [loc.Id, loc.Name])
       );
       const result = stations.map((station) => ({
-        Id: station.Id,
-        Name: station.Name,
-        Address: station.Address,
-        LocationId: locationMap.get(station.LocationId),
-        Lat: station.Lat,
-        Lng: station.Lng,
-        CreatedAt: station.CreatedAt,
-        UpdatedAt: station.UpdatedAt,
-        CreatedBy: station.CreatedBy,
-        UpdatedBy: station.UpdatedBy,
-        DeletedAt: station.DeletedAt,
-        DeletedBy: station.DeletedBy,
-        Status: station.Status,
+        ...station,
+        LocationName: locationMap.get(station.LocationId) ,
       }));
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";

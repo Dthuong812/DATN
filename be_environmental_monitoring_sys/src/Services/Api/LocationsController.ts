@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "path";
+import { GetCurrentUserId } from "src/common/decorators";
 
 @Controller("/locations")
 export class LocationsController {
@@ -55,9 +56,10 @@ export class LocationsController {
   @ApiOperation({ summary: "Xóa khu vực theo Id" })
   async deleteLocation(
     @Param("Id")
-    Id: number
+    Id: number,
+    @GetCurrentUserId() authId: number
   ): Promise<ResultResponse> {
-    return await this.LocationsService.deleteLocation(Id);
+    return await this.LocationsService.deleteLocation(Id,authId);
   }
   @Patch("/:Id")
   @ApiBearerAuth("JWT")
