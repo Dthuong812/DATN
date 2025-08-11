@@ -3,24 +3,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './Services/module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import { HttpExceptionFilter, ValidationExceptionFilter } from './common/Util';
 import { DataContext } from './common/Infrastructure/Data/DataContext';
-import { UserEntity } from './Services/Domain/Models/users.entity';
-import { RolesEntity } from './Services/Domain/Models/roles.entity';
-import { RoleFunctionPermissionEntity } from './Services/Domain/Models/role_function_permission.entity';
-import { FunctionsEntity } from './Services/Domain/Models/functions.entity';
-import { PermissionsEntity } from './Services/Domain/Models/permissions.entity';
-import { LocationsEntity } from './Services/Domain/Models/locations.entity';
-import { SensorsEntity } from './Services/Domain/Models/sensors.entity';
-import { StationsEntity } from './Services/Domain/Models/stations.entity';
-import { LogTypesEntity } from './Services/Domain/Models/log_types.entity';
-import { LogsEntity } from './Services/Domain/Models/logs.entity';
-import { UserRoleAssignmentsEntity } from './Services/Domain/Models/user_role_assignments.entity';
-
-
+import { ValidationLoggingPipe } from './logger/validation-logging-pipe';
+import { AllExceptionsFilter } from './logger/all-exceptions-filter';
+import { SuccessLoggingInterceptor } from './logger/success-logging-interceptor';
+import { LogsService } from './Services/Application/Services/LogsService';
+import { RequestLoggingInterceptor } from './logger/request-logging-interceptor';
 dotenv.config();
 
 async function bootstrap() {
@@ -69,7 +60,11 @@ async function bootstrap() {
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
       credentials: false,
   });
-
+  const logsService = app.get(LogsService);
+  app.useGlobalPipes(new ValidationLoggingPipe(logsService));
+  app.useGlobalFilters(new AllExceptionsFilter(logsService));
+  app.useGlobalInterceptors(new SuccessLoggingInterceptor(logsService));
+  app.useGlobalInterceptors(new RequestLoggingInterceptor(logsService));
   const port = process.env.PORT || 4000;
   await app.listen(port);
   console.log(`Server running at http://localhost:${port}/api`);

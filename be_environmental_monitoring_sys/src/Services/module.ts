@@ -38,6 +38,10 @@ import { DevicesService } from './Application/Services/DevicesService';
 import { DevicesDao } from './Infrastructure/Dao/DevicesDao';
 import { SensorsDataRepository } from './Infrastructure/Repository/SensorsDattaRepository';
 import { SensorsDataDao } from './Infrastructure/Dao/SensorsDataDao';
+import { LogsService } from './Application/Services/LogsService';
+import { LogsRepository } from './Infrastructure/Repository/LogsRepository';
+import { LogsDao } from './Infrastructure/Dao/LogsDao';
+import { LogsController } from './Api/LogsController';
 
 @Module({
   imports: [
@@ -70,7 +74,7 @@ import { SensorsDataDao } from './Infrastructure/Dao/SensorsDataDao';
     SensorTypesController,
     SensorsController,
     DevicesController,
-
+    LogsController,
   ],
   providers: [
     UserService,
@@ -107,6 +111,10 @@ import { SensorsDataDao } from './Infrastructure/Dao/SensorsDataDao';
 
     SensorsDataRepository,
     SensorsDataDao,
+
+    LogsService,
+    LogsRepository,
+    LogsDao,
     {
       provide: 'USER_REPOSITORY',
       useClass: UserRepsitory,

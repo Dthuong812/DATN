@@ -3,26 +3,26 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity("Logs", { schema: "eco_monitoring" })
 export class LogsEntity {
     @PrimaryGeneratedColumn({ type: 'int', name: 'Id' })
-    Id: number;
+    Id?: number;
 
     @Column({ type: 'int', name: 'LogTypeId' })
-    LogTypeId: number;
+    LogTypeId?: number;
 
     @Column({ type: 'varchar', length: 50 })
-    Action: string;
+    Action?: string;
 
     @Column({ type: 'varchar', length: 100 })
-    Method: string;
+    Method?: string;
 
     @Column({ type: 'text' })
-    Content: string;
+    Content?: string;
 
     @Column({ type: 'text' })
-    Data: string;
+    Data?: string;
 
     @Column("datetime")
-    CreatedAt: Date;
+    CreatedAt?: Date;
 
     @Column({ type: 'int', nullable: true  })
-    CreatedBy: number;
+    CreatedBy?: number;
 }
