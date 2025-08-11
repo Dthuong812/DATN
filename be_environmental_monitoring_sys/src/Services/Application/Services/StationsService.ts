@@ -138,9 +138,24 @@ export class StationsService extends CoreServiceBase<
       const locationMap = new Map(
         LocationList.map((loc) => [loc.Id, loc.Name])
       );
+      const userIds = [station.CreatedBy, station.UpdatedBy].filter(Boolean);
+      const users = await this.userService.getAll({
+        where: { Id: In(userIds) }
+      });
+      const userMap = new Map((users.Data || []).map((u) => [u.Id, u.UserName]));
+
+      const devices = await this.DevicesRepository.getAll({
+        where: { StationId: Id }
+      });
       const result = {
         ...station,
         LocationName: locationMap.get(station.LocationId),
+        CreateName: userMap.get(station.CreatedBy) || null,
+        UpdateName: station.UpdatedBy ? userMap.get(station.UpdatedBy) || null : null,
+        TotalDevices: devices.length,
+        Devices: devices.map((device) => ({
+          ...device,
+        }))
       };
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";
@@ -159,9 +174,24 @@ export class StationsService extends CoreServiceBase<
       const locationMap = new Map(
         LocationList.map((loc) => [loc.Id, loc.Name])
       );
+      const userIds = Array.from(
+        new Set([
+          ...stations.map((s) => s.CreatedBy),
+          ...stations.map((s) => s.UpdatedBy).filter((id) => id !== null)
+        ])
+      );
+      const userResponse = await this.userService.getAll({
+        where: { Id: In(userIds) }
+      });
+      const users = userResponse.Data || [];
+      const userMap = new Map((userResponse.Data || []).map((u) => [u.Id, u.UserName])); 
       const result = stations.map((station) => ({
         ...station,
-        LocationName: locationMap.get(station.LocationId) ,
+        LocationName: locationMap.get(station.LocationId) || null,
+        CreateName: userMap.get(station.CreatedBy) || null,
+        UpdateName: station.UpdatedBy
+          ? userMap.get(station.UpdatedBy) || null
+          : null
       }));
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";
