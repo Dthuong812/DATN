@@ -1,9 +1,10 @@
+import { RoleFunctionPermissionRepository } from './Infrastructure/Repository/RoleFunctionPermissionRepository';
 import { LocationsRepository } from './Infrastructure/Repository/LocationsRepository';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './Api/UserController';
 import { UserService } from './Application/Services/UserService';
-import { UserRepsitory } from './Infrastructure/Repository/UserRepository';
+import { UserRepository } from './Infrastructure/Repository/UserRepository';
 import { UserDao } from './Infrastructure/Dao/UserDao';
 import { AuthController } from './Api/AuthController';
 import { AuthService } from './Application/Services/AuthService';
@@ -36,12 +37,25 @@ import { DevicesController } from './Api/DevicesController';
 import { DevicesRepository } from './Infrastructure/Repository/DevicesRepository';
 import { DevicesService } from './Application/Services/DevicesService';
 import { DevicesDao } from './Infrastructure/Dao/DevicesDao';
-import { SensorsDataRepository } from './Infrastructure/Repository/SensorsDattaRepository';
+import { SensorsDataRepository } from './Infrastructure/Repository/SensorsDataRepository';
 import { SensorsDataDao } from './Infrastructure/Dao/SensorsDataDao';
 import { LogsService } from './Application/Services/LogsService';
 import { LogsRepository } from './Infrastructure/Repository/LogsRepository';
 import { LogsDao } from './Infrastructure/Dao/LogsDao';
 import { LogsController } from './Api/LogsController';
+import { PermissionsService } from './Application/Services/PermissionsService';
+import { PermissionsRepository } from './Infrastructure/Repository/PermissionsRepository';
+import { PermissionsDao } from './Infrastructure/Dao/PermissionsDao';
+import { PermissionsController } from './Api/PermissionsController';
+import { FunctionsService } from './Application/Services/FunctionsService';
+import { FunctionsRepository } from './Infrastructure/Repository/FunctionsRepository';
+import { FunctionsDao } from './Infrastructure/Dao/FunctionsDao';
+import { FunctionsController } from './Api/FunctionsController';
+import { RoleFunctionPermissionDao } from './Infrastructure/Dao/RoleFunctionPermissionDao';
+import { RolesDao } from './Infrastructure/Dao/RolesDao';
+import { RolesRepository } from './Infrastructure/Repository/RoleRepository';
+import { RolesService } from './Application/Services/RolesService';
+import { RolesController } from './Api/RolesController';
 
 @Module({
   imports: [
@@ -75,11 +89,14 @@ import { LogsController } from './Api/LogsController';
     SensorsController,
     DevicesController,
     LogsController,
+    PermissionsController,
+    FunctionsController,
+    RolesController,
   ],
   providers: [
     UserService,
     JwtService,
-    UserRepsitory,
+    UserRepository,
     UserDao,
 
     AuthService,
@@ -115,18 +132,21 @@ import { LogsController } from './Api/LogsController';
     LogsService,
     LogsRepository,
     LogsDao,
-    {
-      provide: 'USER_REPOSITORY',
-      useClass: UserRepsitory,
-    },
-    {
-      provide: 'STATIONS_REPOSITORY',
-      useClass: StationsRepository,
-    },
-    {
-      provide: 'LOCATIONS_REPOSITORY',
-      useClass: LocationsRepository,
-    },
+
+    PermissionsService,
+    PermissionsRepository,
+    PermissionsDao,
+
+    FunctionsService,
+    FunctionsRepository,
+    FunctionsDao,
+
+    RoleFunctionPermissionRepository,
+    RoleFunctionPermissionDao,
+
+    RolesDao,
+    RolesRepository,
+    RolesService,
 
     {
       provide: APP_GUARD,

@@ -7,7 +7,7 @@ import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { StationsRepository } from "src/Services/Infrastructure/Repository/StationsRepository";
 import { SensorTypesRepository } from "src/Services/Infrastructure/Repository/SensorTypesRepository";
-import { SensorsDataRepository } from "src/Services/Infrastructure/Repository/SensorsDattaRepository";
+import { SensorsDataRepository } from "src/Services/Infrastructure/Repository/SensorsDataRepository";
 import { DevicesRepository } from "src/Services/Infrastructure/Repository/DevicesRepository";
 
 @Injectable()

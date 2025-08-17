@@ -6,7 +6,7 @@ import {
   PayLoadUpdateUserDto,
   UserDto,
 } from "src/Services/Domain/Dtos/users.dto";
-import { UserRepsitory } from "src/Services/Infrastructure/Repository/UserRepository";
+import { UserRepository } from "src/Services/Infrastructure/Repository/UserRepository";
 import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import * as argon2 from "argon2";
@@ -14,7 +14,7 @@ import { Mapper } from "src/Services/Domain/Mapper/Mapper";
 
 @Injectable()
 export class UserService extends CoreServiceBase<UserEntity, UserDto> {
-  constructor(private readonly userRepository: UserRepsitory) {
+  constructor(private readonly userRepository: UserRepository) {
     super(userRepository);
   }
   async getAllUsers(): Promise<ResultResponse> {

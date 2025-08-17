@@ -5,7 +5,7 @@ import { CoreRepositoryBase } from './CoreRepositoryBase';
 import { UserDao } from '../Dao/UserDao';
 
 @Injectable()
-export class UserRepsitory extends CoreRepositoryBase<UserEntity, UserDto> {
+export class UserRepository extends CoreRepositoryBase<UserEntity, UserDto> {
     constructor(
         private readonly userDao: UserDao
     ) {

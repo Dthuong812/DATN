@@ -12,7 +12,7 @@ import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { ErrorManage } from "src/common/ErrorCode/ErrorManager";
 import { refreshDto } from "src/Services/Domain/Dtos/refesh.dto";
-import { UserRepsitory } from "src/Services/Infrastructure/Repository/UserRepository";
+import { UserRepository } from "src/Services/Infrastructure/Repository/UserRepository";
 import {
   ChangePasswordDto,
   ForgotPassWordDto,
@@ -30,7 +30,7 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly userService: UserService,
     private readonly captchaService: CaptchaService,
-    private readonly userRepository: UserRepsitory,
+    private readonly userRepository: UserRepository,
     private readonly mail: MailService,
     private readonly telegramService: TelegramService
   ) {}
