@@ -56,10 +56,21 @@ import { RolesDao } from './Infrastructure/Dao/RolesDao';
 import { RolesRepository } from './Infrastructure/Repository/RoleRepository';
 import { RolesService } from './Application/Services/RolesService';
 import { RolesController } from './Api/RolesController';
-
+import { UserRoleAssignmentsRepository } from './Infrastructure/Repository/UserRoleAssignmentsRepository';
+import { UserRoleAssignmentsDao } from './Infrastructure/Dao/UserRoleAssignmentsDao';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-ioredis-yet';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+      ttl: 1000 * 60 * 5,
+    }),
+
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '15m' },
@@ -147,6 +158,9 @@ import { RolesController } from './Api/RolesController';
     RolesDao,
     RolesRepository,
     RolesService,
+
+    UserRoleAssignmentsRepository,
+    UserRoleAssignmentsDao,
 
     {
       provide: APP_GUARD,

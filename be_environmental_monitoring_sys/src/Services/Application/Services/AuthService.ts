@@ -70,7 +70,7 @@ export class AuthService {
         }
       }
       //validate
-      const users = await this.userService.getAll();
+      const users = await this.userService.getAllUsers();
       const user = users.Data.find(
         (u) =>
           u.UserName === payload.UserName ||
@@ -107,18 +107,22 @@ export class AuthService {
       }
 
       // tạo token
+      const roleCodes = user.Roles?.map(r => r.Code) || [];
       const tokens = await this.getTokens(
         user.Id,
         user.UserName,
         user.Location_Id,
-        user.IsManagement
+        user.IsManagement,
+        roleCodes,
       );
       const { access_token, refresh_token, exp_refresh } = tokens;
+      
       const item = {
         UserId: user.Id,
         UserName: user.UserName,
         Location_Id: user.Location_Id,
         IsManagement: user.IsManagement,
+        RoleCodes: roleCodes, 
         access_token,
         refresh_token,
         exp_refresh,
@@ -138,9 +142,10 @@ export class AuthService {
     userId: number,
     username: string,
     Location_Id: number,
-    IsManagement: number
+    IsManagement: number,
+    RoleCode : string[] = []
   ) {
-    const payload = { sub: userId, username, Location_Id, IsManagement };
+    const payload = { sub: userId, username, Location_Id, IsManagement ,RoleCode};
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {

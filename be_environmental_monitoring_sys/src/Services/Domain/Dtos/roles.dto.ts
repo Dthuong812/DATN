@@ -10,6 +10,8 @@ import { FunctionsDto } from "./functions.dto";
 import { Type } from "class-transformer";
 
 export class RolesDto {
+  @ApiProperty({ required: false })
+  @IsOptional() 
   Id: number;
   Code: string;
   Name: string;

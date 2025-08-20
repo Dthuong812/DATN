@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { RolesService } from "../Application/Services/RolesService";
 import { RequirePermission } from "src/common/decorators";
@@ -31,5 +31,21 @@ export class RolesController {
   @RequirePermission({ Func: "FUNC_ROLE", Permission: EnumQuyen.DELETE })
   async deleteRole(@Param("Id") Id: number) {
     return await this.RolesService.deleteRole(Id);
+  }
+
+  @Get("")
+  @ApiBearerAuth("JWT")
+  @ApiOperation({ summary: "Lấy danh sách vai trò" })
+  @RequirePermission({ Func: "FUNC_ROLE", Permission: EnumQuyen.READ })
+  async getAllRoles() {
+    return await this.RolesService.getAllRoles();
+  } 
+
+  @Get("/:Id")
+  @ApiBearerAuth("JWT")
+  @ApiOperation({ summary: "Lấy thông tin vai trò theo Id" })
+  @RequirePermission({ Func: "FUNC_ROLE", Permission: EnumQuyen.READ })
+  async getRoleById(@Param("Id") Id: number) {
+    return await this.RolesService.getRoleById(Id);
   }
 }

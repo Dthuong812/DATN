@@ -1,131 +1,156 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { Type } from "class-transformer"
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, IsStrongPassword, Matches, MinLength } from "class-validator"
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsStrongPassword,
+  Matches,
+  MinLength,
+  ValidateNested,
+} from "class-validator";
+import { UserRoleAssignmentsDto } from "./user_role_assignments.dto";
+import { RolesDto } from "./roles.dto";
 
 export class UserDto {
-    Id : number
-    UserName : string
-    PassWord : string
-    FullName : string
-    Email : string
-    Phone: string
-    ChangePasswordAt: Date
-    Location_Id: number
-    IsManagement:Number
-    Active: number
-    CreatedBy: number
-    CreatedAt: Date
-    UpdatedBy: number
-    UpdatedAt: Date
-    DeletedAt?: Date;
+  Id: number;
+  UserName: string;
+  PassWord: string;
+  FullName: string;
+  Email: string;
+  Phone: string;
+  ChangePasswordAt: Date;
+  Location_Id: number;
+  IsManagement: Number;
+  Active: number;
+  CreatedBy: number;
+  CreatedAt: Date;
+  UpdatedBy: number;
+  UpdatedAt: Date;
+  DeletedAt?: Date;
 }
 
-export class PayLoadCreateUserDto{
-    @ApiProperty({ description: "Tên đăng nhập" })
-    @IsNotEmpty()
-    @IsString()
-    UserName: string;
+export class PayLoadCreateUserDto {
+  @ApiProperty({ description: "Tên đăng nhập" })
+  @IsNotEmpty()
+  @IsString()
+  UserName: string;
 
-    @ApiProperty({ description: "Mật khẩu" })
-    @IsString()
-    @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
-    @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/, {
-      message: 'Mật khẩu phải chứa chữ hoa, chữ thường và số',
-    })
-    PassWord: string;
+  @ApiProperty({ description: "Mật khẩu" })
+  @IsString()
+  @MinLength(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" })
+  @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/, {
+    message: "Mật khẩu phải chứa chữ hoa, chữ thường và số",
+  })
+  PassWord: string;
 
-    @ApiProperty({ description: "Họ và tên" })
-    @IsNotEmpty()
-    @IsString()
-    FullName: string;
+  @ApiProperty({ description: "Họ và tên" })
+  @IsNotEmpty()
+  @IsString()
+  FullName: string;
 
-    @ApiProperty({ description: "Email" })
-    @IsNotEmpty()
-    @IsString()
-    Email: string;
+  @ApiProperty({ description: "Email" })
+  @IsNotEmpty()
+  @IsString()
+  Email: string;
 
-    @ApiProperty({ description: "Số điện thoại" })
-    @IsNotEmpty()
-    @IsString()
-    Phone: string;
+  @ApiProperty({ description: "Số điện thoại" })
+  @IsNotEmpty()
+  @IsString()
+  Phone: string;
 
-    @ApiProperty({ description: "ID địa chỉ" })
-    @IsNotEmpty()
-    Location_Id: number;
+  @ApiProperty({ description: "ID địa chỉ" })
+  @IsNotEmpty()
+  Location_Id: number;
 
-    @ApiProperty({ description: "Quyền quản lý" })
-    @IsNotEmpty()   
-    IsManagement: number;
+  @ApiProperty({ description: "Quyền quản lý" })
+  @IsNotEmpty()
+  IsManagement: number;
 
-    @ApiProperty({ description: "Trạng thái hoạt động" })
-    @IsNotEmpty()
-    Active: number;
+  @ApiProperty({ description: "Trạng thái hoạt động" })
+  @IsNotEmpty()
+  Active: number;
 
-    @IsOptional()
-    @IsNumber()
-    @IsNotEmpty()
-    CreatedBy?: number;
+  @IsOptional()
+  @IsNumber()
+  @IsNotEmpty()
+  CreatedBy?: number;
 
-    @IsOptional()
-    @Type(() => Date)
-    @IsDate()
-    @IsNotEmpty()
-    CreatedAt?: Date = new Date();
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @IsNotEmpty()
+  CreatedAt?: Date = new Date();
+
+  @ApiProperty({ type: [RolesDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RolesDto)
+  UserRoles: RolesDto[];
 }
-export class PayLoadUpdateUserDto{
-    @ApiProperty({ description: "Tên đăng nhập" })
-    @IsNotEmpty()
-    @IsString()
-    UserName: string;
+export class PayLoadUpdateUserDto {
+  @ApiProperty({ description: "Tên đăng nhập" })
+  @IsNotEmpty()
+  @IsString()
+  UserName: string;
 
-    @ApiProperty({ description: "Mật khẩu" })
-    @IsOptional()
-    @IsString()
-    @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
-    @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/, {
-      message: 'Mật khẩu phải chứa chữ hoa, chữ thường và số',
-    })
-    PassWord?: string;
+  @ApiProperty({ description: "Mật khẩu" })
+  @IsOptional()
+  @IsString()
+  @MinLength(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" })
+  @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/, {
+    message: "Mật khẩu phải chứa chữ hoa, chữ thường và số",
+  })
+  PassWord?: string;
 
-    @ApiProperty({ description: "Họ và tên" })
-    @IsNotEmpty()
-    @IsString()
-    FullName: string;
+  @ApiProperty({ description: "Họ và tên" })
+  @IsNotEmpty()
+  @IsString()
+  FullName: string;
 
-    @ApiProperty({ description: "Email" })
-    @IsNotEmpty()
-    @IsString()
-    Email: string;
+  @ApiProperty({ description: "Email" })
+  @IsNotEmpty()
+  @IsString()
+  Email: string;
 
-    @ApiProperty({ description: "Số điện thoại" })
-    @IsNotEmpty()
-    @IsString()
-    Phone: string;
+  @ApiProperty({ description: "Số điện thoại" })
+  @IsNotEmpty()
+  @IsString()
+  Phone: string;
 
-    @ApiProperty({ description: "ID địa chỉ" })
-    @IsNotEmpty()
-    Location_Id: number;
+  @ApiProperty({ description: "ID địa chỉ" })
+  @IsNotEmpty()
+  Location_Id: number;
 
-    @ApiProperty({ description: "Quyền quản lý" })
-    @IsNotEmpty()   
-    IsManagement: number;
+  @ApiProperty({ description: "Quyền quản lý" })
+  @IsNotEmpty()
+  IsManagement: number;
 
-    @ApiProperty({ description: "Trạng thái hoạt động" })
-    @IsNotEmpty()
-    Active: number;
+  @ApiProperty({ description: "Trạng thái hoạt động" })
+  @IsNotEmpty()
+  Active: number;
 
-    @IsOptional()
-    @IsNotEmpty()
-    @IsNumber()
-    UpdatedBy?: number;
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
+  UpdatedBy?: number;
 
-    @IsOptional()
-    @Type(() => Date)
-    @IsDate()
-    UpdatedAt?: Date = new Date();
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  UpdatedAt?: Date = new Date();
+
+  @ApiProperty({ type: [RolesDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RolesDto)
+  UserRoles: RolesDto[];
 }
 export class ResetPasswordDto {
-  @ApiProperty({ required: false }) 
+  @ApiProperty({ required: false })
   @IsString()
   @IsNotEmpty()
   @IsStrongPassword(
@@ -138,8 +163,8 @@ export class ResetPasswordDto {
     },
     {
       message:
-        'Mật khẩu phải có ít nhất 6 ký tự, 1 chữ thường, 1 chữ hoa, 1 sô và 1 ký tự đặc biệt',
-    },
+        "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ thường, 1 chữ hoa, 1 sô và 1 ký tự đặc biệt",
+    }
   )
   PassWord: string;
 
@@ -172,8 +197,8 @@ export class ChangePasswordDto {
     },
     {
       message:
-        'Mật khẩu phải có ít nhất 6 ký tự, 1 chữ thường, 1 chữ hoa, 1 sô và 1 ký tự đặc biệt',
-    },
+        "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ thường, 1 chữ hoa, 1 sô và 1 ký tự đặc biệt",
+    }
   )
   @ApiProperty({ description: "Mật khẩu mới" })
   PassWord: string;
@@ -187,23 +212,21 @@ export class ChangePasswordDto {
   @Type(() => Date)
   @IsDate()
   ChangePasswordAt?: Date;
-
 }
-export class ForgotPassWordDto
-{
-    @ApiProperty({ description: "Tên đăng nhập" })
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional() 
-    UserName:string;
-    @ApiProperty({ description: "Email" })
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional() 
-    Email?:string;
-    @ApiProperty({ description: "Phone" })
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional() 
-    Phone?:string;
+export class ForgotPassWordDto {
+  @ApiProperty({ description: "Tên đăng nhập" })
+  @IsNotEmpty()
+  @IsString()
+  @IsOptional()
+  UserName: string;
+  @ApiProperty({ description: "Email" })
+  @IsNotEmpty()
+  @IsString()
+  @IsOptional()
+  Email?: string;
+  @ApiProperty({ description: "Phone" })
+  @IsNotEmpty()
+  @IsString()
+  @IsOptional()
+  Phone?: string;
 }

@@ -2,13 +2,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity("UserRoleAssignments",{schema:"eco_monitoring"})
 export class UserRoleAssignmentsEntity {
     @PrimaryGeneratedColumn({ type: 'int', })
-    Id: number;
+    Id?: number;
     @Column("int",{ nullable: true })
-    UserId: number;
+    UserId?: number;
     @Column("int",{ nullable: true })
-    RoleId: number;
+    RoleId?: number;
     @Column("int",{ nullable: true })
-    CreatedBy: number;
+    CreatedBy?: number;
     @Column("datetime",{ nullable: true })
-    CreatedAt: Date;
+    CreatedAt?: Date;
 }

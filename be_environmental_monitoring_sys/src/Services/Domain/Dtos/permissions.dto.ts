@@ -5,10 +5,10 @@ export class PermissionsDto{
     @ApiProperty({ required: false })
     @IsOptional() 
     Id?: number;
-    @ApiProperty({ description: "Mã code" })
-    @IsOptional() 
+    // @ApiProperty({ description: "Mã code" })
+    // @IsOptional() 
     Code: string;
-    @ApiProperty({ description: "Tên quyền" })
-    @IsOptional() 
+    // @ApiProperty({ description: "Tên quyền" })
+    // @IsOptional() 
     Name: string;
   }

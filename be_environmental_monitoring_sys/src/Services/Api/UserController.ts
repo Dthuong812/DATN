@@ -37,7 +37,13 @@ export class UserController{
     @ApiBearerAuth('JWT')
     @ApiOperation({ summary: 'Xóa người dùng' })
     async deleteUser(@Param("Id") Id: number): Promise<ResultResponse> {
-        const result = await this.userService.softDelete({ Id});
-        return result;
+        return await this.userService.deleteUser(Id);  
+    }
+
+    @Get("/:Id")
+    @ApiBearerAuth('JWT')
+    @ApiOperation({ summary: 'Lấy thông tin người dùng theo Id' })
+    async getUserById(@Param("Id") Id: number): Promise<ResultResponse> {
+        return await this.userService.getUserById(Id);
     }
 }

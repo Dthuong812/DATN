@@ -3,36 +3,36 @@ import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 @Entity("Users",{schema:"eco_monitoring"})
 export class UserEntity {
     @PrimaryGeneratedColumn({ type: 'int', })
-    Id: number;
+    Id?: number;
     @Column("varchar",{ unique: true, length: 50 })
-    UserName: string;
+    UserName?: string;
     @Column("varchar",  {  length: 200 })
-    PassWord: string;
+    PassWord?: string;
     @Column("varchar", { length: 100 })
-    FullName: string;
+    FullName?: string;
     @Column("varchar", {length: 200 })
-    Email: string;
+    Email?: string;
     @Column("varchar", { length: 20 })
-    Phone: string;
+    Phone?: string;
     @Column("datetime",{ nullable: true })
-    ChangePasswordAt: Date;
+    ChangePasswordAt?: Date;
     @Column("int")
-    Location_Id: number;
+    Location_Id?: number;
     @Column("tinyint", {
         nullable: true,
         default: () => "'0'",
     })
-    IsManagement: number;
+    IsManagement?: number;
     @Column("int",{ nullable: true })
-    Active: number;
+    Active?: number;
     @Column("int",{ nullable: true })
-    CreatedBy: number;
+    CreatedBy?: number;
     @Column("datetime",{ nullable: true })
-    CreatedAt: Date;
+    CreatedAt?: Date;
     @Column("int",{ nullable: true })
-    UpdatedBy: number;
+    UpdatedBy?: number;
     @Column("datetime",{ nullable: true })
-    UpdatedAt: Date;
+    UpdatedAt?: Date;
     @DeleteDateColumn()
     DeletedAt?: Date
 }

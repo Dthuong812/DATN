@@ -7,16 +7,16 @@ export class FunctionsDto {
     @IsOptional() 
     Id?: number;
   
-    @ApiProperty({ description: "Mã code" })
-    @IsOptional() 
+    // @ApiProperty({ description: "Mã code" })
+    // @IsOptional() 
     Code: string;
   
-    @ApiProperty({ description: "Tên chức năng" })
-    @IsOptional() 
+    // @ApiProperty({ description: "Tên chức năng" })
+    // @IsOptional() 
     Name: string;
   
-    @ApiProperty({ description: "Mô tả chức năng" })
-    @IsOptional() 
+    // @ApiProperty({ description: "Mô tả chức năng" })
+    // @IsOptional() 
     Description: string;
   
     @ApiProperty({ type: [PermissionsDto] })
