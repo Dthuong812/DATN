@@ -1,0 +1,202 @@
+import { Injectable } from "@nestjs/common";
+import { ErrorCode } from "src/common/ErrorCode/EnumCode";
+import { ResultResponse } from "src/common/ResultResponse";
+import { UserService } from "./UserService";
+import * as fs from "fs";
+import * as XLSX from "xlsx";
+import * as path from "path";
+import { In } from "typeorm";
+import { CoreServiceBase } from "./CoreServiceBase";
+import { StationsEntity } from "../../Domain/Models/stations.entity";
+import { PayLoadCreateStationDto, StationsDto } from "../../Domain/Dtos/stations.dto";
+import { StationsRepository } from "../../Infrastructure/Repository/StationsRepository";
+import { LocationsRepository } from "../../Infrastructure/Repository/LocationsRepository";
+import { DevicesRepository } from "../../Infrastructure/Repository/DevicesRepository";
+import { SensorsRepository } from "../../Infrastructure/Repository/SensorsRepository";
+import { Mapper } from "../../Domain/Mapper/Mapper";
+
+
+@Injectable()
+export class StationsService extends CoreServiceBase<
+  StationsEntity,
+  StationsDto
+> {
+  constructor(
+    private readonly stationsRepository: StationsRepository,
+    private readonly userService: UserService,
+    private readonly LocationsRepository: LocationsRepository,
+    private readonly DevicesRepository: DevicesRepository,
+    private readonly SensorsRepository: SensorsRepository
+  ) {
+    super(stationsRepository);
+  }
+  async importFromFile(file: Express.Multer.File, authId: number) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    let rawData: any[] = [];
+
+    try {
+      if (ext === ".xlsx" || ext === ".csv") {
+        const workbook = XLSX.readFile(file.path);
+        const sheetName = workbook.SheetNames[0];
+        rawData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      } else if (ext === ".json") {
+        const content = fs.readFileSync(file.path, "utf-8");
+        rawData = JSON.parse(content);
+      } else {
+        throw new Error(
+          "Chỉ hỗ trợ file Excel (.xlsx), CSV (.csv), hoặc JSON (.json)"
+        );
+      }
+
+      const results = [];
+
+      for (const record of rawData) {
+        try {
+          const payload: PayLoadCreateStationDto = {
+            Name: record.Name,
+            Address: record.Address,
+            LocationId: +record.LocationId,
+            Lat: +record.Lat,
+            Lng: +record.Lng,
+            Status: +record.Status,
+            CreatedBy: authId,
+            CreatedAt: new Date(),
+          };
+
+          const entity = Mapper.mapDtoToEntity(payload, StationsEntity);
+          const savedEntity = await this.stationsRepository.create(entity);
+
+          results.push({ success: true, data: savedEntity, payload });
+        } catch (err) {
+          results.push({ success: false, error: err.message, payload: record });
+        }
+      }
+
+      fs.unlinkSync(file.path);
+
+      return {
+        success: true,
+        imported: results.filter((r) => r.success).length,
+        failed: results.filter((r) => !r.success).length,
+        results,
+      };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  async deleteStation(Id: number, authId: number): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const station = await this.stationsRepository.getById(Id);
+      if (!station) {
+        res.Status = ErrorCode.NOT_FOUND_ID;
+        res.Message = "Không tìm thấy trạm";
+        return res;
+      }
+
+      await this.stationsRepository.markAsDeleted({ Id }, authId);
+      const devices = await this.DevicesRepository.getAll({
+        where: { StationId: Id },
+      });
+
+      if (devices.length > 0) {
+        const deviceIds = devices.map((d) => d.Id);
+
+        await this.DevicesRepository.updateMany(
+          { StationId: Id },
+          { StationId: null, Status: 0, UpdatedBy: authId, UpdatedAt: new Date() }
+        );
+        await this.SensorsRepository.updateMany(
+          { DeviceId: In(deviceIds) } as any,
+          { Status: 0, UpdatedBy: authId, UpdatedAt: new Date() }
+        );
+      }
+
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Xóa thành công";
+    } catch (error) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = error.message;
+    }
+    return res;
+  }
+
+  async getStationById(Id: number): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const station = await this.stationsRepository.getById(Id);
+      if (!station) {
+        res.Status = ErrorCode.NOT_FOUND_ID;
+        res.Message = "Không tìm thấy trạm";
+        return res;
+      }
+      const LocationList = await this.LocationsRepository.getAll();
+      const locationMap = new Map(
+        LocationList.map((loc) => [loc.Id, loc.Name])
+      );
+      const userIds = [station.CreatedBy, station.UpdatedBy].filter(Boolean);
+      const users = await this.userService.getAll({
+        where: { Id: In(userIds) }
+      });
+      const userMap = new Map((users.Data || []).map((u) => [u.Id, u.UserName]));
+
+      const devices = await this.DevicesRepository.getAll({
+        where: { StationId: Id }
+      });
+      const result = {
+        ...station,
+        LocationName: locationMap.get(station.LocationId),
+        CreateName: userMap.get(station.CreatedBy) || null,
+        UpdateName: station.UpdatedBy ? userMap.get(station.UpdatedBy) || null : null,
+        TotalDevices: devices.length,
+        Devices: devices.map((device) => ({
+          ...device,
+        }))
+      };
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Xử lí thành công";
+      res.Data = result;
+    } catch (error) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = error.message;
+    }
+    return res;
+  }
+  async getAllStations(): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const stations = await this.stationsRepository.getAll();
+      const LocationList = await this.LocationsRepository.getAll();
+      const locationMap = new Map(
+        LocationList.map((loc) => [loc.Id, loc.Name])
+      );
+      const userIds = Array.from(
+        new Set([
+          ...stations.map((s) => s.CreatedBy),
+          ...stations.map((s) => s.UpdatedBy).filter((id) => id !== null)
+        ])
+      );
+      const userResponse = await this.userService.getAll({
+        where: { Id: In(userIds) }
+      });
+      const users = userResponse.Data || [];
+      const userMap = new Map((userResponse.Data || []).map((u) => [u.Id, u.UserName])); 
+      const result = stations.map((station) => ({
+        ...station,
+        LocationName: locationMap.get(station.LocationId) || null,
+        CreateName: userMap.get(station.CreatedBy) || null,
+        UpdateName: station.UpdatedBy
+          ? userMap.get(station.UpdatedBy) || null
+          : null
+      }));
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Xử lí thành công";
+      res.Data = result;
+    } catch (error) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = error.message;
+    }
+    return res;
+  }
+}

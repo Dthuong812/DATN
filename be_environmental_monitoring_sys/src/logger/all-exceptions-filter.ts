@@ -6,7 +6,7 @@ import {
     HttpStatus,
   } from "@nestjs/common";
   import { LogTypeId, Action, Method } from "src/common/EnumLoaiLogs";
-  import { LogsService } from "src/Services/Application/Services/LogsService";
+  import { LogsService } from "src/Services/Version1.0/Application/Services/LogsService";
   
   @Catch()
   export class AllExceptionsFilter implements ExceptionFilter {

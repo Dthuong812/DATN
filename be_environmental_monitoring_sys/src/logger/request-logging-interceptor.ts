@@ -7,7 +7,7 @@ import {
   import { Observable } from "rxjs";
   import { tap } from "rxjs/operators";
   import { LogTypeId, Action, Method } from "src/common/EnumLoaiLogs";
-  import { LogsService } from "src/Services/Application/Services/LogsService";
+  import { LogsService } from "src/Services/Version1.0/Application/Services/LogsService";
   
   @Injectable()
   export class RequestLoggingInterceptor implements NestInterceptor {

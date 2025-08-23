@@ -1,6 +1,5 @@
-import { SensorsTypesEntity } from './Services/Domain/Models/sensor_types.entity';
+
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './Services/module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
@@ -10,15 +9,14 @@ import { DataContext } from './common/Infrastructure/Data/DataContext';
 import { ValidationLoggingPipe } from './logger/validation-logging-pipe';
 import { AllExceptionsFilter } from './logger/all-exceptions-filter';
 import { SuccessLoggingInterceptor } from './logger/success-logging-interceptor';
-import { LogsService } from './Services/Application/Services/LogsService';
+
 import { RequestLoggingInterceptor } from './logger/request-logging-interceptor';
+import { AppModule } from './Services/Version1.0/module';
+import { LogsService } from './Services/Version1.0/Application/Services/LogsService';
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const dbUrl = process.env.DATABASE_URL!;
-  await DataContext.getInstance(dbUrl,[]);
-
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
