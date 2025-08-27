@@ -1,0 +1,1 @@
+export interface IServiceBase<TEntity, TDto> {}

@@ -1,5 +1,4 @@
 import { RoleFunctionPermissionRepository } from './Infrastructure/Repository/RoleFunctionPermissionRepository';
-import { LocationsRepository } from './Infrastructure/Repository/LocationsRepository';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './Api/UserController';
@@ -17,28 +16,7 @@ import { RefreshStrategy } from 'src/common/strategies/RefreshStrategy';
 import { MailService } from './Application/Services/MailService';
 import { TelegramService } from './Application/Services/TelegramService';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { StationsController } from './Api/StationsController';
-import { StationsService } from './Application/Services/StationsService';
-import { StationsRepository } from './Infrastructure/Repository/StationsRepository';
-import { StationsDao } from './Infrastructure/Dao/StationsDao';
-import { LocationsService } from './Application/Services/LocationService';
-import { LocationsDao } from './Infrastructure/Dao/LocationsDao';
-import { LocationsController } from './Api/LocationsController';
-import { SensorTypesController } from './Api/SensorTypesController';
-import { SensorTypesService } from './Application/Services/SensorTypesService';
-import { SensorTypesRepository } from './Infrastructure/Repository/SensorTypesRepository';
-import { SensorTypesDao } from './Infrastructure/Dao/SensorTypesDao';
-import { SensorsController } from './Api/SensorsController';
-import { SensorsService } from './Application/Services/SensorsService';
-import { SensorsRepository } from './Infrastructure/Repository/SensorsRepository';
-import { SensorsDao } from './Infrastructure/Dao/SensorsDao';
 import { mergeIdIntoBody } from './middleware/merge-id-into-body.middleware';
-import { DevicesController } from './Api/DevicesController';
-import { DevicesRepository } from './Infrastructure/Repository/DevicesRepository';
-import { DevicesService } from './Application/Services/DevicesService';
-import { DevicesDao } from './Infrastructure/Dao/DevicesDao';
-import { SensorsDataRepository } from './Infrastructure/Repository/SensorsDataRepository';
-import { SensorsDataDao } from './Infrastructure/Dao/SensorsDataDao';
 import { LogsService } from './Application/Services/LogsService';
 import { LogsRepository } from './Infrastructure/Repository/LogsRepository';
 import { LogsDao } from './Infrastructure/Dao/LogsDao';
@@ -94,11 +72,6 @@ import * as redisStore from 'cache-manager-ioredis-yet';
   controllers: [
     UserController,
     AuthController,
-    StationsController,
-    LocationsController,
-    SensorTypesController,
-    SensorsController,
-    DevicesController,
     LogsController,
     PermissionsController,
     FunctionsController,
@@ -117,28 +90,6 @@ import * as redisStore from 'cache-manager-ioredis-yet';
     MailService,
     TelegramService,
 
-    StationsService,
-    StationsRepository, 
-    StationsDao,
-
-    LocationsService,
-    LocationsDao,
-    LocationsRepository,
-
-    SensorTypesService,
-    SensorTypesRepository,
-    SensorTypesDao,
-
-    SensorsService,
-    SensorsRepository,
-    SensorsDao,
-
-    DevicesRepository,
-    DevicesDao,
-    DevicesService,
-
-    SensorsDataRepository,
-    SensorsDataDao,
 
     LogsService,
     LogsRepository,

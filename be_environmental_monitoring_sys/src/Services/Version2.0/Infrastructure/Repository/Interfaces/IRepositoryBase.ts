@@ -1,0 +1,1 @@
+export interface IRepositoryBase<TEntity, TDto> {}

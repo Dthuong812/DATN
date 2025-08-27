@@ -1,5 +1,4 @@
 import { Controller, Get} from "@nestjs/common";
-import { LocationsService } from "../Application/Services/LocationService";
 import { ResultResponse } from "src/common/ResultResponse";
 import { LogsService } from "../Application/Services/LogsService";
 import { ApiBearerAuth } from "@nestjs/swagger";
