@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("DeviceType ", { schema: "ecomonitor_data" })
+@Entity("DeviceType", { schema: "ecomonitor_data" })
 export class DeviceTypeEntity {
   @PrimaryGeneratedColumn("uuid")
   Code?: string;

@@ -4,6 +4,8 @@ import { ProjectEntity } from "../Models/project.entity";
 import { IsUnique } from "../../decorators/is-unique.decorator";
 
 export class ProjectDto {
+  @ApiProperty({ required: false })
+  @IsOptional() 
   Id: number;
   Code: string;
   Name: string;

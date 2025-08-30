@@ -13,7 +13,7 @@ import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
 } from "../Domain/Dto/organization.dto";
-import { GetCurrentUser, GetCurrentUserId } from "src/common/decorators";
+import { GetCurrentUserId } from "src/common/decorators";
 
 @ApiBearerAuth("JWT")
 @Controller("organization")
@@ -30,23 +30,22 @@ export class OrganizationController {
     @Body() payload: CreateOrganizationDto,
     @GetCurrentUserId() authId: number
   ) {
-    payload.CreatedBy = authId;
-    return this.OrganizationService.create(payload);
+    return this.OrganizationService.createOrganization(payload, authId);
   }
 
   @Patch("/:Id")
   @ApiOperation({ summary: "Cập nhật tổ chức" })
   async updateOrganization(
+    @Param("Id") Id: number,
     @Body() payload: UpdateOrganizationDto,
     @GetCurrentUserId() authId: number
   ) {
-    payload.UpdatedBy = authId;
-    return this.OrganizationService.update({ Id: payload.Id }, payload);
+    return this.OrganizationService.updateOrganization(Id, payload, authId);
   }
   @Delete("/:Id")
   @ApiOperation({ summary: "Xóa tổ chức" })
   async deleteOrganization(@Param("Id") Id: number) {
-    return this.OrganizationService.softDelete({ Id });
+    return this.OrganizationService.deleteOrganization(Id);
   }
 
   @Get("/:Id")

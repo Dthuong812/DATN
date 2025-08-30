@@ -20,7 +20,7 @@ export class AuthDto {
   @IsString()
   Phone?: string;
 
-  @ApiProperty({ required: true, default: "Eco@12312345" })
+  @ApiProperty({ required: true, default: "?1T7f,6fPZW4" })
   @IsNotEmpty()
   @IsString()
   PassWord: string;
