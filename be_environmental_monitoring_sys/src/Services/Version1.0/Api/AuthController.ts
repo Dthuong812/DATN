@@ -18,8 +18,8 @@ export class AuthController {
   @Public()
   @Post("/signin")
   @ApiOperation({ summary: "Đăng nhập" })
-  async signIn(@Body() payload: AuthDto): Promise<ResultResponse> {
-    return await this.authService.signIn(payload);
+  async signIn(@Body() payload: AuthDto , @Req() req: Request): Promise<ResultResponse> {
+    return await this.authService.signIn(payload,req);
   }
 
   @Public()

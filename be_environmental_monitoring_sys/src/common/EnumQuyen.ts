@@ -7,5 +7,6 @@ export enum EnumQuyen
     APPROVE="APPROVE",
     CANCEL="CANCEL",
     IMPORT ="IMPORT",
-    CONFIRM="CONFIRM"
+    CONFIRM="CONFIRM",
+    EXPORT="EXPORT",
 }

@@ -13,7 +13,8 @@ import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
 } from "../Domain/Dto/organization.dto";
-import { GetCurrentUserId } from "src/common/decorators";
+import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
+import { EnumQuyen } from "src/common/EnumQuyen";
 
 @ApiBearerAuth("JWT")
 @Controller("organization")
@@ -26,6 +27,7 @@ export class OrganizationController {
   }
   @Post()
   @ApiOperation({ summary: "Tạo tổ chức mới" })
+  @RequirePermission({ Func: "FUNC_ORG", Permission: EnumQuyen.CREATE })
   async createOrganization(
     @Body() payload: CreateOrganizationDto,
     @GetCurrentUserId() authId: number
@@ -34,6 +36,7 @@ export class OrganizationController {
   }
 
   @Patch("/:Id")
+  @RequirePermission({ Func: "FUNC_ORG", Permission: EnumQuyen.UPDATE })
   @ApiOperation({ summary: "Cập nhật tổ chức" })
   async updateOrganization(
     @Param("Id") Id: number,
@@ -43,12 +46,14 @@ export class OrganizationController {
     return this.OrganizationService.updateOrganization(Id, payload, authId);
   }
   @Delete("/:Id")
+  @RequirePermission({ Func: "FUNC_ORG", Permission: EnumQuyen.DELETE })
   @ApiOperation({ summary: "Xóa tổ chức" })
   async deleteOrganization(@Param("Id") Id: number) {
     return this.OrganizationService.deleteOrganization(Id);
   }
 
   @Get("/:Id")
+  @RequirePermission({ Func: "FUNC_ORG", Permission: EnumQuyen.READ })
   @ApiOperation({ summary: "Lấy thông tin tổ chức theo Id" })
   async getOrganizationById(@Param("Id") Id: number) {
     return this.OrganizationService.getById(Id);

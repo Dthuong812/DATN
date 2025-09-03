@@ -9,7 +9,7 @@ import { ProjectController } from "./API/ProjectContronller";
 import { ProjectService } from "./Application/Services/ProjectService";
 import { ProjectRepository } from "./Infrastructure/Repository/ProjectRepository";
 import { ProjectDao } from "./Infrastructure/Dao/ProjectDao";
-import { Or } from "typeorm";
+import { ClientsModule, Transport } from "@nestjs/microservices";
 import { OrganizationController } from "./API/OrganizationController";
 import { OrganizationService } from "./Application/Services/OrganizationService";
 import { OrganizationRepository } from "./Infrastructure/Repository/OrganizationRepository";
@@ -32,6 +32,16 @@ import { DepartmentDao } from "./Infrastructure/Dao/DepartmentDao";
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "15m" },
     }),
+    ClientsModule.register([
+      {
+        name: 'Version2',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 6000,
+        },
+      },
+    ])
   ],
   controllers: [ProjectController, 
     OrganizationController,

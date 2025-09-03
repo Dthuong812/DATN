@@ -1,6 +1,6 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { PERMISSION_KEY, PermissionMeta } from '../decorators';
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { PERMISSION_KEY, PermissionMeta } from "../decorators";
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -11,24 +11,29 @@ export class PermissionGuard implements CanActivate {
       PERMISSION_KEY,
       [context.getHandler(), context.getClass()],
     );
+
     if (!required) {
-      return true; // Nếu không có yêu cầu permission cụ thể, cho phép truy cập
+      return true; 
     }
 
     const { user } = context.switchToHttp().getRequest();
 
-    // console.log('User permissions:', user.permissions);
-    // const hasAll = user.permissions.some((perm: any) =>
-    //   perm.PermissionsCode.includes('ALL'),
-    // );
-    //if (hasAll) return true;
-    if(user.RoleCode==="ROLE_ADMIN")
-      return true;
+    if (!user) {
+      return false; 
+    }
 
-    // Match by Func + Permission
+    // Nếu là admin → cho qua
+    if (Array.isArray(user.RoleCode) && user.RoleCode.includes("ROLE_ADMIN")) {
+      return true;
+    }
+
+    if (!user.permissions || !Array.isArray(user.permissions)) {
+      return false; 
+    }
+
     return user.permissions.some((perm: any) =>
       perm.FunctionCode === required.Func &&
-      perm.PermissionsCode.includes(required.Permission),
+      perm.PermissionsCode?.includes(required.Permission),
     );
   }
 }
