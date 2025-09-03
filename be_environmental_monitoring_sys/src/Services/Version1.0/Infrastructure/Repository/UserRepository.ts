@@ -11,5 +11,8 @@ export class UserRepository extends CoreRepositoryBase<UserEntity, UserDto> {
     ) {
         super([userDao]);
     }
-    
+    async getPayloadByName(username: string) {
+        const user = await this.userDao.getPayloadByName(username);
+        return user;
+    }
 }

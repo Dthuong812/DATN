@@ -17,12 +17,13 @@ export class PermissionGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
 
-    console.log('User permissions:', user.permissions);
-
-    const hasAll = user.permissions.some((perm: any) =>
-      perm.PermissionsCode.includes('ALL'),
-    );
-    if (hasAll) return true;
+    // console.log('User permissions:', user.permissions);
+    // const hasAll = user.permissions.some((perm: any) =>
+    //   perm.PermissionsCode.includes('ALL'),
+    // );
+    //if (hasAll) return true;
+    if(user.RoleCode==="ROLE_ADMIN")
+      return true;
 
     // Match by Func + Permission
     return user.permissions.some((perm: any) =>

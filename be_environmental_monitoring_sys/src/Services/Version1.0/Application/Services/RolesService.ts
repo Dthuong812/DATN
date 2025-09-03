@@ -55,6 +55,7 @@ export class RolesService extends CoreServiceBase<RolesEntity, RolesDto> {
               roleFuncPerm.RoleId = newRole.Id;
               roleFuncPerm.FunctionId = func.Id;
               roleFuncPerm.PermissionId = perm.Id;
+              roleFuncPerm.Allowed = true;
               RoleFunctionPermission.push(roleFuncPerm);
             }
           }
@@ -113,6 +114,7 @@ export class RolesService extends CoreServiceBase<RolesEntity, RolesDto> {
               roleFuncPerm.RoleId = Id;
               roleFuncPerm.FunctionId = func.Id;
               roleFuncPerm.PermissionId = perm.Id;
+              roleFuncPerm.Allowed = true;
               RoleFunctionPermission.push(roleFuncPerm);
             }
           }

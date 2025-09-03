@@ -28,10 +28,8 @@ export class AccessGuard extends AuthGuard('jwt') {
       if (!canActivateJwt) {
         return false;
       }
-       return true;
-
       // Kiểm tra quyền
-      //return this.permissionGuard.canActivate(context);
+      return this.permissionGuard.canActivate(context);
     } catch (error) {
       console.error('Error during JWT validation or permission check:', error);
       throw new UnauthorizedException('Unauthorized access');

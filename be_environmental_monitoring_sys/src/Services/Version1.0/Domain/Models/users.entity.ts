@@ -17,15 +17,12 @@ export class UserEntity {
     @Column("datetime",{ nullable: true })
     ChangePasswordAt?: Date;
     @Column("int")
-    Location_Id?: number;
-    @Column("tinyint", {
-        nullable: true,
-        default: () => "'0'",
-    })
-    IsManagement?: number;
-    @Column("int",{ nullable: true })
     Active?: number;
     @Column("int",{ nullable: true })
+    Organization_Id?: number;
+    @Column("int",{ nullable: true })
+    Department_Id?: number;
+    @Column("int")
     CreatedBy?: number;
     @Column("datetime",{ nullable: true })
     CreatedAt?: Date;

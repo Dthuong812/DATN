@@ -23,8 +23,8 @@ export class UserDto {
   Email: string;
   Phone: string;
   ChangePasswordAt: Date;
-  Location_Id: number;
-  IsManagement: Number;
+  Organization_Id: number;
+  Department_id: Number;
   Active: number;
   CreatedBy: number;
   CreatedAt: Date;
@@ -62,13 +62,13 @@ export class PayLoadCreateUserDto {
   @IsString()
   Phone: string;
 
-  @ApiProperty({ description: "ID địa chỉ" })
+  @ApiProperty({ description: "ID tổ chức" })
   @IsNotEmpty()
-  Location_Id: number;
+  Organization_Id: number;
 
-  @ApiProperty({ description: "Quyền quản lý" })
+  @ApiProperty({ description: "Id phòng ban" })
   @IsNotEmpty()
-  IsManagement: number;
+  Department_Id: number;
 
   @ApiProperty({ description: "Trạng thái hoạt động" })
   @IsNotEmpty()
@@ -121,13 +121,13 @@ export class PayLoadUpdateUserDto {
   @IsString()
   Phone: string;
 
-  @ApiProperty({ description: "ID địa chỉ" })
+  @ApiProperty({ description: "ID tổ chức" })
   @IsNotEmpty()
-  Location_Id: number;
+  Organization_Id: number;
 
-  @ApiProperty({ description: "Quyền quản lý" })
+  @ApiProperty({ description: "Id phòng ban" })
   @IsNotEmpty()
-  IsManagement: number;
+  Department_Id: number;
 
   @ApiProperty({ description: "Trạng thái hoạt động" })
   @IsNotEmpty()

@@ -1,3 +1,4 @@
+import { Or } from 'typeorm';
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -51,7 +52,7 @@ export class AuthService {
     return dayjs(latestChangePasswordAt) < time;
   };
 
-  async signIn(payload: AuthDto): Promise<ResultResponse> {
+  async signIn(payload: AuthDto,req: Request): Promise<ResultResponse> {
     const res = new ResultResponse(0, "", null);
 
     try {
@@ -65,14 +66,7 @@ export class AuthService {
         }
       }
       //validate
-      const users = await this.userService.getAllUsers();
-      const user = users.Data.find(
-        (u) =>
-          u.UserName === payload.UserName ||
-          u.Email === payload.Email ||
-          u.Phone === payload.Phone
-      );
-
+      const user = await this.userService.getPayloadByName(payload.UserName);
       if (!user) {
         res.Status = ErrorCode.USER_NOT_FOUND;
         res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
@@ -102,22 +96,22 @@ export class AuthService {
       }
 
       // tạo token
-      const roleCodes = user.Roles?.map(r => r.Code) || [];
       const tokens = await this.getTokens(
-        user.Id,
+        user.UserId,
         user.UserName,
-        user.Location_Id,
-        user.IsManagement,
-        roleCodes,
+        user.Organization_Id,
+        user.Department_Id,
+        user.RoleCodes,
+        user.Permissions
       );
       const { access_token, refresh_token, exp_refresh } = tokens;
       
       const item = {
-        UserId: user.Id,
+        UserId: user.UserId,
         UserName: user.UserName,
-        Location_Id: user.Location_Id,
-        IsManagement: user.IsManagement,
-        RoleCodes: roleCodes, 
+        Organization_Id: user.Organization_Id,
+        Department_Id: user.Department_Id,
+        RoleCode: user.RoleCodes,
         access_token,
         refresh_token,
         exp_refresh,
@@ -136,11 +130,12 @@ export class AuthService {
   async getTokens(
     userId: number,
     username: string,
-    Location_Id: number,
-    IsManagement: number,
-    RoleCode : string[] = []
+    Organization_Id: number,
+    Department_Id: number,
+    RoleCode: any[],
+    Permissions: any[],
   ) {
-    const payload = { sub: userId, username, Location_Id, IsManagement ,RoleCode};
+    const payload = { sub: userId, username, Organization_Id, Department_Id ,RoleCode, Permissions};
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -195,15 +190,17 @@ export class AuthService {
       const tokens = await this.getTokens(
         user.Id,
         user.UserName,
-        user.Location_Id,
-        user.IsManagement
+        user.Organization_Id,
+        user.Department_Id,
+        user.RoleCode,
+        user.Permission
       );
       const { access_token, refresh_token, exp_refresh } = tokens;
       const item = {
         UserId: user.Id,
         UserName: user.UserName,
-        Location_Id: user.Location_Id,
-        IsManagement: user.IsManagement,
+        Organization_Id: user.Organization_Id,
+        Department_Id: user.Department_Id,
         access_token,
         refresh_token,
         exp_refresh,
@@ -293,12 +290,12 @@ export class AuthService {
     user.UpdatedAt = new Date();
 
     const param = { Id: user.Id };
-    const updateuser = await this.userRepository.update(param, user);
+    const updateUser = await this.userRepository.update(param, user);
 
-    if (updateuser) {
+    if (updateUser) {
       res.Status = ErrorCode.CHANGE_PASS_SUCCESS;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.CHANGE_PASS_SUCCESS);
-      res.Data = updateuser;
+      res.Data = updateUser;
     }
 
     return res;

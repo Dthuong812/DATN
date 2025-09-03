@@ -325,5 +325,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
     }
     return res;
   }
-  
+    async getPayloadByName(username: string) {
+      return this.userRepository.getPayloadByName(username);
+    }
 }
