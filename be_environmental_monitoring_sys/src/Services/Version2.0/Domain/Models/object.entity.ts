@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -24,10 +25,10 @@ export class ObjectEntity {
   @Column({ type: "int" })
   Status?: number;
 
-  @Column({ type: "decimal", precision: 10, scale: 8 })
+  @Column({ type: "decimal", precision: 11, scale: 8 })
   Latitude?: number;
 
-  @Column({ type: "decimal", precision: 10, scale: 8 })
+  @Column({ type: "decimal", precision: 11, scale: 8 })
   Longitude?: number;
 
   @Column({ type: "json", nullable: true })
@@ -44,4 +45,7 @@ export class ObjectEntity {
 
   @Column("int", { nullable: true })
   UpdatedBy?: number;
+
+  @DeleteDateColumn()
+  DeletedAt?: Date;
 }

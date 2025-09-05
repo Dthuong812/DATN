@@ -24,6 +24,10 @@ import { DepartmentController } from "./API/DepartmentController";
 import { DepartmentRepository } from "./Infrastructure/Repository/DepartmentRepository";
 import { DepartmentService } from "./Application/Services/DepartmentService";
 import { DepartmentDao } from "./Infrastructure/Dao/DepartmentDao";
+import { ObjectDao } from "./Infrastructure/Dao/ObjectDao";
+import { ObjectService } from "./Application/Services/ObjectService";
+import { ObjectRepository } from "./Infrastructure/Repository/ObjectRepository";
+import { ObjectController } from "./API/ObjectController";
 
 @Module({
   imports: [
@@ -45,7 +49,8 @@ import { DepartmentDao } from "./Infrastructure/Dao/DepartmentDao";
   ],
   controllers: [ProjectController, 
     OrganizationController,
-    DepartmentController
+    DepartmentController,
+    ObjectController
 
   ],
   providers: [
@@ -63,6 +68,10 @@ import { DepartmentDao } from "./Infrastructure/Dao/DepartmentDao";
     DepartmentRepository,
     DepartmentService,
     DepartmentDao,
+
+    ObjectService,
+    ObjectRepository,
+    ObjectDao,
 
     {
       provide: APP_GUARD,
