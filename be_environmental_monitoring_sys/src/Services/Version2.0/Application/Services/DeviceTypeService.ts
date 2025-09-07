@@ -5,13 +5,16 @@ import { DeviceTypeDto } from "../../Domain/Dto/device_type.dto";
 import { DeviceTypeRepository } from "../../Infrastructure/Repository/DeviceTypeRepository";
 import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
+import { DeviceRepository } from "../../Infrastructure/Repository/DeviceRepository";
 
 @Injectable()
 export class DeviceTypeService extends CoreServiceBase<
   DeviceTypeEntity,
   DeviceTypeDto
 > {
-  constructor(private readonly DeviceTypeRepository: DeviceTypeRepository) {
+  constructor(private readonly DeviceTypeRepository: DeviceTypeRepository,
+    private readonly DeviceRepository: DeviceRepository
+  ) {
     super(DeviceTypeRepository);
   }
 
@@ -24,7 +27,7 @@ export class DeviceTypeService extends CoreServiceBase<
           res.Message = "Loại thiết bị không tồn tại";
           return res;
         }
-        // XÓA THIẾT BỊ TRƯỚC KHI XÓA LOẠI THIẾT BỊ
+        await this.DeviceRepository.delete({DeviceType_Code: deviceType.Code});
         await this.DeviceTypeRepository.delete({Id});
         res.Status = ErrorCode.SUCCESS;
         res.Message = "Xử lí thành công";

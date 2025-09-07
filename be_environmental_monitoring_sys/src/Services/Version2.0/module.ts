@@ -32,6 +32,10 @@ import { DeviceTypeService } from "./Application/Services/DeviceTypeService";
 import { DeviceTypeRepository } from "./Infrastructure/Repository/DeviceTypeRepository";
 import { DeviceTypeDao } from "./Infrastructure/Dao/DeviceTypeDao";
 import { mergeIdIntoBody } from "./middleware/merge-id-into-body.middleware";
+import { DeviceController } from "./API/DeviceController";
+import { DeviceService } from "./Application/Services/DeviceService";
+import { DeviceRepository } from "./Infrastructure/Repository/DeviceRepository";
+import { DeviceDao } from "./Infrastructure/Dao/DeviceDao";
 
 @Module({
   imports: [
@@ -56,6 +60,7 @@ import { mergeIdIntoBody } from "./middleware/merge-id-into-body.middleware";
     DepartmentController,
     ObjectController,
     DeviceTypeController,
+    DeviceController,
 
   ],
   providers: [
@@ -81,6 +86,10 @@ import { mergeIdIntoBody } from "./middleware/merge-id-into-body.middleware";
     DeviceTypeService,
     DeviceTypeRepository,
     DeviceTypeDao,
+
+    DeviceService,
+    DeviceRepository,
+    DeviceDao,
 
     {
       provide: APP_GUARD,

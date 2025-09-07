@@ -1,10 +1,11 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-@Entity("Device", { schema: "ecomonitor_data" })
+@Entity("Devices", { schema: "ecomonitor_data" })
 export class DeviceEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   Id?: number;
@@ -22,9 +23,6 @@ export class DeviceEntity {
   DeviceType_Code?: string;
 
   @Column({ type: "int" })
-  DeviceType_Id?:  number;
-
-  @Column({ type: "int" })
   Icon_Id?: number;
 
   @Column("varchar", { length: 100, nullable: false, unique: true })
@@ -33,9 +31,24 @@ export class DeviceEntity {
   @Column({ type: "json", nullable: true })
   Details_Data?: Record<string, any>;
 
-  @Column({ type: "decimal", precision: 10, scale: 8 })
+  @Column({ type: "decimal", precision: 11, scale: 8 })
   Latitude?: number;
 
-  @Column({ type: "decimal", precision: 10, scale: 8 })
+  @Column({ type: "decimal", precision: 11, scale: 8 })
   Longitude?: number;
+
+  @Column("int", { nullable: true })
+  CreatedBy?: number;
+
+  @Column("datetime", { nullable: true })
+  CreatedAt?: Date;
+
+  @Column("datetime", { nullable: true })
+  UpdatedAt?: Date;
+
+  @Column("int", { nullable: true })
+  UpdatedBy?: number;
+
+  @DeleteDateColumn()
+  DeletedAt?: Date;
 }
