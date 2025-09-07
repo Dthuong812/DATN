@@ -2,9 +2,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("DeviceType", { schema: "ecomonitor_data" })
 export class DeviceTypeEntity {
-  @PrimaryGeneratedColumn("uuid")
-  Code?: string;
+  @PrimaryGeneratedColumn("increment")
+  Id?: number;
+
+  @Column("varchar", { length: 20, nullable: false, unique: true })
+  Code?: string; 
 
   @Column("varchar", { length: 255, nullable: false, unique: true })
-  Name?: string;
+  Name?: string; 
 }

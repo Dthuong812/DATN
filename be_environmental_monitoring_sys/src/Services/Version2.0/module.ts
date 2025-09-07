@@ -19,7 +19,6 @@ import { ProjectOrganizationRepository } from "./Infrastructure/Repository/Proje
 import { APP_GUARD } from "@nestjs/core";
 import { AccessGuard } from "src/common/guards";
 import { JwtModule } from "@nestjs/jwt";
-import { mergeIdIntoBody } from "../Version1.0/middleware/merge-id-into-body.middleware";
 import { DepartmentController } from "./API/DepartmentController";
 import { DepartmentRepository } from "./Infrastructure/Repository/DepartmentRepository";
 import { DepartmentService } from "./Application/Services/DepartmentService";
@@ -28,6 +27,11 @@ import { ObjectDao } from "./Infrastructure/Dao/ObjectDao";
 import { ObjectService } from "./Application/Services/ObjectService";
 import { ObjectRepository } from "./Infrastructure/Repository/ObjectRepository";
 import { ObjectController } from "./API/ObjectController";
+import { DeviceTypeController } from "./API/DeviceTypeController";
+import { DeviceTypeService } from "./Application/Services/DeviceTypeService";
+import { DeviceTypeRepository } from "./Infrastructure/Repository/DeviceTypeRepository";
+import { DeviceTypeDao } from "./Infrastructure/Dao/DeviceTypeDao";
+import { mergeIdIntoBody } from "./middleware/merge-id-into-body.middleware";
 
 @Module({
   imports: [
@@ -50,7 +54,8 @@ import { ObjectController } from "./API/ObjectController";
   controllers: [ProjectController, 
     OrganizationController,
     DepartmentController,
-    ObjectController
+    ObjectController,
+    DeviceTypeController,
 
   ],
   providers: [
@@ -72,6 +77,10 @@ import { ObjectController } from "./API/ObjectController";
     ObjectService,
     ObjectRepository,
     ObjectDao,
+
+    DeviceTypeService,
+    DeviceTypeRepository,
+    DeviceTypeDao,
 
     {
       provide: APP_GUARD,
