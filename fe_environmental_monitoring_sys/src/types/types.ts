@@ -32,7 +32,7 @@ export interface AsyncState {
   error?: string | null;
 }
 export interface LoginPayload {
-  Email: string;
+  UserName: string;
   PassWord: string;
 }
 export interface LoginResponse {
@@ -60,65 +60,22 @@ export interface ForgotResponse {
   Status: number;
   Message: string;
 }
-
-export interface StationsResponse {
-  Status: number;
-  Message: string;
-  Data: {
-    Stations: Station[];
-  };
-}
-
-export interface Station {
+export interface Project {
   Id: number;
+  Code: string;
   Name: string;
-  Address: string;
-  Lat: number;
-  Lng: number;
-  LocationId: string;
-  Status: number;
-  CreatedAt: Date;
-  CreatedBy: string;
-  UpdatedBy: string;
-  UpdatedAt: Date;
+  Description: string;
 }
 
-
-export interface StationFormValues {
-  Name: string;
-  Address: string;
-  LocationId: number;
-  Lat: number;
-  Lng: number;
-  Status: number;
-}
-
-export interface Location {
-  Id: number;
-  Name: string;
-  CreatedAt: Date;
-  TotalStations: number;
-}
-
-export interface LocationsResponse {
+export interface ProjectResponse {
   Status: number;
   Message: string;
   Data: {
-    Locations: Location[];
+    Project: Project[];
   };
 }
-
-export interface LocationFormValues {
+export interface ProjectFormValue {
+  Code: string;
   Name: string;
-}
-export interface LocationDetail {
-  Status: number;
-  Message: string;
-  Data: {
-    Id: number;
-    Name: string;
-    CreatedAt: Date;
-    TotalStations: number;
-    Stations: Station[];
-  };
+  Description: string;
 }

@@ -1,27 +1,20 @@
-import AssignRoleComponent from "@/components/users_roles/AssignRoleComponent";
-// import PermissionManagementComponent from "@/components/PermissionManagementComponent";
-import UserTable from "@/components/users_roles/UserTable";
+import OrganizationTable from "@/components/organizations/OrganizationTable";
+import ProjectTable from "@/components/projects/ProjectTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 
 const tabs = [
   {
-    key: "user",
-    label: "Người dùng",
-    content:  <UserTable />,
+    key: "project",
+    label: "Dự án",
+    content: <ProjectTable/>,
   },
   {
-    key: "role",
-    label: "Vai trò",
-    content: <AssignRoleComponent />,
+    key: "organization",
+    label: "Tổ chức",
+    content: <OrganizationTable/>,
   },
-  // {
-  //   key: "permission-management",
-  //   label: "Quản lý quyền",
-  //   content: <PermissionManagementComponent />,
-  // }
 ];
-
-export default function UserPage() {
+export default function Project_Organization() {
   return (
     <div className="max-w-8xl mx-auto px-6 py-6 ">
       <Tabs defaultValue="user" className="w-full">
@@ -43,7 +36,6 @@ export default function UserPage() {
           </TabsContent>
         ))}
       </Tabs>
-      
     </div>
   );
 }

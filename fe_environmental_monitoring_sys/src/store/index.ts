@@ -1,21 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
-import stationReducer from './slices/stationSlice';
-import locationReducer from './slices/locationSlice';
-import { stationsApi } from '@/services/stations.service';
+import projectReducer from './slices/projectSlice';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { locationsApi } from '@/services/location.service';
+import { projectsApi } from '@/services/project.service';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    station : stationReducer,
-    [stationsApi.reducerPath]: stationsApi.reducer,
-    location:locationReducer,
-    [locationsApi.reducerPath]: locationsApi.reducer,
+
+    project:projectReducer,
+    [projectsApi.reducerPath]: projectsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(stationsApi.middleware , locationsApi.middleware),
+    getDefaultMiddleware().concat(projectsApi.middleware),
 });
 setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>;

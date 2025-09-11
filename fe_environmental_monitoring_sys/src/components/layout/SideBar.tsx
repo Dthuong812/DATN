@@ -32,7 +32,9 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
     { href: "/admin/report", label: "Báo cáo", icon: FilePlus2 },
     { href: "/admin/logs", label: "Logs", icon: ScanEye },
     { href: "/admin/location", label: "Khu vực", icon: LocateIcon},
+    { href: "/admin/project_organization", label: "Dự án - Tổ chức", icon: Users },
     { href: "/admin/user", label: "Người dùng", icon: Users },
+
   ];
 
   const bottomNavItems = [

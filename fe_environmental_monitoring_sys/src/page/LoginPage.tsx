@@ -25,21 +25,17 @@ export function LoginPage({
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const auth = useSelector((state: RootState) => state.auth);
-  const [Email, setEmail] = useState("");
+  const [UserName, setUserName] = useState("");
   const [PassWord, setPassWord] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!Email || !PassWord) {
+    if (!UserName || !PassWord) {
       toast.error("Vui lòng nhập đầy đủ thông tin đăng nhập.");
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(Email)) {
-      toast.error("Email không hợp lệ");
-      return;
-    }
-    dispatch(loginUser({ Email, PassWord }));
+
+    dispatch(loginUser({ UserName, PassWord }));
   };
   useEffect(() => {
     if (auth.isSuccess && auth.user) {
@@ -72,12 +68,11 @@ export function LoginPage({
                 <div className="grid gap-6">
                   <div className="grid gap-6">
                     <div className="grid gap-3">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="username">Tên đăng nhập</Label>
                       <Input
-                        id="email"
-                        type="email"
-                        placeholder="abc@gmail.com"
-                        onChange={(e) => setEmail(e.target.value)}
+                        id="username"
+                        placeholder="thuongkute"
+                        onChange={(e) => setUserName(e.target.value)}
                         disabled={auth.isLoading}
                       
                       />

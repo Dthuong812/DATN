@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import Pagination from "./Pagination"; // Đường dẫn tùy vào cấu trúc thư mục
+import Pagination from "../Pagination"; // Đường dẫn tùy vào cấu trúc thư mục
 
 export default function AssignRoleComponent() {
   const roles = [

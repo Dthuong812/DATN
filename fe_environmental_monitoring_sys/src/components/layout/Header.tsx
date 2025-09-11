@@ -30,10 +30,8 @@ export default function Header() {
   };
 
   const navItems = [
-    { href: "/", label: "Trang chủ" },
     { href: "/map", label: "Quan Trắc" },
-    { href: "/about", label: "Giới thiệu" },
-    { href: "/contact", label: "Liên hệ" },
+    { href: "/report", label: "Thống kê" },
   ];
 
   return (
