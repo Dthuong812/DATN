@@ -79,3 +79,44 @@ export interface ProjectFormValue {
   Name: string;
   Description: string;
 }
+
+
+export interface Organization {
+  Id: number;
+  Local_Id:number
+  Parent_Id:number | null;
+  Code: string;
+  Name: string;
+  Phone: string;
+  Email: string;
+  ParentName: string | null;
+  LocalName: string | null;
+  Project: Project[];
+}
+export interface OrganizationResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Organization: Organization[];
+  };
+}
+export interface OrganizationFormValue {
+  Local_Id:number
+  Parent_Id:number | null;
+  Code: string;
+  Name: string;
+  Phone: string;
+  Email: string;
+  Project: Project[];
+}
+export interface Local {
+  Id: number;
+  Name: string;
+} 
+export interface LocalResponse{
+  Status: number;
+  Message: string;
+  Data: {
+    Local: Local[];
+  };
+}

@@ -34,7 +34,7 @@ export default function UpdateProjectModal({
         ...projectData,
       });
     }
-  }, [projectData, onSuccess]);
+  }, [projectData, isSuccess, onSuccess]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

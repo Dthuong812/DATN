@@ -41,7 +41,7 @@ export default function ProjectTable() {
     <div className="flex-1 rounded-xl border overflow-auto h-full scrollbar-hide bg-white shadow p-4 space-y-4">
       <div className="flex justify-end">
         <Button
-          className="bg-green-600 text-white hover:bg-green-700"
+          className="bg-green-600 text-white hover:bg-green-700 cursor-pointer"
           onClick={() => setIsOpen(true)}
         >
           Thêm dự án

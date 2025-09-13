@@ -1,3 +1,4 @@
+import DepartmentTable from "@/components/departments/DepartmentTable";
 import OrganizationTable from "@/components/organizations/OrganizationTable";
 import ProjectTable from "@/components/projects/ProjectTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
@@ -13,11 +14,16 @@ const tabs = [
     label: "Tổ chức",
     content: <OrganizationTable/>,
   },
+  {
+    key: "department",
+    label: "Phòng ban",
+    content: <DepartmentTable/>,
+  },
 ];
 export default function Project_Organization() {
   return (
     <div className="max-w-8xl mx-auto px-6 py-6 ">
-      <Tabs defaultValue="user" className="w-full">
+      <Tabs defaultValue="project"  className="w-full">
         <TabsList className="pt-4 justify-start border-b rounded-none mb-4 w-full bg-gray-50">
           {tabs.map((tab) => (
             <TabsTrigger
