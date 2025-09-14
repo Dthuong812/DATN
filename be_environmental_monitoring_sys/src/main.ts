@@ -14,6 +14,8 @@ import { RequestLoggingInterceptor } from './logger/request-logging-interceptor'
 import { AppModule } from './Services/Version1.0/module';
 import { LogsService } from './Services/Version1.0/Application/Services/LogsService';
 import { Version2Module } from './Services/Version2.0/module';
+import { DeviceDataEntity } from './Services/Version2.0/Domain/Models/device_data.entity';
+import { LocalEntity } from './Services/Version2.0/Domain/Models/local.entity';
 dotenv.config();
 
 async function bootstrap() {
@@ -70,7 +72,7 @@ async function bootstrap() {
   const Version2 = await NestFactory.create(Version2Module);
   const db = await DataContext.getInstance(
     process.env.DATABASE_URL_VER_2,
-    [],
+    [DeviceDataEntity,LocalEntity],
   );
   Version2.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
@@ -79,7 +81,12 @@ async function bootstrap() {
       port: 7000,
     },
   });
-  Version2.useGlobalFilters(new ValidationExceptionFilter(), new HttpExceptionFilter());
+  // Version2.connectMicroservice<MicroserviceOptions>({
+  //   transport : Transport.MQTT,
+  //   options: {
+  //     url: 'mqtt://192.168.32.100:1883',
+  //   }
+  // });
   await Version2.startAllMicroservices();
   Version2.useGlobalFilters(new ValidationExceptionFilter(), new HttpExceptionFilter());
   Version2.enableCors({

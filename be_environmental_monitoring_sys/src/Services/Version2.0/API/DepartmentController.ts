@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
 import { DepartmentService } from "../Application/Services/DepartmentService";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
-import { CreateDepartmentDto, UpdateDepartmentDto } from "../Domain/Dto/department.dto";
+import { CreateDepartmentDto, PayloadFilterDepartmentDto, UpdateDepartmentDto } from "../Domain/Dto/department.dto";
 import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
 
@@ -12,8 +12,8 @@ export class DepartmentController {
   @Get()
   @RequirePermission({ Func: "FUNC_DEPT", Permission: EnumQuyen.CREATE })
   @ApiOperation({ summary: "Lấy tất cả phòng ban" })
-  async getAll() {
-    return this.DepartmentService.getAll();
+  async getAll(@Query() query: PayloadFilterDepartmentDto) {
+    return this.DepartmentService.getAll(query);
   }
 
   @Post()
@@ -43,5 +43,11 @@ export class DepartmentController {
     @ApiOperation({ summary: "Xóa phòng ban" })
     async deleteDepartment(@Param("Id") Id: number) {
         return this.DepartmentService.deleteDepartment(Id);
+    }
+    @Get("/:Id")
+    @RequirePermission({ Func: "FUNC_DEPT", Permission: EnumQuyen.READ })
+    @ApiOperation({ summary: "Lấy phòng ban theo Id" })
+    async getById(@Param("Id") Id: number) {
+        return this.DepartmentService.getById(Id);
     }
 }

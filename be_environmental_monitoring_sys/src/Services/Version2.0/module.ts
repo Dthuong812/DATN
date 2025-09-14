@@ -36,6 +36,14 @@ import { DeviceController } from "./API/DeviceController";
 import { DeviceService } from "./Application/Services/DeviceService";
 import { DeviceRepository } from "./Infrastructure/Repository/DeviceRepository";
 import { DeviceDao } from "./Infrastructure/Dao/DeviceDao";
+import { DeviceDataRepository } from "./Infrastructure/Repository/DeviceDataRepository";
+import { DeviceDataDao } from "./Infrastructure/Dao/DeviceDataDao";
+import { DeviceDataController } from "./API/DeviceDataController";
+import { DeviceDataService } from "./Application/Services/DeviceDataService";
+import { LocalRepository } from "./Infrastructure/Repository/LocalRepository";
+import { LocalDao } from "./Infrastructure/Dao/LocalDao";
+import { LocalService } from "./Application/Services/LocalService";
+import { LocalController } from "./API/LocalController";
 
 @Module({
   imports: [
@@ -53,7 +61,7 @@ import { DeviceDao } from "./Infrastructure/Dao/DeviceDao";
           port: 6000,
         },
       },
-    ])
+    ]),
   ],
   controllers: [ProjectController, 
     OrganizationController,
@@ -61,7 +69,8 @@ import { DeviceDao } from "./Infrastructure/Dao/DeviceDao";
     ObjectController,
     DeviceTypeController,
     DeviceController,
-
+    DeviceDataController,
+    LocalController
   ],
   providers: [
     ProjectService,
@@ -91,6 +100,13 @@ import { DeviceDao } from "./Infrastructure/Dao/DeviceDao";
     DeviceRepository,
     DeviceDao,
 
+
+    DeviceDataRepository,
+    DeviceDataDao,
+    DeviceDataService,
+    LocalService,
+    LocalRepository,
+    LocalDao,
     {
       provide: APP_GUARD,
       useClass: AccessGuard,

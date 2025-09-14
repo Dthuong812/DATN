@@ -79,3 +79,26 @@ export class UpdateDepartmentDto {
     @IsDate()
     UpdatedAt?: Date = new Date();
 }
+
+export class PayloadFilterDepartmentDto {
+    @ApiProperty({ required: false, description: "page" })
+    @IsOptional()
+    page?: number;
+  
+    @ApiProperty({ required: false, description: "pageSize" })
+    @IsOptional()
+    pageSize?: number;
+  
+    @IsOptional()
+    @ApiProperty({ required: false })
+    Organization_Id?: number;
+  
+    @ApiProperty({ required: false, description: "Trường sort" })
+    @IsOptional()
+    sortField?: string;
+  
+    @ApiProperty({ required: false, description: "Kiểu sort DESC/ASC" })
+    @IsOptional()
+    sortOrder?: string;
+  }
+  

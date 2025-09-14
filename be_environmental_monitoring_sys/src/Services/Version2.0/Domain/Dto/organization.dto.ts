@@ -22,7 +22,6 @@ export class OrganizationDto {
 export class CreateOrganizationDto {
   @ApiProperty({ description: "Local_Id" })
   @IsNumber()
-  @IsUnique(OrganizationEntity, "Local_Id", { message: "Local_Id đã tồn tại" })
   Local_Id: number;
   @ApiProperty({ description: "Mã Code dự án" })
   @IsString()
@@ -48,9 +47,10 @@ export class CreateOrganizationDto {
   CreatedAt?: Date = new Date();
   @ApiProperty({ type: [ProjectDto] })
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ProjectDto)
-  Project: ProjectDto[];
+  Project?: ProjectDto[];
 }
 export class UpdateOrganizationDto {
   @IsOptional()

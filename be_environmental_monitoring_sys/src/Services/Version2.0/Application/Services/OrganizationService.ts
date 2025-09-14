@@ -14,6 +14,7 @@ import { ProjectOrganizationDto } from "../../Domain/Dto/project_organization.dt
 import { ProjectOrganizationRepository } from "../../Infrastructure/Repository/ProjectOrganizationRepository";
 import { Mapper } from "../../Domain/Mapper/Mapper";
 import { ProjectRepository } from "../../Infrastructure/Repository/ProjectRepository";
+import { LocalRepository } from '../../Infrastructure/Repository/LocalRepository';
 
 @Injectable()
 export class OrganizationService extends CoreServiceBase<
@@ -24,7 +25,8 @@ export class OrganizationService extends CoreServiceBase<
     private readonly OrganizationRepository: OrganizationRepository,
     private readonly ProOrgRepository: ProjectOrganizationRepository,
     private readonly projectRepository: ProjectRepository,
-    private readonly DepartmentRepository: DepartmentRepository
+    private readonly DepartmentRepository: DepartmentRepository,
+    private readonly LocalRepository: LocalRepository,
   ) {
     super(OrganizationRepository);
   }
@@ -152,5 +154,68 @@ export class OrganizationService extends CoreServiceBase<
     }
     return res;
   }
+  async getAll(): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const orgs = await this.OrganizationRepository.getAll();
+      const organization = await Promise.all(
+        orgs.map(async (org) => {
+          const parent = org.Parent_Id
+          ? await this.OrganizationRepository.getById(org.Parent_Id)
+          : null;
+          const local = await this.LocalRepository.getById(org.Local_Id);
+          return {
+            ...org,
+            LocalName: local ? local.Name : null,
+            ParentName: parent?.Name ?? null,
+          };
+        })
+      );
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Lấy dữ liệu thành công";
+      res.Data =  organization;
+    }
+    catch (err) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = err.message;
+    }
+    return res;
+  }
+  async getById(Id: number): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const org = await this.OrganizationRepository.getById(Id);
+      if (!org) {
+        res.Status = ErrorCode.NOT_FOUND_ID;  
+        res.Message = "Không tìm thấy tổ chức";
+        return res;
+      }
 
+      const parent = org.Parent_Id
+        ? await this.OrganizationRepository.getById(org.Parent_Id)
+        : null;
+      const local = await this.LocalRepository.getById(org.Local_Id);
+      const projects = await this.ProOrgRepository.getAll({
+        where:{ Organization_Id: Id }
+      });
+      const projectList = await Promise.all(
+        projects.map(async (pro) => {
+          const project = await this.projectRepository.getById(pro.Project_Id);
+          return project;
+        })
+      );
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Lấy dữ liệu thành công";
+      res.Data = {
+        ...org,
+        LocalName: local ? local.Name : null,
+        ParentName: parent?.Name ?? null,
+        Project: projectList,
+      };
+    } catch (err) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = err.message;
+    } 
+    return res;
+  }
 }

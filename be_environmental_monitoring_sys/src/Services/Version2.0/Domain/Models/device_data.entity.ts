@@ -9,14 +9,14 @@ export class DeviceDataEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   Id?: number;
 
-  @Column("varchar", { length: 20, nullable: false, unique: true })
+  @Column("varchar", { length: 20, nullable: false })
   Object_Code?: string;
 
-  @Column("varchar", { length: 20, nullable: false, unique: true })
+  @Column("varchar", { length: 20, nullable: false})
   Project_Code?: string;
 
-  @Column("varchar", { length: 20, nullable: false, unique: true })
-  Device_Code?: string;
+  @Column("varchar", { length: 20, nullable: false})
+  Devices_Code?: string;
 
   @Column({ type: "json", nullable: true })
   DataJson?: Record<string, any>;
