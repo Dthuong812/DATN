@@ -120,3 +120,30 @@ export interface LocalResponse{
     Local: Local[];
   };
 }
+
+export interface Department {
+  Id: number;
+  Organization_Id:number
+  Parent_Id:number | null;
+  Code: string;
+  Name: string;
+  Phone: string;
+  Email: string;
+  ParentName: string | null;
+}
+export interface DepartmentResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Department: Department[];
+  };
+}
+export interface DepartmentFormValue {
+  Organization_Id:number
+  Parent_Id:number | null;
+  Code: string;
+  Name: string;
+  Phone: string;
+  Email: string;
+}
+
