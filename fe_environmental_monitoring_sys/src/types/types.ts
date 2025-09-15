@@ -147,3 +147,60 @@ export interface DepartmentFormValue {
   Email: string;
 }
 
+export interface Function {
+  Id: number;
+  Name: string;
+  Code: string;
+  Description: string;
+  CreatedAt: Date;
+}
+export interface FunctionResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Function: Function[];
+  };
+}
+
+export interface Permission{
+  Id: number;
+  Code : string;
+  Name : string;
+}
+export interface PermissionResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Permission: Permission[];
+  };
+}
+export interface FuncPers {
+  Id: number;
+  Code: string;
+  Name: string;
+  Permissions: Permission[];
+}
+export interface Role {
+  Id: number;
+  Code: string;
+  Name: string;
+  Description: string;
+  CreatedAt: Date;
+  TotalUser: number;
+
+}
+export interface RoleResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    Role: Role[];
+  };
+}
+
+export interface RoleFormValue {
+  Code: string;
+  Name: string;
+  Description: string;
+  Functions: number[];
+  Permissions: number[];
+}
