@@ -15,15 +15,6 @@ export interface SensorData {
   timestamp: string;
   stationId: string;
 }
-export interface User {
-  id: number;
-  userName: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  isDieuHanh: boolean;
-  active: boolean;
-}
 ///
 export interface AsyncState {
   isLoading: boolean;
@@ -78,6 +69,7 @@ export interface ProjectFormValue {
   Code: string;
   Name: string;
   Description: string;
+  Functions: Function[];
 }
 
 
@@ -91,7 +83,7 @@ export interface Organization {
   Email: string;
   ParentName: string | null;
   LocalName: string | null;
-  Project: Project[];
+  Project?: Project[];
 }
 export interface OrganizationResponse {
   Status: number;
@@ -203,4 +195,36 @@ export interface RoleFormValue {
   Description: string;
   Functions: number[];
   Permissions: number[];
+}
+
+export interface User {
+  Id: number;
+  UserName: string;
+  FullName: string;
+  Email: string;
+  Phone: string;
+  Organization_Id: number;
+  OrganizationName: string | null;
+  Department_Id: number | null;
+  DepartmentName: string | null;
+  Active: number;
+  Roles: Role[];
+}
+export interface UserResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    User: User[];
+  };
+}
+export interface UserFormValue {
+  UserName: string;
+  PassWord: string;
+  FullName: string;
+  Email: string;
+  Phone: string;
+  Organization_Id: number;
+  Department_Id: number | null;
+  Active: number;
+  Roles: number[];
 }

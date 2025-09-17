@@ -7,6 +7,7 @@ import departmentReducer from "./slices/departmentSlice";
 import functionReducer from "./slices/functionSlice";
 import permissionReducer from "./slices/PermissionSlice";
 import roleReducer from "./slices/roleSlice";
+import useReducer from "./slices/userSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { projectsApi } from "@/services/project.service";
 import { organizationApi } from "@/services/organization.service";
@@ -15,6 +16,7 @@ import { departmentApi } from "@/services/department.service";
 import { functionApi } from "@/services/function.service";
 import { permissionApi } from "@/services/permission.service";
 import { roleApi } from "@/services/role.service";
+import { usersApi } from "@/services/user.service";
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +36,8 @@ export const store = configureStore({
     [permissionApi.reducerPath]: permissionApi.reducer,
     role: roleReducer,
     [roleApi.reducerPath]: roleApi.reducer,
+    users: useReducer,
+    [usersApi.reducerPath]: usersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -43,7 +47,8 @@ export const store = configureStore({
       departmentApi.middleware,
       functionApi.middleware,
       permissionApi.middleware,
-      roleApi.middleware
+      roleApi.middleware,
+      usersApi.middleware
     ),
 });
 setupListeners(store.dispatch);

@@ -110,11 +110,11 @@ export default function UpdateOrganizationDraw({
         >
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="Code">Mã dự án</Label>
+              <Label htmlFor="Code">Mã tổ chức</Label>
               <Input
                 id="Code"
                 {...register("Code")}
-                placeholder="Nhập mã dự án"
+                placeholder="Nhập mã tổ chức"
               />
             </div>
           </div>
