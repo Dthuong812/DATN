@@ -4,11 +4,13 @@ import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { CreateDepartmentDto, PayloadFilterDepartmentDto, UpdateDepartmentDto } from "../Domain/Dto/department.dto";
 import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
+import { MessagePattern } from "@nestjs/microservices";
 
 @ApiBearerAuth("JWT")
 @Controller("department")
 export class DepartmentController {
   constructor(private readonly DepartmentService: DepartmentService) {}
+  @MessagePattern('message_get_all_dept')
   @Get()
   @RequirePermission({ Func: "FUNC_DEPT", Permission: EnumQuyen.CREATE })
   @ApiOperation({ summary: "Lấy tất cả phòng ban" })

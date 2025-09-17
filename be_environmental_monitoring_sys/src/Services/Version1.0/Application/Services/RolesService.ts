@@ -172,18 +172,9 @@ export class RolesService extends CoreServiceBase<RolesEntity, RolesDto> {
           };
         })
       );
-      const roleFuncPerms = await this.RoleFunPerRepository.getAll();
-      const totalFunctions = new Set(roleFuncPerms.map((rfp) => rfp.FunctionId))
-        .size;
-      const totalPermissions = roleFuncPerms.length;
-      const result = roleUser.map((r) => ({
-        ...r,
-        TotalFunctions: totalFunctions,
-        TotalPermissions: totalPermissions,
-      }));
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";
-      res.Data = result;
+      res.Data = roleUser;
     } catch (error) {
       res.Status = ErrorCode.EXCEPTION;
       res.Message = error.message;

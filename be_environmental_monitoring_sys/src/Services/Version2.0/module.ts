@@ -54,7 +54,7 @@ import { LocalController } from "./API/LocalController";
     }),
     ClientsModule.register([
       {
-        name: 'Version2',
+        name: 'app',
         transport: Transport.TCP,
         options: {
           host: '127.0.0.1',
@@ -62,6 +62,7 @@ import { LocalController } from "./API/LocalController";
         },
       },
     ]),
+    
   ],
   controllers: [ProjectController, 
     OrganizationController,

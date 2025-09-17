@@ -158,29 +158,48 @@ export class OrganizationService extends CoreServiceBase<
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {
       const orgs = await this.OrganizationRepository.getAll();
+  
       const organization = await Promise.all(
         orgs.map(async (org) => {
           const parent = org.Parent_Id
-          ? await this.OrganizationRepository.getById(org.Parent_Id)
-          : null;
+            ? await this.OrganizationRepository.getById(org.Parent_Id)
+            : null;
+  
           const local = await this.LocalRepository.getById(org.Local_Id);
+          const proOrgs = await this.ProOrgRepository.getAll({
+            where: { Organization_Id: org.Id },
+          });
+  
+          const projects = await Promise.all(
+            proOrgs.map(async (po) => {
+              const proj = await this.projectRepository.getById(po.Project_Id);
+              return proj
+                ? {
+                   ...proj
+                  }
+                : null;
+            })
+          );
+  
           return {
             ...org,
             LocalName: local ? local.Name : null,
             ParentName: parent?.Name ?? null,
+            Projects: projects.filter((p) => p !== null),
           };
         })
       );
+  
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Lấy dữ liệu thành công";
-      res.Data =  organization;
-    }
-    catch (err) {
+      res.Data = organization;
+    } catch (err) {
       res.Status = ErrorCode.EXCEPTION;
       res.Message = err.message;
     }
     return res;
   }
+  
   async getById(Id: number): Promise<ResultResponse> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {

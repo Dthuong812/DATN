@@ -25,7 +25,7 @@ export class ProjectController {
   @ApiOperation({ summary: "Cập nhật dự án" })
   @RequirePermission({ Func: "FUNC_PROJECT", Permission: EnumQuyen.UPDATE })
   async updateProject(@Body() payload: UpdateProjectDto ,@Param('Id') Id: number) {
-    return this.ProjectService.update({Id},payload);
+    return this.ProjectService.updateProject(Id,payload);
   }
 
   @Delete("/:Id")

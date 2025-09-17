@@ -15,11 +15,13 @@ import {
 } from "../Domain/Dto/organization.dto";
 import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
+import { MessagePattern } from "@nestjs/microservices";
 
 @ApiBearerAuth("JWT")
 @Controller("organization")
 export class OrganizationController {
-  constructor(private readonly OrganizationService: OrganizationService) {}
+  constructor(private readonly OrganizationService: OrganizationService,) {}
+  @MessagePattern('message_get_all_org')
   @Get()
   @ApiOperation({ summary: "Lấy tất cả dự án mới" })
   async getAll() {

@@ -1,3 +1,4 @@
+import { Project } from './../../../../fe_environmental_monitoring_sys/src/types/types';
 import { RoleFunctionPermissionRepository } from './Infrastructure/Repository/RoleFunctionPermissionRepository';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -38,6 +39,11 @@ import { UserRoleAssignmentsRepository } from './Infrastructure/Repository/UserR
 import { UserRoleAssignmentsDao } from './Infrastructure/Dao/UserRoleAssignmentsDao';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis-yet';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ProjectFunctionController } from './Api/ProjectFuntionsController';
+import { ProjectFunctionsService } from './Application/Services/ProjectFunctionsService';
+import { ProjectFunctionsRepository } from './Infrastructure/Repository/ProjectFunctionsRepository';
+import { ProjectFunctionsDao } from './Infrastructure/Dao/ProjectFuntionsDao';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -48,6 +54,16 @@ import * as redisStore from 'cache-manager-ioredis-yet';
       port: 6379,
       ttl: 1000 * 60 * 5,
     }),
+    ClientsModule.register([
+      {
+        name: 'Version2',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 7000,
+        },
+      },
+    ]),
 
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -76,6 +92,7 @@ import * as redisStore from 'cache-manager-ioredis-yet';
     PermissionsController,
     FunctionsController,
     RolesController,
+    ProjectFunctionController,
   ],
   providers: [
     UserService,
@@ -112,6 +129,10 @@ import * as redisStore from 'cache-manager-ioredis-yet';
 
     UserRoleAssignmentsRepository,
     UserRoleAssignmentsDao,
+
+    ProjectFunctionsService,
+    ProjectFunctionsRepository,
+    ProjectFunctionsDao,
 
     {
       provide: APP_GUARD,

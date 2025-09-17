@@ -67,11 +67,11 @@ export class PayLoadCreateUserDto {
   Organization_Id: number;
 
   @ApiProperty({ description: "Id phòng ban" })
-  @IsNotEmpty()
+  @IsOptional()
   Department_Id: number;
 
   @ApiProperty({ description: "Trạng thái hoạt động" })
-  @IsNotEmpty()
+  @IsOptional()
   Active: number;
 
   @IsOptional()

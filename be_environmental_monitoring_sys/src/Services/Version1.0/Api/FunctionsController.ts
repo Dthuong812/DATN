@@ -1,8 +1,10 @@
-import { Controller, Get } from "@nestjs/common";
+import { MessagePattern } from '@nestjs/microservices';
+import { Body, Controller, Get } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { FunctionsService } from "../Application/Services/FunctionsService";
 import { RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
+import { ProjectFunctionsDto } from '../Domain/Dtos/project_functions.dto';
 
 @ApiBearerAuth("JWT")
 @Controller("functions")
@@ -15,4 +17,5 @@ export class FunctionsController {
   async getAll() {
     return await this.FunctionsService.getAll();
   }
+
 }

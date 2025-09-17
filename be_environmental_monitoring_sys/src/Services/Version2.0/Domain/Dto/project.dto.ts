@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString } from "class-validator";
+import { IsArray, IsOptional, IsString } from "class-validator";
 import { ProjectEntity } from "../Models/project.entity";
 import { IsUnique } from "../../decorators/is-unique.decorator";
 
@@ -11,7 +11,14 @@ export class ProjectDto {
   Name: string;
   Description: string;
 }
-
+export class FunctionDto{
+  @ApiProperty({ required: false })
+  @IsOptional()
+  Id?: number;
+  Name?: string;
+  Code?: string;
+  Description?: string;
+}
 export class CreateProjectDto {
   @ApiProperty({ description: "Mã Code dự án" })
   @IsString()
@@ -23,6 +30,10 @@ export class CreateProjectDto {
   @ApiProperty({ description: "Mô tả" })
   @IsString()
   Description: string;
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({ type: [FunctionDto] })
+  Functions?: FunctionDto[];
 }
 export class UpdateProjectDto {
   @IsOptional()
@@ -37,4 +48,7 @@ export class UpdateProjectDto {
   @ApiProperty({ description: "Mô tả" })
   @IsString()
   Description: string;
+  @IsArray()
+  @IsOptional()
+  Functions?: FunctionDto[];
 }

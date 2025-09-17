@@ -3,7 +3,5 @@ export class UserRoleAssignmentsDto {
     UserId: number;
     RoleId: number;
     CreatedBy: number;
-    CreatedAt: Date;
-    UpdatedBy: number;
-    UpdatedAt: Date;
+    Organization_Id: number;
 }

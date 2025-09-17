@@ -1,10 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { Organization } from "./../../../../../../fe_environmental_monitoring_sys/src/types/types";
+import { Inject, Injectable } from "@nestjs/common";
 import { CoreServiceBase } from "./CoreServiceBase";
 import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import * as argon2 from "argon2";
 import { UserEntity } from "../../Domain/Models/users.entity";
-import { PayLoadCreateUserDto, PayLoadUpdateUserDto, UserDto } from "../../Domain/Dtos/users.dto";
+import {
+  PayLoadCreateUserDto,
+  PayLoadUpdateUserDto,
+  UserDto,
+} from "../../Domain/Dtos/users.dto";
 import { UserRepository } from "../../Infrastructure/Repository/UserRepository";
 import { UserRoleAssignmentsRepository } from "../../Infrastructure/Repository/UserRoleAssignmentsRepository";
 import { RolesRepository } from "../../Infrastructure/Repository/RoleRepository";
@@ -13,15 +18,21 @@ import { FunctionsRepository } from "../../Infrastructure/Repository/FunctionsRe
 import { PermissionsRepository } from "../../Infrastructure/Repository/PermissionsRepository";
 import { Mapper } from "../../Domain/Mapper/Mapper";
 import { UserRoleAssignmentsDto } from "../../Domain/Dtos/user_role_assignments.dto";
+import { ClientProxy } from "@nestjs/microservices";
+import { REQUEST } from "@nestjs/core";
+import { firstValueFrom } from "rxjs";
 
 @Injectable()
 export class UserService extends CoreServiceBase<UserEntity, UserDto> {
-  constructor(private readonly userRepository: UserRepository,
+  constructor(
+    private readonly userRepository: UserRepository,
     private readonly userRoleAssignmentsRepository: UserRoleAssignmentsRepository,
     private readonly roleRepository: RolesRepository,
     private readonly RoleFunPerRepository: RoleFunctionPermissionRepository,
     private readonly FunctionsRepository: FunctionsRepository,
-    private readonly PermissionsRepository: PermissionsRepository
+    private readonly PermissionsRepository: PermissionsRepository,
+    @Inject("Version2") private dataClient: ClientProxy,
+    @Inject(REQUEST) readonly request: Request
   ) {
     super(userRepository);
   }
@@ -29,31 +40,41 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {
       const users = await this.userRepository.getAll();
-  
-      const userWithRoles = await Promise.all(
-        users.map(async (user) => {
-          const roleMappings = await this.userRoleAssignmentsRepository.getAll({
-            where: { UserId: user.Id },
-          });
-  
-          const roles = await Promise.all(
-            roleMappings.map(async (r) => {
-              const roleEntity = await this.roleRepository.getById(r.RoleId);
-              return {
-                Id: roleEntity.Id,
-                Code: roleEntity.Code,
-                Name: roleEntity.Name,
-                Description: roleEntity.Description,
-              };
-            })
-          );
-  
-          return {
-            ...user,
-            Roles: roles,   
-          };
-        })
+      const allRoleMappings = await this.userRoleAssignmentsRepository.getAll();
+      const allRoles = await this.roleRepository.getAll();
+      const orgData = await firstValueFrom(
+        this.dataClient.send("message_get_all_org", {})
       );
+      const depData = await firstValueFrom(
+        this.dataClient.send("message_get_all_dept", {})
+      );
+  
+      const orgList = Array.isArray(orgData?.Data) ? orgData.Data : [];
+      const depList = Array.isArray(depData?.Data) ? depData.Data : [];
+  
+      const userWithRoles = users.map((user) => {
+        const roleMappings = allRoleMappings.filter(
+          (rm) => rm.UserId === user.Id
+        );
+        const roles = roleMappings
+          .map((rm) => allRoles.find((r) => r.Id === rm.RoleId))
+          .filter(Boolean)
+          .map((r) => ({
+            Id: r.Id,
+            Code: r.Code,
+            Name: r.Name,
+            Description: r.Description,
+          }));
+        const org = orgList.find((o: any) => o.Id === user.Organization_Id);
+        const dept = depList.find((d: any) => d.Id === user.Department_Id);
+  
+        return {
+          ...user,
+          Roles: roles,
+          OrganizationName: org?.Name || null,
+          DepartmentName: dept?.Name || null,
+        };
+      });
   
       res.Data = userWithRoles;
       res.Status = ErrorCode.SUCCESS;
@@ -65,7 +86,9 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
     return res;
   }
   
-  async createUser(payload: PayLoadCreateUserDto,
+
+  async createUser(
+    payload: PayLoadCreateUserDto,
     authId: number
   ): Promise<ResultResponse> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
@@ -122,12 +145,11 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
         for (const role of payload.UserRoles) {
           const userRole = new UserRoleAssignmentsDto();
           userRole.UserId = newUser.Id;
-          userRole.RoleId = role.Id;  
-          userRole.CreatedBy = authId;
-          userRole.CreatedAt = new Date();
+          userRole.RoleId = role.Id;
+          userRole.Organization_Id = newUser.Organization_Id;
           userRoles.push(userRole);
         }
-      
+
         await this.userRoleAssignmentsRepository.createMany(userRoles);
       }
       res.Data = newUser;
@@ -142,7 +164,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
   async updateUser(
     Id: number,
     payload: PayLoadUpdateUserDto,
-    authId:number
+    authId: number
   ): Promise<ResultResponse> {
     const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
     try {
@@ -212,12 +234,11 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
         for (const role of payload.UserRoles) {
           const userRole = new UserRoleAssignmentsDto();
           userRole.UserId = Id;
-          userRole.RoleId = role.Id;  
-          userRole.CreatedBy = authId;
-          userRole.CreatedAt = new Date();
+          userRole.RoleId = role.Id;
+          userRole.Organization_Id = user.Organization_Id;
           userRoles.push(userRole);
         }
-      
+
         await this.userRoleAssignmentsRepository.createMany(userRoles);
       }
 
@@ -262,23 +283,26 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
       const roleMappings = await this.userRoleAssignmentsRepository.getAll({
         where: { UserId: user.Id },
       });
-  
+
       const roles = await Promise.all(
         roleMappings.map(async (r) => {
           const roleEntity = await this.roleRepository.getById(r.RoleId);
-  
+
           if (!roleEntity) return null;
-  
+
           const roleFuncPerms = await this.RoleFunPerRepository.getAll({
             where: { RoleId: roleEntity.Id },
           });
-  
 
           const functions = await Promise.all(
             roleFuncPerms.map(async (rfp) => {
-              const func = await this.FunctionsRepository.getById(rfp.FunctionId);
-              const perm = await this.PermissionsRepository.getById(rfp.PermissionId);
-  
+              const func = await this.FunctionsRepository.getById(
+                rfp.FunctionId
+              );
+              const perm = await this.PermissionsRepository.getById(
+                rfp.PermissionId
+              );
+
               return {
                 Id: func.Id,
                 Code: func.Code,
@@ -293,7 +317,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
               };
             })
           );
-  
+
           const funcMap = new Map<number, any>();
           for (const f of functions) {
             if (!funcMap.has(f.Id)) {
@@ -302,7 +326,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
               funcMap.get(f.Id).Permissions.push(...f.Permissions);
             }
           }
-  
+
           return {
             Id: roleEntity.Id,
             Code: roleEntity.Code,
@@ -312,10 +336,10 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
           };
         })
       );
-  
+
       res.Data = {
         ...user,
-        Roles: roles.filter(r => r !== null), 
+        Roles: roles.filter((r) => r !== null),
       };
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lý thành công";
@@ -325,7 +349,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
     }
     return res;
   }
-    async getPayloadByName(username: string) {
-      return this.userRepository.getPayloadByName(username);
-    }
+  async getPayloadByName(username: string) {
+    return this.userRepository.getPayloadByName(username);
+  }
 }
