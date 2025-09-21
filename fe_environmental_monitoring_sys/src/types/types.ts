@@ -56,6 +56,7 @@ export interface Project {
   Code: string;
   Name: string;
   Description: string;
+  Functions: Function[];
 }
 
 export interface ProjectResponse {
@@ -193,6 +194,7 @@ export interface RoleFormValue {
   Code: string;
   Name: string;
   Description: string;
+  Projects: number[];
   Functions: number[];
   Permissions: number[];
 }
@@ -228,3 +230,4 @@ export interface UserFormValue {
   Active: number;
   Roles: number[];
 }
+

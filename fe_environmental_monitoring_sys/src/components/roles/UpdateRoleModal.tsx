@@ -1,4 +1,9 @@
-import type { Function, Permission, RoleFormValue } from "@/types/types";
+import type {
+  Function,
+  Permission,
+  Project,
+  RoleFormValue,
+} from "@/types/types";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -11,18 +16,35 @@ import {
   useUpdateRoleMutation,
 } from "@/services/role.service";
 import { useGetPermissionsQuery } from "@/services/permission.service";
-import { useGetFunctionsQuery } from "@/services/function.service";
 import { useForm } from "react-hook-form";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useGetProjectsQuery } from "@/services/project.service";
+import { X } from "lucide-react";
+
 interface UpdateRoleModalProps {
   roleId: number;
   open: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (role?: RoleFormValue) => void;
 }
+
+interface Tab {
+  Id: string;
+  projectId: number;
+  permissions: Record<number, Record<number, boolean>>;
+}
+
 export default function UpdateRoleModal({
   roleId,
   open,
@@ -35,123 +57,193 @@ export default function UpdateRoleModal({
     formState: { errors },
     reset,
   } = useForm<RoleFormValue>();
+
   const {
     data: roleData,
-    isFetching: isRoleFetching,
+    isFetching,
     isSuccess,
   } = useGetRoleByIdQuery(roleId!, {
     skip: !roleId,
   });
-  const { data: listPermissions, isFetching: isPermissionsFetching } =
-    useGetPermissionsQuery({});
-  const { data: listFunctions, isFetching: isFunctionsFetching } =
-    useGetFunctionsQuery({});
 
-  const isFetching =
-    isRoleFetching || isPermissionsFetching || isFunctionsFetching;
-
+  const { data: listPermissions } = useGetPermissionsQuery({});
   const permissions: Permission[] = useMemo(
-    () => (listPermissions?.Data as Permission[]) || [],
+    () => listPermissions?.Data || [],
     [listPermissions]
   );
 
-  const functions: Function[] = useMemo(
-    () => (listFunctions?.Data as Function[]) || [],
-    [listFunctions]
+  const { data: listProject } = useGetProjectsQuery({});
+  const projects: Project[] = useMemo(
+    () => listProject?.Data || [],
+    [listProject]
   );
+
   const [updateRole, { isLoading }] = useUpdateRoleMutation();
-  const [selectedPermissions, setSelectedPermissions] = useState<
-    Record<number, Record<number, boolean>>
-  >({});
-  const [selectAll, setSelectAll] = useState<Record<number, boolean>>({});
+  const [tabs, setTabs] = useState<Tab[]>([]);
+  const [active, setActive] = useState("");
+
+  const mapRoleDataToTabs = (
+    roleProjects: any[],
+    permissions: Permission[]
+  ): Tab[] => {
+    return roleProjects.map((project, idx) => {
+      const perms: Record<number, Record<number, boolean>> = {};
+
+      project.Functions.forEach((func: Function) => {
+        perms[func.Id] = {};
+        permissions.forEach((perm) => {
+          const hasPerm = func.Permissions?.some((p: Permission) => p.Id === perm.Id);
+          perms[func.Id][perm.Id] = hasPerm;
+        });
+      });
+
+      return {
+        Id: `${idx + 1}`,
+        projectId: project.Id,
+        permissions: perms,
+      };
+    });
+  };
+  const [originalRole, setOriginalRole] = useState<RoleFormValue | null>(null);
+
   useEffect(() => {
-    if (isSuccess && roleData) {
-      reset({
+    if (projects?.length && permissions?.length && isSuccess && roleData) {
+      const initRole: RoleFormValue = {
         Code: roleData.Data.Code,
         Name: roleData.Data.Name,
         Description: roleData.Data.Description,
-      });
-      const initSelected: Record<number, Record<number, boolean>> = {};
-      functions.forEach((f) => {
-        initSelected[f.Id] = {};
-        permissions.forEach((p: Permission) => {
-          initSelected[f.Id][p.Id] = false;
-        });
-      });
-      roleData.Data.Functions.forEach(
-        (func: { Id: number; Permissions: { Id: number }[] }) => {
-          if (!initSelected[func.Id]) initSelected[func.Id] = {};
-          func.Permissions.forEach((perm) => {
-            initSelected[func.Id][perm.Id] = true;
-          });
-        }
-      );
-      setSelectedPermissions(initSelected);
-      const initSelectAll: Record<number, boolean> = {};
-      permissions.forEach((p: Permission) => {
-        const allSelected = functions.every(
-          (f) => initSelected[f.Id] && initSelected[f.Id][p.Id]
-        );
-        initSelectAll[p.Id] = allSelected;
-      });
-      setSelectAll(initSelectAll);
-    }
-  }, [isSuccess, roleData, reset, functions, permissions]);
-  const handleToggleAll = (permId: number) => {
-    setSelectAll((prev) => ({ ...prev, [permId]: !prev[permId] }));
-    setSelectedPermissions((prev) => {
-      const updated = { ...prev };
-      functions.forEach((func: Function) => {
-        if (!updated[func.Id]) updated[func.Id] = {};
-        updated[func.Id][permId] = !selectAll[permId];
-      });
-      return updated;
-    });
-  };
-  const handleToggle = (functionId: number, permId: number) => {
-    setSelectedPermissions((prev) => {
-      const updated = { ...prev };
-      updated[functionId] = {
-        ...updated[functionId],
-        [permId]: !updated[functionId]?.[permId],
+        Projects: roleData.Data.Projects || [],
+        Functions: roleData.Data.Functions || [],
+        Permissions: roleData.Data.Permissions || [],
       };
-      return updated;
+  
+      reset(initRole);
+      setOriginalRole(initRole);
+  
+      const tabsFromRole = mapRoleDataToTabs(roleData.Data.Projects, permissions);
+      setTabs(tabsFromRole);
+      setActive(tabsFromRole.length ? tabsFromRole[0].Id : "");
+    }
+  }, [projects, permissions, isSuccess, roleData, reset]);
+
+  const chooseProject = (tabId: string, projectId: number) => {
+    const project = projects.find((p) => p.Id === projectId);
+    if (!project) return;
+
+    const perms: Record<number, Record<number, boolean>> = {};
+    project.Functions.forEach((func: Function) => {
+      perms[func.Id] = {};
+      permissions.forEach((perm) => {
+        perms[func.Id][perm.Id] = false;
+      });
     });
+
+    setTabs((prev) =>
+      prev.map((t) =>
+        t.Id === tabId ? { ...t, projectId, permissions: perms } : t
+      )
+    );
   };
+
+  const togglePermission = (
+    tabId: string,
+    functionId: number,
+    permId: number
+  ) => {
+    setTabs((prev) =>
+      prev.map((t) =>
+        t.Id === tabId
+          ? {
+              ...t,
+              permissions: {
+                ...t.permissions,
+                [functionId]: {
+                  ...t.permissions[functionId],
+                  [permId]: !t.permissions[functionId]?.[permId],
+                },
+              },
+            }
+          : t
+      )
+    );
+  };
+
+  const handleToggleAll = (tabId: string, permId: number) => {
+    setTabs((prev) =>
+      prev.map((t) => {
+        if (t.Id !== tabId) return t;
+        const project = projects.find((p) => p.Id === t.projectId);
+        const functions = project?.Functions || [];
+        const allChecked = functions.every(
+          (f) => t.permissions[f.Id]?.[permId]
+        );
+        const newPermissions: Record<number, Record<number, boolean>> = {};
+  
+        for (const f of functions) {
+          newPermissions[f.Id] = {
+            ...(t.permissions[f.Id] || {}),
+            [permId]: !allChecked,
+          };
+        }
+  
+        return { ...t, permissions: { ...t.permissions, ...newPermissions } };
+      })
+    );
+  };
+  
+
   const onSubmit = async (data: RoleFormValue) => {
     try {
-      const functionsToSubmit = Object.entries(selectedPermissions).map(
-        ([functionId, perms]) => ({
-          Id: Number(functionId),
-          Permissions: Object.keys(perms)
-            .filter((permId) => perms[Number(permId)])
-            .map((permId) => ({ Id: Number(permId) })),
-        })
-      );
+      const projectsToSubmit = tabs.map((tab) => ({
+        Id: tab.projectId,
+        Functions: Object.entries(tab.permissions).map(
+          ([functionId, perms]) => ({
+            Id: Number(functionId),
+            Permissions: Object.keys(perms)
+              .filter((permId) => perms[Number(permId)])
+              .map((permId) => ({ Id: Number(permId) })),
+          })
+        ),
+      }));
+
       const payload = {
         Code: data.Code,
         Name: data.Name,
         Description: data.Description,
-        Functions: functionsToSubmit,
+        Projects: projectsToSubmit,
       };
-      await updateRole({ id: roleId, ...payload }).unwrap();
+
+      const updatedRole = await updateRole({ id: roleId, ...payload }).unwrap();
+
       toast.success("Cập nhật vai trò thành công!");
       reset();
       onClose();
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(updatedRole);
     } catch (error) {
       console.error("Failed to update role:", error);
       toast.error("Cập nhật vai trò thất bại!");
     }
   };
+
   const handleCancel = () => {
+    if (originalRole) {
+      reset(originalRole);
+    }
+    if (roleData) {
+      const tabsFromRole = mapRoleDataToTabs(roleData.Data.Projects, permissions);
+      setTabs(tabsFromRole);
+      setActive(tabsFromRole.length ? tabsFromRole[0].Id : "");
+    }
     onClose();
-    reset();
   };
+  
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[1200px] mt-10">
+      <DialogContent className="sm:max-w-[900px] mt-10"
+      onInteractOutside={(e) => e.preventDefault()}
+      onEscapeKeyDown={(e) => e.preventDefault()}  
+      >
         <DialogHeader>
           <DialogTitle>Cập nhật vai trò</DialogTitle>
         </DialogHeader>
@@ -211,47 +303,161 @@ export default function UpdateRoleModal({
               )}
             </div>
             <Label>Phân quyền</Label>
-            <div className="rounded border max-h-[500px] overflow-auto scrollbar-hide">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-100 sticky top-0">
-                  <tr>
-                    <th className="p-2 text-left border">Chức năng</th>
-                    {permissions.map((perm: Permission) => (
-                      <th key={perm.Id} className="p-2 text-center border">
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="capitalize">{perm.Name}</span>
-                          <Checkbox
-                            checked={!!selectAll[perm.Id]}
-                            onCheckedChange={() => handleToggleAll(perm.Id)}
-                          />
+            <Tabs value={active} onValueChange={setActive}>
+              <div className="flex items-center">
+                <TabsList>
+                  <div className="flex items-center">
+                    <TabsList>
+                      {tabs.map((tab) => (
+                        <div key={tab.Id} className="flex items-center">
+                          <TabsTrigger
+                            value={tab.Id}
+                            className="flex items-center"
+                          >
+                            {projects
+                              .find((p) => p.Id === tab.projectId)
+                              ?.Name.slice(0, 20) }
+                            <span
+                              className="ml-2 hover:text-destructive cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              
+                                setTabs((prev) => {
+                                  const newTabs = prev.filter((t) => t.Id !== tab.Id);
+                              
+                                  if (active === tab.Id) {
+                                    setActive(newTabs.length ? newTabs[0].Id : "");
+                                  }
+                              
+                                  return newTabs;
+                                });
+                              }}
+                              
+                            >
+                              <X size={14} />
+                            </span>
+                          </TabsTrigger>
                         </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {functions.map((func: Function) => (
-                    <tr key={func.Id} className="border-t">
-                      <td className="p-2 border">
-                        <b>{func.Code}</b> <br /> {func.Name}
-                      </td>
-                      {permissions.map((perm: Permission) => (
-                        <td key={perm.Id} className="text-center border">
-                          <Checkbox
-                            checked={
-                              selectedPermissions[func.Id]?.[perm.Id] || false
-                            }
-                            onCheckedChange={() =>
-                              handleToggle(func.Id, perm.Id)
-                            }
-                          />
-                        </td>
                       ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    </TabsList>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="ml-2"
+                      onClick={() => {
+                        const usedIds = tabs.map((t) => t.projectId);
+                        const availableProjects = projects.filter((p) => !usedIds.includes(p.Id));
+                      
+                        if (availableProjects.length === 0) {
+                          toast.warning("Không còn dự án nào để thêm");
+                          return;
+                        }
+                      
+                        const newProject = availableProjects[0];
+                        const newId = Date.now().toString(); 
+                      
+                        setTabs((prev) => [
+                          ...prev,
+                          {
+                            Id: newId,
+                            projectId: newProject.Id,
+                            permissions: {},
+                          },
+                        ]);
+                      
+                        setActive(newId);
+                      }}
+                    >
+                      + Tab
+                    </Button>
+                  </div>
+                </TabsList>
+              </div>
+
+              {tabs.map((tab) => {
+                const project = projects.find((p) => p.Id === tab.projectId);
+                const functions = project?.Functions || [];
+
+                return (
+                  <TabsContent
+                    key={tab.Id}
+                    value={tab.Id}
+                    className="mt-4 max-h-45 overflow-auto scrollbar-hide"
+                  >
+                    <Select
+                      value={String(tab.projectId)}
+                      onValueChange={(val) =>
+                        chooseProject(tab.Id, Number(val))
+                      }
+                    >
+                      <SelectTrigger className="w-[200px] mb-4">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {projects.map((p) => (
+                          <SelectItem key={p.Id} value={String(p.Id)}>
+                            {p.Name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <table className="w-full text-sm border">
+                      <thead className="bg-gray-100 sticky top-[-2px]">
+                        <tr>
+                          <th className="p-2 text-left border">Chức năng</th>
+                          {permissions.map((perm) => (
+                            <th
+                              key={perm.Id}
+                              className="p-2 text-center border"
+                            >
+                              <div className="flex flex-col items-center gap-1">
+                                <span>{perm.Name}</span>
+                                <Checkbox
+                                  checked={
+                                    functions.length > 0 &&
+                                    functions.every(
+                                      (f) => tab.permissions[f.Id]?.[perm.Id]
+                                    )
+                                  }
+                                  onCheckedChange={() =>
+                                    handleToggleAll(tab.Id, perm.Id)
+                                  }
+                                />
+                              </div>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {functions.map((func: Function) => (
+                          <tr key={func.Id} className="border-t">
+                            <td className="p-2 border">
+                              <b>{func.Code}</b>
+                              <br /> {func.Name}
+                            </td>
+                            {permissions.map((perm) => (
+                              <td key={perm.Id} className="text-center border">
+                                <Checkbox
+                                  checked={
+                                    tab.permissions[func.Id]?.[perm.Id] || false
+                                  }
+                                  onCheckedChange={() =>
+                                    togglePermission(tab.Id, func.Id, perm.Id)
+                                  }
+                                />
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+
             <DrawerFooter className="flex justify-end gap-2 flex-row p-0">
               <Button
                 type="button"

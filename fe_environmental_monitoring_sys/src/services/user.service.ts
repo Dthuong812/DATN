@@ -60,6 +60,20 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+    lockUser: builder.mutation({
+      query: (id) => ({
+        url: `/auth/lock-user/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+    unlockUser: builder.mutation({
+      query: (id) => ({
+        url: `/auth/unlock-user/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 export const {
@@ -69,4 +83,7 @@ export const {
     useUpdateUserMutation,
     useDeleteUserMutation,
     useImportUsersMutation,
+    useLazyGetUserByIdQuery,
+    useLockUserMutation,
+    useUnlockUserMutation
 } = usersApi;

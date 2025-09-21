@@ -18,10 +18,10 @@ import UpdateRoleModal from "./UpdateRoleModal";
 
 export default function AssignRoleComponent() {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const { data, isFetching, refetch } = useGetRolesQuery({});
   const roles = data?.Data || [];
-  const totalRoles = data?.total || 0;
+  const totalRoles = roles.length;
   const totalPages = Math.ceil(totalRoles / itemsPerPage);
   const displayedRoles = roles.slice(
     (currentPage - 1) * itemsPerPage,
@@ -54,7 +54,6 @@ export default function AssignRoleComponent() {
             <TableHead>Mã vai trò</TableHead>
             <TableHead>Tên vai trò</TableHead>
             <TableHead>Mô tả</TableHead>
-            <TableHead>Số lượng</TableHead>
             <TableHead>Hành động</TableHead>
           </TableRow>
         </TableHeader>
@@ -71,7 +70,6 @@ export default function AssignRoleComponent() {
                   ? role.Description.slice(0, 50) + "..."
                   : role.Description}
               </TableCell>
-              <TableCell>{role.TotalUser}</TableCell>
               <TableCell className="space-x-2">
                 <Button variant="outline" size="icon"
                   className="cursor-pointer"

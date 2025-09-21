@@ -58,5 +58,6 @@ export const {
     useAddProjectMutation,
     useUpdateProjectMutation,
     useDeleteProjectMutation,
-    useGetProjectByIdQuery
+    useGetProjectByIdQuery,
+    useLazyGetProjectByIdQuery
 } = projectsApi;    

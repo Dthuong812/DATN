@@ -39,7 +39,6 @@ export const roleApi = createApi({
         url: `/roles/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Role"],
     }),
     createRole: builder.mutation({
       query: (newRole) => ({
@@ -57,4 +56,5 @@ export const {
   useUpdateRoleMutation,
   useDeleteRoleMutation,
   useCreateRoleMutation,
+  useLazyGetRoleByIdQuery,
 } = roleApi;

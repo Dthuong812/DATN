@@ -8,7 +8,19 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "../ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect, useMemo, useState } from "react";
+
 import type {
   Department,
   Function,
@@ -18,20 +30,9 @@ import type {
   Role,
   UserFormValue,
 } from "@/types/types";
+
 import { useGetOrganizationsQuery } from "@/services/organization.service";
 import { useGetDepartmentsQuery } from "@/services/department.service";
-import { useAddUserMutation } from "@/services/user.service";
-import { Checkbox } from "../ui/checkbox";
-import { Eye, EyeOff, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { useGetPermissionsQuery } from "@/services/permission.service";
 import { useGetFunctionsQuery } from "@/services/function.service";
 import {
@@ -39,11 +40,16 @@ import {
   useLazyGetRoleByIdQuery,
 } from "@/services/role.service";
 import { useLazyGetProjectByIdQuery } from "@/services/project.service";
+import {
+  useUpdateUserMutation,
+  useLazyGetUserByIdQuery,
+} from "@/services/user.service";
 
-interface AddUserModalProps {
+interface UpdateUserModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  userId: number;
 }
 interface Tab {
   Id: string;
@@ -53,11 +59,12 @@ interface Tab {
   rolePermissions: Record<number, Record<number, boolean>>;
 }
 
-export default function AddUserModal({
+export default function UpdateUserModal({
   open,
   onClose,
   onSuccess,
-}: AddUserModalProps) {
+  userId,
+}: UpdateUserModalProps) {
   const [active, setActive] = useState("tab-1");
   const {
     register,
@@ -65,31 +72,14 @@ export default function AddUserModal({
     reset,
     control,
     formState: { errors },
-  } = useForm<UserFormValue>({
-    defaultValues: {
-      PassWord: "Eco@12312345",
-    },
-  });
+  } = useForm<UserFormValue>();
+
   const [showPassWord, setShowPassWord] = useState(false);
 
-  const selectedOrgId = useWatch({
-    control,
-    name: "Organization_Id",
-  });
-  const [fetchRoleById] = useLazyGetRoleByIdQuery();
-  const [fetchProjectById] = useLazyGetProjectByIdQuery();
   const { data: listOrgs } = useGetOrganizationsQuery({});
-  const org = listOrgs?.Data;
-
-  const projects =
-    org?.find((o: Organization) => o.Id === Number(selectedOrgId))?.Projects ||
-    [];
-
+  const org = listOrgs?.Data || [];
   const { data: listDep } = useGetDepartmentsQuery({});
   const depData = listDep?.Data?.data || [];
-  const dep = depData.filter(
-    (d: Department) => d.Organization_Id === Number(selectedOrgId)
-  );
 
   const { data: listPermissions } = useGetPermissionsQuery({});
   const permissions: Permission[] = useMemo(
@@ -105,9 +95,28 @@ export default function AddUserModal({
     [listFunctions]
   );
 
+  const [fetchRoleById] = useLazyGetRoleByIdQuery();
+  const [fetchProjectById] = useLazyGetProjectByIdQuery();
+  const [fetchUserById] = useLazyGetUserByIdQuery();
+
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
+
+  const selectedOrgId = useWatch({
+    control,
+    name: "Organization_Id",
+  });
+
+  const projects =
+    org?.find((o: Organization) => o.Id === Number(selectedOrgId))?.Projects ||
+    [];
+
+  const dep = depData.filter(
+    (d: Department) => d.Organization_Id === Number(selectedOrgId)
+  );
+
   const initPermissions = (projectId: number) => {
     const perms: Record<number, Record<number, boolean>> = {};
-    const funcs = functions.filter((f) => f.Id === projectId);
+    const funcs = functions.filter((f) => f.ProjectId === projectId);
     funcs.forEach((func) => {
       perms[func.Id] = {};
       permissions.forEach((perm) => {
@@ -116,21 +125,12 @@ export default function AddUserModal({
     });
     return perms;
   };
+
   const [projectFunctions, setProjectFunctions] = useState<
     Record<number, Function[]>
   >({});
-  const [tabs, setTabs] = useState<Tab[]>(() => {
-    if (projects.length === 0) return [];
-    const defaultCompany = projects[0].Id;
-    return [
-      {
-        Id: "1",
-        projectId: defaultCompany,
-        permissions: initPermissions(defaultCompany),
-        rolePermissions: {},
-      },
-    ];
-  });
+  const [tabs, setTabs] = useState<Tab[]>([]);
+
   useEffect(() => {
     const fetchFunctions = async () => {
       for (const tab of tabs) {
@@ -149,6 +149,66 @@ export default function AddUserModal({
       fetchFunctions();
     }
   }, [tabs]);
+
+  useEffect(() => {
+    if (open && userId) {
+      fetchUserById(userId)
+        .unwrap()
+        .then((res) => {
+          const user = res?.Data;
+          if (!user) return;
+
+          reset({
+            FullName: user.FullName,
+            UserName: user.UserName,
+            Email: user.Email,
+            Phone: user.Phone,
+            Organization_Id: user.Organization_Id,
+            Department_Id: user.Department_Id,
+            PassWord: user.PassWord,
+          });
+
+          const newTabs: Tab[] = user.Projects.map((proj, idx) => {
+            const perms = initPermissions(proj.Id);
+            const rolePerms = initPermissions(proj.Id);
+
+            let roleId: number | undefined;
+            if (proj.Roles?.length) {
+              const role = proj.Roles[0];
+              roleId = role.Id;
+              role.Functions.forEach((f: Function) => {
+                if (!perms[f.Id]) perms[f.Id] = {};
+                if (!rolePerms[f.Id]) rolePerms[f.Id] = {};
+                f.Permissions.forEach((p: Permission) => {
+                  perms[f.Id][p.Id] = true;
+                  rolePerms[f.Id][p.Id] = true;
+                });
+              });
+            }
+
+            proj.UserFunctions?.forEach((f: Function) => {
+              if (!perms[f.Id]) perms[f.Id] = {};
+              f.Permissions.forEach((p: Permission) => {
+                perms[f.Id][p.Id] = true;
+              });
+            });
+
+            return {
+              Id: String(idx + 1),
+              projectId: proj.Id,
+              roleId,
+              permissions: perms,
+              rolePermissions: rolePerms,
+            };
+          });
+
+          setTabs(newTabs);
+          if (newTabs.length) setActive(newTabs[0].Id);
+        })
+        .catch(() => toast.error("Không tải được thông tin người dùng"));
+    }
+  }, [open, userId]);
+
   const chooseProject = (tabId: string, projectId: number) => {
     setTabs((prev) =>
       prev.map((t) =>
@@ -197,7 +257,6 @@ export default function AddUserModal({
       })
     );
   };
-  const [addUser, { isLoading }] = useAddUserMutation();
 
   const onSubmit = async (data: UserFormValue) => {
     try {
@@ -222,8 +281,8 @@ export default function AddUserModal({
           }),
         })),
       };
-      await addUser(payload).unwrap();
-      toast.success("Thêm người dùng thành công");
+      await updateUser({ id: userId, ...payload }).unwrap();
+      toast.success("Cập nhật người dùng thành công");
       reset();
       onSuccess();
       onClose();
@@ -237,11 +296,12 @@ export default function AddUserModal({
     setTabs([]);
     onClose();
   };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[1000px] p-6 mt-10">
         <DialogHeader>
-          <DialogTitle>Thêm người dùng</DialogTitle>
+          <DialogTitle>Cập nhật người dùng</DialogTitle>
         </DialogHeader>
 
         <form
@@ -259,7 +319,6 @@ export default function AddUserModal({
               <p className="text-sm text-red-600">{errors.FullName.message}</p>
             )}
           </div>
-
           <div className="flex gap-4 w-full">
             <div className="grid gap-2 w-full">
               <Label htmlFor="UserName">Tên đăng nhập</Label>
@@ -270,11 +329,6 @@ export default function AddUserModal({
                   required: "Tên đăng nhập không được bỏ trống",
                 })}
               />
-              {errors.UserName && (
-                <p className="text-sm text-red-600">
-                  {errors.UserName.message}
-                </p>
-              )}
             </div>
 
             <div className="grid gap-2 w-full">
@@ -283,11 +337,8 @@ export default function AddUserModal({
                 <Input
                   id="PassWord"
                   type={showPassWord ? "text" : "password"}
-                  placeholder="Nhập mật khẩu"
-                  {...register("PassWord", {
-                    required: "Mật khẩu không được bỏ trống",
-                  })}
-                  className="pr-10"
+                  {...register("PassWord")}
+                  className="pr-9"
                 />
                 <button
                   type="button"
@@ -301,11 +352,6 @@ export default function AddUserModal({
                   )}
                 </button>
               </div>
-              {errors.PassWord && (
-                <p className="text-sm text-red-600">
-                  {errors.PassWord.message}
-                </p>
-              )}
             </div>
           </div>
           <div className="flex gap-4 w-full">
@@ -313,19 +359,14 @@ export default function AddUserModal({
               <Label htmlFor="Email">Email</Label>
               <Input
                 id="Email"
-                placeholder="Nhập Emai"
+                placeholder="Nhập Email"
                 {...register("Email", {
-                  required: "Emai không được bỏ trống",
+                  required: "Email không được bỏ trống",
                 })}
               />
-              {errors.Email && (
-                <p className="text-sm text-red-600">
-                  {errors.Email.message}
-                </p>
-              )}
             </div>
             <div className="grid gap-2 w-full">
-              <Label htmlFor="Phone"></Label>
+              <Label htmlFor="Phone">Số điện thoại</Label>
               <Input
                 id="Phone"
                 placeholder="Nhập số điện thoại"
@@ -333,23 +374,14 @@ export default function AddUserModal({
                   required: "Số điện thoại không được bỏ trống",
                 })}
               />
-              {errors.Phone && (
-                <p className="text-sm text-red-600">
-                  {errors.Phone.message}
-                </p>
-              )}
             </div>
-
           </div>
-
           <div className="flex gap-4 w-full">
             <div className="grid gap-2 w-full">
               <Label htmlFor="Organization_Id">Chọn tổ chức</Label>
               <select
                 id="Organization_Id"
-                {...register("Organization_Id", {
-                  valueAsNumber: true,
-                })}
+                {...register("Organization_Id", { valueAsNumber: true })}
                 className="flex h-9 w-full rounded-md border px-3 py-2 text-sm"
               >
                 <option value="">-- Chọn tổ chức --</option>
@@ -365,10 +397,7 @@ export default function AddUserModal({
               <Label htmlFor="Department_Id">Chọn phòng ban</Label>
               <select
                 id="Department_Id"
-                // {...register("Department_Id", {
-                //   required: "Vui lòng chọn phòng ban",
-                //   valueAsNumber: true,
-                // })}
+                {...register("Department_Id", { valueAsNumber: true })}
                 className="flex h-9 w-full rounded-md border px-3 py-2 text-sm"
               >
                 <option value="">-- Chọn phòng ban --</option>
@@ -380,6 +409,7 @@ export default function AddUserModal({
               </select>
             </div>
           </div>
+          {/* Tabs phân quyền */}
           <Label>Phân quyền</Label>
           <Tabs value={active} onValueChange={setActive}>
             <div className="flex items-center">
@@ -387,8 +417,8 @@ export default function AddUserModal({
                 {tabs.map((tab) => (
                   <div key={tab.Id} className="flex items-center">
                     <TabsTrigger value={tab.Id}>
-                      {projects.find((p:Project) => p.Id === tab.projectId)?.Name.slice(0,20) ||
-                        "Chưa chọn dự án"}
+                      {projects.find((p: Project) => p.Id === tab.projectId)
+                        ?.Name || "Chưa chọn dự án"}
                       <span
                         className="ml-2 cursor-pointer"
                         onClick={(e) => {
@@ -414,7 +444,7 @@ export default function AddUserModal({
                 onClick={() => {
                   const usedIds = tabs.map((t) => t.projectId);
                   const available = projects.filter(
-                    (p:Project) => !usedIds.includes(p.Id)
+                    (p: Project) => !usedIds.includes(p.Id)
                   );
                   if (!available.length) {
                     toast.warning("Không còn dự án nào để thêm");
@@ -521,7 +551,7 @@ export default function AddUserModal({
                     </Select>
                   </div>
 
-                  <div className="overflow-x-auto max-h-[230px] scrollbar-hide mb-2 ">
+                  <div className="overflow-x-auto max-h-[230px] scrollbar-hide mb-2">
                     <table className="w-full text-sm border">
                       <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
@@ -534,7 +564,7 @@ export default function AddUserModal({
                               <div className="flex flex-col items-center gap-1">
                                 <span>{perm.Name}</span>
                                 <Checkbox
-                                  checked={functions.every(
+                                  checked={funcs.every(
                                     (f) => tab.permissions[f.Id]?.[perm.Id]
                                   )}
                                   onCheckedChange={() =>
@@ -581,7 +611,6 @@ export default function AddUserModal({
               );
             })}
           </Tabs>
-
           <div className="flex justify-end gap-2">
             <Button
               className="cursor-pointer"
@@ -596,7 +625,7 @@ export default function AddUserModal({
               disabled={isLoading}
               className="bg-green-800 hover:bg-green-700 cursor-pointer"
             >
-              {isLoading ? "Đang lưu..." : "Lưu"}
+              {isLoading ? "Đang lưu..." : "Cập nhật"}
             </Button>
           </div>
         </form>

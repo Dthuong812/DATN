@@ -11,10 +11,10 @@ export default function DeleteRoleButton({
     id: number;
     refetch: () => void;
   }) {
-    const [deleteProject] = useDeleteRoleMutation();
+    const [deleteRole] = useDeleteRoleMutation();
     const handleDelete = async () => {
       try {
-        const res = await deleteProject(id).unwrap();
+        const res = await deleteRole(id).unwrap();
         if (res.Status === 1) {
           toast.success("Xoá thành công!");
           refetch();
