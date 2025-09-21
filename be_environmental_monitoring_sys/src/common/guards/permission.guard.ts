@@ -22,8 +22,7 @@ export class PermissionGuard implements CanActivate {
       return false; 
     }
 
-    // Nếu là admin → cho qua
-    if (Array.isArray(user.RoleCode) && user.RoleCode.includes("ROLE_ADMIN")) {
+    if (Array.isArray(user.RoleCode) && user.RoleCode.includes("SUPPER_ADMIN")) {
       return true;
     }
 

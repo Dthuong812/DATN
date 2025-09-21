@@ -1,3 +1,4 @@
+import { Function } from './../../../../../../fe_environmental_monitoring_sys/src/types/types';
 import { ApiProperty } from "@nestjs/swagger";
 import {
   IsArray,
@@ -18,6 +19,22 @@ export class RolesDto {
   Description: string;
   CreatedAt: Date;
 }
+export class ProjectsDto{
+  @ApiProperty({ required: false })
+  @IsOptional()
+  Id?: number;
+  Name?: string;
+  Code?: string;
+  Description: string;
+  @ApiProperty({
+    description: "Danh sách chức năng",
+    type: () => [FunctionsDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FunctionsDto)
+  Functions?: FunctionsDto[];
+}
 
 export class PayloadCreateRoleDto {
   @ApiProperty({ description: "Mã code" })
@@ -31,15 +48,14 @@ export class PayloadCreateRoleDto {
   @ApiProperty({ description: "Mô tả vai trò" })
   @IsOptional()
   Description: string;
-
   @ApiProperty({
-    description: "Danh sách chức năng",
-    type: () => [FunctionsDto],
+    description: "Danh sách dự án",
+    type: () => [ProjectsDto],
   })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => FunctionsDto)
-  Functions?: FunctionsDto[];
+  @Type(() => ProjectsDto)
+  Projects?: ProjectsDto[];
 
   @IsOptional()
   @Type(() => Date)
@@ -62,11 +78,11 @@ export class PayloadUpdateRoleDto {
   Description: string;
 
   @ApiProperty({
-    description: "Danh sách chức năng",
-    type: () => [FunctionsDto],
+    description: "Danh sách dự án",
+    type: () => [ProjectsDto],
   })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => FunctionsDto)
-  Functions?: FunctionsDto[];
+  @Type(() => ProjectsDto)
+  Projects?: ProjectsDto[];
 }

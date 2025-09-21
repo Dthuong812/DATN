@@ -4,4 +4,5 @@ export class UserRoleAssignmentsDto {
     RoleId: number;
     CreatedBy: number;
     Organization_Id: number;
+    ProjectId?: number;
 }

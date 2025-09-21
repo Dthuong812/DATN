@@ -9,4 +9,7 @@ export class UserRoleAssignmentsEntity {
     RoleId?: number;
     @Column("int",{ nullable: true })
     Organization_Id?: number
+    @Column("int",{ nullable: true })
+    ProjectId?: number
+
 }

@@ -1,3 +1,4 @@
+import { MessagePattern } from '@nestjs/microservices';
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ProjectService } from "../Application/Services/ProjectService";
@@ -9,6 +10,7 @@ import { EnumQuyen } from "src/common/EnumQuyen";
 @Controller("project")
 export class ProjectController {
   constructor(private readonly ProjectService: ProjectService) {}
+  @MessagePattern('message_getAll_projects')
   @Get()
   async getAllProjects() {
     return this.ProjectService.getAll();

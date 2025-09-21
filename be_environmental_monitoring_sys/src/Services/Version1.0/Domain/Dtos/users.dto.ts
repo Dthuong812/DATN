@@ -1,3 +1,7 @@
+import {
+  Project,
+  FuncPers,
+} from "./../../../../../../fe_environmental_monitoring_sys/src/types/types";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
@@ -14,6 +18,7 @@ import {
 } from "class-validator";
 import { UserRoleAssignmentsDto } from "./user_role_assignments.dto";
 import { RolesDto } from "./roles.dto";
+import { FunctionsDto } from "./functions.dto";
 
 export class UserDto {
   Id: number;
@@ -24,7 +29,7 @@ export class UserDto {
   Phone: string;
   ChangePasswordAt: Date;
   Organization_Id: number;
-  Department_id: Number;
+  Department_id?: Number;
   Active: number;
   CreatedBy: number;
   CreatedAt: Date;
@@ -33,6 +38,31 @@ export class UserDto {
   DeletedAt?: Date;
 }
 
+export class ProjectUserDto {
+  @ApiProperty({ description: "Dự án" })
+  @IsNotEmpty()
+  @IsNumber()
+  ProjectId: number;
+  @ApiProperty({ type: [RolesDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RolesDto)
+  Roles: RolesDto[];
+}
+export class FuncPersUserDto {
+  @ApiProperty({ description: "Dự án" })
+  @IsNotEmpty()
+  @IsNumber()
+  ProjectId: number;
+  @ApiProperty({
+    description: "Danh sách chức năng",
+    type: () => [FunctionsDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FunctionsDto)
+  Functions?: FunctionsDto[];
+}
 export class PayLoadCreateUserDto {
   @ApiProperty({ description: "Tên đăng nhập" })
   @IsNotEmpty()
@@ -85,11 +115,17 @@ export class PayLoadCreateUserDto {
   @IsNotEmpty()
   CreatedAt?: Date = new Date();
 
-  @ApiProperty({ type: [RolesDto] })
+  @ApiProperty({ type: [ProjectUserDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => RolesDto)
-  UserRoles: RolesDto[];
+  @Type(() => ProjectUserDto)
+  Projects: ProjectUserDto[];
+
+  @ApiProperty({ type: [FuncPersUserDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FuncPersUserDto)
+  FuncPers: FuncPersUserDto[];
 }
 export class PayLoadUpdateUserDto {
   @ApiProperty({ description: "Tên đăng nhập" })
@@ -131,6 +167,7 @@ export class PayLoadUpdateUserDto {
 
   @ApiProperty({ description: "Trạng thái hoạt động" })
   @IsNotEmpty()
+  @IsOptional()
   Active: number;
 
   @IsOptional()
@@ -143,11 +180,18 @@ export class PayLoadUpdateUserDto {
   @IsDate()
   UpdatedAt?: Date = new Date();
 
-  @ApiProperty({ type: [RolesDto] })
+
+  @ApiProperty({ type: [ProjectUserDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => RolesDto)
-  UserRoles: RolesDto[];
+  @Type(() => ProjectUserDto)
+  Projects: ProjectUserDto[];
+
+  @ApiProperty({ type: [FuncPersUserDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FuncPersUserDto)
+  FuncPers: FuncPersUserDto[];
 }
 export class ResetPasswordDto {
   @ApiProperty({ required: false })

@@ -3,5 +3,6 @@ export class RoleFunctionPermissionDto {
     RoleId: number;
     FunctionId: number;
     PermissionId: number;
+    ProjectId:number;
     Allow:number;
 }

@@ -1,3 +1,4 @@
+import { ProjectOrganizationRepository } from './../../Infrastructure/Repository/ProjectOrganizationRepository';
 import { Inject, Injectable } from "@nestjs/common";
 import { ProjectEntity } from "../../Domain/Models/project.entity";
 import { CreateProjectDto, ProjectDto } from "../../Domain/Dto/project.dto";
@@ -14,6 +15,7 @@ import { Mapper } from "../../Domain/Mapper/Mapper";
 export class ProjectService extends CoreServiceBase<ProjectEntity, ProjectDto> {
   constructor(
     private readonly ProjectRepository: ProjectRepository,
+    private readonly ProjectOrganizationRepository: ProjectOrganizationRepository,
     @Inject("app") private client: ClientProxy,
     @Inject(REQUEST) readonly request: Request
   ) {
@@ -29,6 +31,7 @@ export class ProjectService extends CoreServiceBase<ProjectEntity, ProjectDto> {
         return res;
       }
       await this.client.emit("delete_project_function", { ProjectId: Id });
+      await this.ProjectOrganizationRepository.delete({ ProjectId: Id });
       await this.ProjectRepository.delete({ Id });
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";
@@ -127,4 +130,34 @@ export class ProjectService extends CoreServiceBase<ProjectEntity, ProjectDto> {
     }
     return res;
   }
+  async getAll(): Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+  
+    try {
+      const projects = await this.ProjectRepository.getAll();
+      const projectsWithFunctions = [];
+      for (const project of projects) {
+        const functions = await lastValueFrom(
+          this.client.send("get_project_function_by_project_id", {
+            ProjectId: project.Id,
+          })
+        );
+  
+        projectsWithFunctions.push({
+          ...project,
+          Functions: functions.Data ?? [], 
+        });
+      }
+  
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Xử lí thành công";
+      res.Data = projectsWithFunctions;
+    } catch (error) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = error.message;
+    }
+  
+    return res;
+  }
+  
 }

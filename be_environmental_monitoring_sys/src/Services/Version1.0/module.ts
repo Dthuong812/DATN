@@ -44,6 +44,8 @@ import { ProjectFunctionController } from './Api/ProjectFuntionsController';
 import { ProjectFunctionsService } from './Application/Services/ProjectFunctionsService';
 import { ProjectFunctionsRepository } from './Infrastructure/Repository/ProjectFunctionsRepository';
 import { ProjectFunctionsDao } from './Infrastructure/Dao/ProjectFuntionsDao';
+import { UserFunctionPermissionDao } from './Infrastructure/Dao/UserFunctionPermissionDao';
+import { UserFunctionPermissionRepository } from './Infrastructure/Repository/UserFunctionPermissionRepository';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -133,6 +135,8 @@ import { ProjectFunctionsDao } from './Infrastructure/Dao/ProjectFuntionsDao';
     ProjectFunctionsService,
     ProjectFunctionsRepository,
     ProjectFunctionsDao,
+    UserFunctionPermissionRepository,
+    UserFunctionPermissionDao,
 
     {
       provide: APP_GUARD,

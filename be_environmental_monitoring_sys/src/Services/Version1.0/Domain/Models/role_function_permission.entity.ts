@@ -10,6 +10,8 @@ export class RoleFunctionPermissionEntity {
     FunctionId: number;
     @Column({ type: 'int' })
     PermissionId: number;
+    @Column({type:"int"})
+    ProjectId: number;
     @Column("tinyint", { default: () => "'0'" })
     Allowed: boolean;
 }

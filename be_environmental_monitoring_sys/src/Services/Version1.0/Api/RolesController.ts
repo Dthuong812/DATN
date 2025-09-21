@@ -32,15 +32,13 @@ export class RolesController {
   async deleteRole(@Param("Id") Id: number) {
     return await this.RolesService.deleteRole(Id);
   }
-
   @Get("")
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Lấy danh sách vai trò" })
   @RequirePermission({ Func: "FUNC_ROLE", Permission: EnumQuyen.READ })
   async getAllRoles() {
     return await this.RolesService.getAllRoles();
-  } 
-
+  }
   @Get("/:Id")
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Lấy thông tin vai trò theo Id" })
