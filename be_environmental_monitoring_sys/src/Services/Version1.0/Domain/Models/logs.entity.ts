@@ -9,6 +9,9 @@ export class LogsEntity {
     LogTypeId?: number;
 
     @Column({ type: 'varchar', length: 50 })
+    Service? : string
+
+    @Column({ type: 'varchar', length: 50 })
     Action?: string;
 
     @Column({ type: 'varchar', length: 100 })

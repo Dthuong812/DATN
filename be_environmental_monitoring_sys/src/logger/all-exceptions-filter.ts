@@ -10,7 +10,9 @@ import {
   
   @Catch()
   export class AllExceptionsFilter implements ExceptionFilter {
-    constructor(private readonly logsService: LogsService) {}
+    constructor(private readonly logsService: LogsService,
+      private readonly serviceName: string
+    ) {}
   
     async catch(exception: unknown, host: ArgumentsHost) {
       const ctx = host.switchToHttp();
@@ -56,6 +58,7 @@ import {
   
       this.logsService.sendLog(
         LogTypeId.Loi_He_Thong,
+        this.serviceName,
         action,
         request.method as Method,
         typeof errorMessage === "string"

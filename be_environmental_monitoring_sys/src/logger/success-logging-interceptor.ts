@@ -12,7 +12,9 @@ import { LogsService } from "src/Services/Version1.0/Application/Services/LogsSe
 
 @Injectable()
 export class SuccessLoggingInterceptor implements NestInterceptor {
-  constructor(private readonly logsService: LogsService) {}
+  constructor(private readonly logsService: LogsService,
+    private readonly serviceName: string
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -36,6 +38,7 @@ export class SuccessLoggingInterceptor implements NestInterceptor {
 
         this.logsService.sendLog(
           LogTypeId.Xu_Ly_Thanh_Cong,
+          this.serviceName,
           action,
           request.method as Method,
           message,

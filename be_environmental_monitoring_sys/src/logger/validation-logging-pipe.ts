@@ -11,7 +11,9 @@ import { LogsService } from "src/Services/Version1.0/Application/Services/LogsSe
   
   @Injectable()
   export class ValidationLoggingPipe extends ValidationPipe {
-    constructor(private readonly logsService: LogsService) {
+    constructor(private readonly logsService: LogsService,
+      private readonly serviceName: string
+    ) {
       super({ whitelist: true, forbidNonWhitelisted: true });
     }
   
@@ -30,6 +32,7 @@ import { LogsService } from "src/Services/Version1.0/Application/Services/LogsSe
           const action = actionMap[request.method] || Action.READ;
           this.logsService.sendLog(
             LogTypeId.Loi_Nguoi_Dung_Nhap_Lieu,
+            this.serviceName,
             action,
             request.method as Method,
             "Dữ liệu nhập không hợp lệ",

@@ -1,3 +1,4 @@
+import { ServiceBase } from './../common/Services/ServiceBase';
 import {
     Injectable,
     NestInterceptor,
@@ -11,7 +12,9 @@ import {
   
   @Injectable()
   export class RequestLoggingInterceptor implements NestInterceptor {
-    constructor(private readonly logsService: LogsService) {}
+    constructor(private readonly logsService: LogsService,
+      private readonly serviceName: string
+    ) {}
   
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
       const request = context.switchToHttp().getRequest<Request>();
@@ -27,6 +30,7 @@ import {
         // Ghi log khi nhận request từ client
       this.logsService.sendLog(
         LogTypeId.REQUEST_TO_APP,
+        this.serviceName,
         action,
         request.method as Method,
         "Nhận request từ client",

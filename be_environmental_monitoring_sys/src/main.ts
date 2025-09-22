@@ -62,10 +62,10 @@ async function bootstrap() {
       credentials: false,
   });
   const logsService = app.get(LogsService);
-  app.useGlobalPipes(new ValidationLoggingPipe(logsService));
-  app.useGlobalFilters(new AllExceptionsFilter(logsService));
-  app.useGlobalInterceptors(new SuccessLoggingInterceptor(logsService));
-  app.useGlobalInterceptors(new RequestLoggingInterceptor(logsService));
+  app.useGlobalPipes(new ValidationLoggingPipe(logsService, 'Version1.0'));
+  app.useGlobalFilters(new AllExceptionsFilter(logsService, 'Version1.0'));
+  // app.useGlobalInterceptors(new SuccessLoggingInterceptor(logsService, 'Version1.0'));
+  app.useGlobalInterceptors(new RequestLoggingInterceptor(logsService, 'Version1.0'));
   
 
   //ver 2.0
@@ -88,6 +88,11 @@ async function bootstrap() {
   //   }
   // });
   await Version2.startAllMicroservices();
+  Version2.useGlobalFilters(new ValidationExceptionFilter(), new HttpExceptionFilter());
+  Version2.useGlobalFilters(new AllExceptionsFilter(logsService, 'Version2.0')); 
+  Version2.useGlobalInterceptors(new SuccessLoggingInterceptor(logsService, 'Version2.0')); 
+  // Version2.useGlobalInterceptors(new RequestLoggingInterceptor(logsService, 'Version2.0')); 
+  Version2.useGlobalPipes(new ValidationLoggingPipe(logsService, 'Version2.0')); 
   Version2.useGlobalFilters(new ValidationExceptionFilter(), new HttpExceptionFilter());
   Version2.enableCors({
       origin: '*',
