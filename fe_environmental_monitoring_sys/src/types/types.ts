@@ -231,3 +231,20 @@ export interface UserFormValue {
   Roles: number[];
 }
 
+export interface Log{
+  Id: number;
+  LogTypeId: number;
+  Service : string
+  Action: string;
+  Method: string;
+  Content: string;
+  Data: string;
+  CreatedAt: Date;
+  CreatedBy: number;
+  LogTypeName: string;
+}
+export interface LogResponse {
+  Status: number;
+  Message: string;
+  Data: Log[];
+}

@@ -3,14 +3,12 @@ import {
   Users,
   Settings,
   HelpCircle,
-  UtilityPole,
   ChartCandlestick,
-  FilePlus2,
   ScanEye,
   ChartColumnIncreasing,
   ChevronRight,
   ChevronLeft,
-  LocateIcon,
+  FolderOpenDot,
 } from "lucide-react";
 
 
@@ -27,13 +25,10 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const navItems = [
     { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
     { href: "/admin/realtime", label: "Giám sát", icon: ChartColumnIncreasing },
-    { href: "/admin/station", label: "Trạm cảm biến", icon: UtilityPole },
     { href: "/admin/sensors", label: "Thiết bị", icon: ChartCandlestick },
-    { href: "/admin/report", label: "Báo cáo", icon: FilePlus2 },
-    { href: "/admin/logs", label: "Logs", icon: ScanEye },
-    { href: "/admin/location", label: "Khu vực", icon: LocateIcon},
-    { href: "/admin/project_organization", label: "Dự án - Tổ chức", icon: Users },
+    { href: "/admin/project_organization", label: "Dự án - Tổ chức", icon: FolderOpenDot },
     { href: "/admin/user", label: "Người dùng", icon: Users },
+    { href: "/admin/logs", label: "Logs", icon: ScanEye },
 
   ];
 
@@ -71,7 +66,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
           <Link to={item.href} key={item.href}>
             <Button
               variant="ghost"
-              className={`w-full text-[16px] h-11 transition-all rounded-lg flex  items-center px-4 
+              className={`w-full text-[16px] h-11 transition-all rounded-lg flex  items-center px-4 !cursor-pointer 
                   ${isCollapsed ? "justify-center my-3" : "justify-start my-3"} 
                   ${
                     isActive(item.href)

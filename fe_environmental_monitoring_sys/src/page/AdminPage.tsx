@@ -14,7 +14,7 @@ export default function AdminPage() {
       <div className={isCollapsed ? "w-20" : "w-72"}>
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       </div>
-      <div className="flex-1 bg-gray-50 overflow-y-auto ">
+      <div className="flex-1 bg-gray-50 overflow-y-auto overflow-auto scrollbar-hide ">
         <Outlet context={{ isCollapsed } as AdminContextType} />
       </div>
     </div>
