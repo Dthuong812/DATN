@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsDate, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
 import { IsUnique } from "../../decorators/is-unique.decorator";
 import { ObjectEntity } from "../Models/object.entity";
 import { Type } from "class-transformer";
@@ -37,12 +37,15 @@ export class CreateObjectDto {
   Organization_Code: string;
   @ApiProperty({ description: "Trạng thái" })
   @IsNumber()
+  @Type(() => Number)
   Status: number;
   @ApiProperty({ description: "Vĩ độ" })
   @IsNumber()
+  @Type(() => Number)
   Latitude: number;
   @ApiProperty({ description: "Kinh độ" })
   @IsNumber()
+  @Type(() => Number)
   Longitude: number;
   @ApiProperty({
     description: "Thông tin chi tiết dạng json",
@@ -75,12 +78,15 @@ export class UpdateObjectDto {
   Organization_Code: string;
   @ApiProperty({ description: "Trạng thái" })
   @IsNumber()
+  @Type(() => Number)
   Status: number;
   @ApiProperty({ description: "Vĩ độ" })
   @IsNumber()
+  @Type(() => Number)
   Latitude: number;
   @ApiProperty({ description: "Kinh độ" })
   @IsNumber()
+  @Type(() => Number)
   Longitude: number;
   @ApiProperty({
     description: "Thông tin chi tiết dạng json",
@@ -94,4 +100,51 @@ export class UpdateObjectDto {
   @Type(() => Date)
   @IsDate()
   UpdatedAt?: Date = new Date();
+}
+export class FilterObjectDto {
+  @ApiProperty({ required: false, description: "page" })
+  @IsOptional()
+  page?: number;
+
+  @ApiProperty({ required: false, description: "pageSize" })
+  @IsOptional()
+  pageSize?: number;
+
+  @ApiProperty({ required: false, description: "Code" })
+  @IsOptional()
+  Code?: number;
+
+  @ApiProperty({ required: false, description: "Name" })
+  @IsOptional()
+  Name?: number;
+
+  @ApiProperty({ required: false, description: "Organization_Code" })
+  @IsOptional()
+  Organization_Code?: number;
+
+  @ApiProperty({ required: false, description: "Project_Code" })
+  @IsOptional()
+  Project_Code?: string;
+
+  @ApiProperty({ required: false, description: "Status" })
+  @IsOptional()
+  Status?: number;
+
+  @ApiProperty({ required: false, description: "Address" })
+  @IsOptional()
+  Address?: string;
+
+  @ApiProperty({ required: false, description: "Connection_Type" })
+  @IsOptional()
+  Connection_Type?: string;
+
+  @ApiProperty({ required: false, description: "Ngày cài đặt (YYYY-MM-DD)" })
+  @IsOptional()
+  @IsDateString()
+  Installation_Date?: string;
+
+  @ApiProperty({ required: false, description: "Ngày bảo trì (YYYY-MM-DD)" })
+  @IsOptional()
+  @IsDateString()
+  Last_Maintenance_Date?: string;
 }

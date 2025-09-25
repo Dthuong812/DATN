@@ -31,7 +31,7 @@ export class ProjectService extends CoreServiceBase<ProjectEntity, ProjectDto> {
         return res;
       }
       await this.client.emit("delete_project_function", { ProjectId: Id });
-      await this.ProjectOrganizationRepository.delete({ ProjectId: Id });
+      await this.ProjectOrganizationRepository.delete({ Project_Id: Id });
       await this.ProjectRepository.delete({ Id });
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xử lí thành công";

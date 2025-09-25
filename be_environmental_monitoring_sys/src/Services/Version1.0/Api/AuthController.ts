@@ -47,7 +47,6 @@ export class AuthController {
     @Body() payload: ChangePasswordDto,
     @GetCurrentUserId() authId: number
   ) {
-    console.log(authId);
     return await this.authService.ChangePassword(payload, authId);
   }
   @Public()

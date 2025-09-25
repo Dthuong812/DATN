@@ -31,10 +31,10 @@ export class DeviceEntity {
   @Column({ type: "json", nullable: true })
   Details_Data?: Record<string, any>;
 
-  @Column({ type: "decimal", precision: 11, scale: 8 })
+  @Column({ type: "double"})
   Latitude?: number;
 
-  @Column({ type: "decimal", precision: 11, scale: 8 })
+  @Column({ type: "double"})
   Longitude?: number;
 
   @Column("int", { nullable: true })

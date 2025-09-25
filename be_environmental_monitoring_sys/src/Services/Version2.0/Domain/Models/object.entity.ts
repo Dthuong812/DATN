@@ -25,10 +25,10 @@ export class ObjectEntity {
   @Column({ type: "int" })
   Status?: number;
 
-  @Column({ type: "decimal", precision: 11, scale: 8 })
+  @Column({ type: "double"})
   Latitude?: number;
 
-  @Column({ type: "decimal", precision: 11, scale: 8 })
+  @Column({ type: "double"})
   Longitude?: number;
 
   @Column({ type: "json", nullable: true })

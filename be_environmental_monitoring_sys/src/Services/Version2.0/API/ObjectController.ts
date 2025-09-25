@@ -1,9 +1,9 @@
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ObjectService } from "../Application/Services/ObjectService";
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
 import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
-import { CreateObjectDto, UpdateObjectDto } from "../Domain/Dto/object.dto";
+import { CreateObjectDto, FilterObjectDto, UpdateObjectDto } from "../Domain/Dto/object.dto";
 
 @ApiBearerAuth("JWT")
 @Controller("object")
@@ -14,8 +14,8 @@ export class ObjectController {
     @Get()
     @RequirePermission({ Func: "FUNC_OBJECT", Permission: EnumQuyen.READ })
     @ApiOperation({ summary: "Lấy tất cả đối tượng quan trắc" })
-    async getAll(){
-        return this.ObjectService.getAll();
+    async getAll(@Query() filter: FilterObjectDto){
+        return this.ObjectService.getAll(filter);
     }
 
     @Post()
@@ -23,6 +23,7 @@ export class ObjectController {
     @ApiOperation({ summary: "Tạo đối tượng quan trắc mới" })
     async createObject(@Body() payload: CreateObjectDto, @GetCurrentUserId() authId: number) {
         payload.CreatedBy = authId;
+        payload.Status = 2;
         return this.ObjectService.create( payload);
     }
 
