@@ -260,8 +260,9 @@ export default function UpdateUserModal({
 
   const onSubmit = async (data: UserFormValue) => {
     try {
+      const { PassWord, ...payloadWithoutPassword } = data;
       const payload = {
-        ...data,
+        ...payloadWithoutPassword,
         Projects: tabs.map((t) => ({
           ProjectId: t.projectId,
           Roles: t.roleId ? [{ Id: t.roleId }] : [],

@@ -2,28 +2,25 @@ import { Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { useDeleteDepartmentMutation } from "@/services/department.service";
+import { useDeleteObjectMutation } from "@/services/object.service";
 
-export default function DeleteDepartmentButton({
+export default function DeleteObjectButton({
     id,
-    refetch,
   }: {
     id: number;
-    refetch: () => void;
   }) {
-    const [deleteProject] = useDeleteDepartmentMutation();
+    const [deleteProject] = useDeleteObjectMutation();
     const handleDelete = async () => {
       try {
         const res = await deleteProject(id).unwrap();
         if (res.Status === 113) {
           toast.success("Xoá thành công!");
-          refetch();
         }
         else {
-          toast.error(res.Message || "Lỗi xoá dự án.");
+          toast.error(res.Message || "Lỗi xoá đối tượng.");
         }
       } catch {
-        toast.error("Lỗi xoá dự án.");
+        toast.error("Lỗi xoá đối tượng.");
       }
     };
   return (
@@ -35,9 +32,9 @@ export default function DeleteDepartmentButton({
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Bạn chắc chắn muốn xoá dự án này?</AlertDialogTitle>
+        <AlertDialogTitle>Bạn chắc chắn muốn xoá đối tượng này?</AlertDialogTitle>
         <AlertDialogDescription>
-          Hành động này không thể hoàn tác. Dữ liệu dự án và thông tin liên
+          Hành động này không thể hoàn tác. Dữ liệu đối tượng và thông tin liên
           quan sẽ bị xoá vĩnh viễn.
         </AlertDialogDescription>
       </AlertDialogHeader>

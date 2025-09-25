@@ -248,3 +248,42 @@ export interface LogResponse {
   Message: string;
   Data: Log[];
 }
+
+export interface Details_Value {
+  Address: string;
+  Installation_Date: Date;
+  Last_Maintenance_Date: Date;
+  Power_Supply: string;
+  Connection_Type: string;
+  Note : string;  
+}
+export interface Object{
+  Id: number;
+  Code: string;
+  Name: string;
+  Project_Code: string;
+  Organization_Code: string;
+  Status: number;
+  Latitude: number;
+  Longitude: number;
+  CreatedAt: Date;
+  CreatedBy: number;
+  UpdatedAt: Date;
+  UpdatedBy: number;
+  Details_Value: Details_Value
+}
+export interface ObjectResponse {
+  Status: number;
+  Message: string;
+  Data: Object[];
+}
+export interface ObjectFormValue {
+  Code: string;
+  Name: string;
+  Project_Code: string;
+  Organization_Code: string;
+  Status: number;
+  Latitude: number;
+  Longitude: number;
+  Details_Value: Details_Value
+}

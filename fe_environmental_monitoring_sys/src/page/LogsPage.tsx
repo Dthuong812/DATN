@@ -1,8 +1,10 @@
-import LogTable from "@/components/logs/LogTable";
+import LogTable from "@/components/log/LogTable";
 import { useGetLogsQuery } from "@/services/log.service";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function LogsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -99,7 +101,7 @@ export default function LogsPage() {
             <select
               value={filters.LogTypeId}
               onChange={(e) => handleFilterChange("LogTypeId", e.target.value)}
-              className="w-full rounded-xl border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-gray-50 focus:ring-2 focus:ring-gray-50 cursor-pointer"
+              className="w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-gray-50 focus:ring-2 focus:ring-gray-50 cursor-pointer"
             >
               <option value="">Tất cả loại log</option>
               <option value="1">Lỗi Hệ Thống</option>
@@ -114,12 +116,12 @@ export default function LogsPage() {
             <label className="mb-1 block text-sm font-medium text-gray-600">
               Method
             </label>
-            <input
+            <Input
               type="text"
               value={filters.Method}
               onChange={(e) => handleFilterChange("Method", e.target.value)}
               placeholder="Nhập Method"
-              className="w-full rounded-xl border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="w-full border-none bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             />
           </div>
 
@@ -127,13 +129,13 @@ export default function LogsPage() {
             <label className="mb-1 block text-sm font-medium text-gray-600">
               Ngày bắt đầu
             </label>
-            <input
+            <Input
               type="date"
               value={filters.startDate}
               onChange={(e) =>
                 handleDateChange("startDate", parseDate(e.target.value))
               }
-              className="w-full rounded-xl border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="w-full border-none  bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             />
           </div>
 
@@ -142,38 +144,38 @@ export default function LogsPage() {
             <label className="mb-1 block text-sm font-medium text-gray-600">
               Ngày kết thúc
             </label>
-            <input
+            <Input
               type="date"
               value={filters.endDate}
               onChange={(e) =>
                 handleDateChange("endDate", parseDate(e.target.value))
               }
-              className="w-full rounded-xl border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="w-full border-none  bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             />
           </div>
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button
-            onClick={clearFilters}
-            className="flex items-center gap-2 rounded-xl bg-green-700 px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-600 cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <Button
+              onClick={clearFilters}
+              className="bg-red-600 text-white hover:bg-red-700 cursor-pointer"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-            Xóa bộ lọc
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              Xóa bộ lọc
+            </Button>
         </div>
       </div>
       </div>

@@ -15,6 +15,7 @@ import HelpPage from "./page/HelpPage";
 import ProfilePage from "./page/ProfilePage";
 import { ForgotPasswordPage } from "./page/ForgotPassWordPage";
 import Project_Organization from "./page/Project_Organization";
+import ObjectPage from "./page/ObjectPage";
 
 
 
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
               {
                 path: "project_organization",
                 element: <Project_Organization/>,
+              },
+              {
+                path: "object",
+                element: <ObjectPage/>,
               },
         ]
       },
