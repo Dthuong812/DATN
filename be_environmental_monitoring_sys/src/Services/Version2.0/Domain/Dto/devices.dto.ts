@@ -101,3 +101,35 @@ export class UpdateDeviceDto {
   @IsDate()
   UpdatedAt?: Date = new Date();
 }
+
+
+export class FilterDeviceDto {
+  @ApiProperty({ required: false, description: "page" })
+  @IsOptional()
+  page?: number;
+
+  @ApiProperty({ required: false, description: "pageSize" })
+  @IsOptional()
+  pageSize?: number;
+
+  @ApiProperty({ description: "Mã Code thiết bị", required: false })
+  @IsOptional()
+  @IsString()
+  Code?: string;
+  @ApiProperty({ description: "Mã Code loại thiết bị", required: false })
+  @IsOptional()
+  @IsString()
+  DeviceType_Code?: string
+  @ApiProperty({ description: "Mã Code đối tượng", required: false })
+  @IsOptional()
+  @IsString()
+  Object_Code?: string
+  @ApiProperty({ description: "Tên thiết bị", required: false })
+  @IsOptional()
+  @IsString()
+  Name?: string;
+  @ApiProperty({ description: "Số series", required: false })
+  @IsOptional()
+  @IsString()
+  Series?: string
+}

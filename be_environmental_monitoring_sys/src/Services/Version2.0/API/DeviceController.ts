@@ -6,10 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { DeviceService } from "../Application/Services/DeviceService";
-import { CreateDeviceDto, UpdateDeviceDto } from "../Domain/Dto/devices.dto";
+import { CreateDeviceDto, FilterDeviceDto, UpdateDeviceDto } from "../Domain/Dto/devices.dto";
 import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
 
@@ -20,8 +21,8 @@ export class DeviceController {
   @Get()
   @ApiOperation({ summary: "Lấy tất cả thiết bị" })
   @RequirePermission({ Func: "FUNC_DEVICE", Permission: EnumQuyen.READ })
-  async getAllDevices() {
-    return this.DeviceService.getAll();
+  async getAllDevices(@Query() filter: FilterDeviceDto) {
+    return this.DeviceService.getAll(filter);
   }
 
   @Post()
