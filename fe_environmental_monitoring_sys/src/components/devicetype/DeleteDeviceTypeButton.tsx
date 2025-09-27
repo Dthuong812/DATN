@@ -2,28 +2,25 @@ import { Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { useDeleteDepartmentMutation } from "@/services/department.service";
+import { useDeleteDeviceTypeMutation } from "@/services/devicetype.service";
 
-export default function DeleteDepartmentButton({
+export default function DeleteDeviceTypeButton({
     id,
-    refetch,
   }: {
     id: number;
-    refetch: () => void;
   }) {
-    const [deleteDepartment] = useDeleteDepartmentMutation();
+    const [deleteDeviceType] = useDeleteDeviceTypeMutation();
     const handleDelete = async () => {
       try {
-        const res = await deleteDepartment(id).unwrap();
-        if (res.Status === 113) {
+        const res = await deleteDeviceType(id).unwrap();
+        if (res.Status === 1) {
           toast.success("Xoá thành công!");
-          refetch();
         }
         else {
-          toast.error(res.Message || "Lỗi xoá dự án.");
+          toast.error("Lỗi xoá loại thiết bị.");
         }
       } catch {
-        toast.error("Lỗi xoá dự án.");
+        toast.error("Lỗi xoá loại thiết bị.");
       }
     };
   return (
@@ -35,9 +32,9 @@ export default function DeleteDepartmentButton({
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Bạn chắc chắn muốn xoá dự án này?</AlertDialogTitle>
+        <AlertDialogTitle>Bạn chắc chắn muốn xoá loại thiết bị này?</AlertDialogTitle>
         <AlertDialogDescription>
-          Hành động này không thể hoàn tác. Dữ liệu dự án và thông tin liên
+          Hành động này không thể hoàn tác. Dữ liệu loại thiết bị và thông tin liên
           quan sẽ bị xoá vĩnh viễn.
         </AlertDialogDescription>
       </AlertDialogHeader>

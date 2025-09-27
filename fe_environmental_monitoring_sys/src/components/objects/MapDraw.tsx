@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import type { Object } from "@/types/types";
 import { Button } from "../ui/button";
-import { Wifi, X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface MapDrawProps {
   data: Object[];
@@ -85,7 +85,7 @@ export default function MapDraw({
                         ? "Không hoạt động"
                         : "Bảo trì"}
                     </p>
-                    <p><Wifi/>Kết nối: {obj.Details_Value?.Connection_Type || "N/A"}</p>
+                    <p>Kết nối: {obj.Details_Value?.Connection_Type || "N/A"}</p>
                     <p>Địa chỉ: {obj.Details_Value?.Address || "N/A"}</p>
                   </div>
                 </Tooltip>

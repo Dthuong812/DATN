@@ -26,7 +26,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const navItems = [
     { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
     { href: "/admin/realtime", label: "Giám sát", icon: ChartColumnIncreasing },
-    { href: "/admin/sensors", label: "Thiết bị", icon: ChartCandlestick },
+    { href: "/admin/device", label: "Thiết bị", icon: ChartCandlestick },
     { href: "/admin/object", label: "Đối tượng", icon: Crosshair },
     { href: "/admin/project_organization", label: "Dự án - Tổ chức", icon: FolderOpenDot },
     { href: "/admin/user", label: "Người dùng", icon: Users },

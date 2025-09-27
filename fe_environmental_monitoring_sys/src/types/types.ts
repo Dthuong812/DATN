@@ -287,3 +287,67 @@ export interface ObjectFormValue {
   Longitude: number;
   Details_Value: Details_Value
 }
+
+export interface SensorUnits {
+  temperature?: string; 
+  humidity?: string;
+  pressure?: string;
+  gas?: string;
+  distance?: string;
+  sound_level?: string;
+  [key: string]: string | undefined; 
+}
+export interface Sensor {
+  code: string;
+  name: string;
+  unit: SensorUnits;
+}
+export interface Details_Data {
+  sensors: Sensor[];
+}
+export interface Device{
+  Id: number;
+  Code: string;
+  Name: string;
+  DeviceType_Code: string;
+  Object_Code: string;
+  Latitude: number;
+  Longitude: number;
+  CreatedAt: Date;
+  CreatedBy: number;
+  UpdatedAt: Date;
+  UpdatedBy: number;
+  Icon_Id: number;
+  Series: string;
+  Details_Data: Details_Data
+}
+export interface DeviceResponse {
+  Status: number;
+  Message: string;
+  Data: Device[];
+}
+export interface DeviceFormValue {
+  Code: string;
+  Name: string;
+  DeviceType_Code: string;
+  Object_Code: string;
+  Latitude?: number;
+  Longitude?: number;
+  Icon_Id?: number;
+  Series: string;
+  Details_Data: Details_Data
+}
+export interface DeviceType{
+  Id: number;
+  Code: string;
+  Name: string;
+}
+export interface DeviceTypeResponse {
+  Status: number;
+  Message: string;
+  Data: DeviceType[];
+}
+export interface DeviceTypeFormValue {
+  Code: string;
+  Name: string;
+}

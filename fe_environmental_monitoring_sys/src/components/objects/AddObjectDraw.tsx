@@ -24,7 +24,8 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 interface AddObjectDrawProps {
   open: boolean;
   onClose: () => void;
@@ -35,6 +36,27 @@ const customIcon = new L.Icon({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
+});
+const schema = yup.object().shape({
+  Organization_Code: yup.string().required("Mã công ty là bắt buộc"),
+  Project_Code: yup.string().required("Mã dự án là bắt buộc"),
+  Code: yup.string().required("Mã đối tượng là bắt buộc"),
+  Name: yup.string().required("Tên đối tượng là bắt buộc"),
+  Latitude: yup
+    .number()
+    .typeError("Vĩ độ phải là số")
+    .required("Vĩ độ là bắt buộc"),
+  Longitude: yup
+    .number()
+    .typeError("Kinh độ phải là số")
+    .required("Kinh độ là bắt buộc"),
+  Details_Value: yup.object().shape({
+    Address: yup.string().required("Địa chỉ là bắt buộc"),
+    Installation_Date: yup.string().nullable(),
+    Last_Maintenance_Date: yup.string().nullable(),
+    Connection_Type: yup.string().nullable(),
+    Power_Supply: yup.string().nullable(),
+  }),
 });
 export default function AddObjectDraw({
   open,
@@ -47,7 +69,10 @@ export default function AddObjectDraw({
     formState: { errors },
     reset,
     setValue,
-  } = useForm<ObjectFormValue>();
+  } = useForm<ObjectFormValue>({
+    resolver: yupResolver(schema)
+  });
+
   const { data: listOrgs } = useGetOrganizationsQuery({});
   const org = listOrgs?.Data;
   const [addObject, { isLoading }] = useAddObjectMutation();

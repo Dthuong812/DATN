@@ -16,6 +16,7 @@ import ProfilePage from "./page/ProfilePage";
 import { ForgotPasswordPage } from "./page/ForgotPassWordPage";
 import Project_Organization from "./page/Project_Organization";
 import ObjectPage from "./page/ObjectPage";
+import DevicePage from "./page/DevicePage";
 
 
 
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
               {
                 path: "object",
                 element: <ObjectPage/>,
+              },
+              {
+                path: "device",
+                element: <DevicePage/>,
               },
         ]
       },
