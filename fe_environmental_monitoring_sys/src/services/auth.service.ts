@@ -15,7 +15,6 @@ const forgot_password = async (payload:ForgotPayload) =>{
     if (response.data.Status < 0) {
       throw new Error(response.data.Message);
     }
-    console.log(response.data);
     return response.data;
 
 }
