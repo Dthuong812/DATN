@@ -15,7 +15,6 @@ export abstract class DaoBase<TEntity, TDto> implements IDaoBase<TEntity, TDto> 
   }
   public async initializeRepository() {
     try {
-      console.log(this.databaseUrl)
       const dataSource = await DataContext.getInstance(this.databaseUrl, this.entities);
       this._repository = dataSource.getRepository(this.entity);
     } catch (error) {

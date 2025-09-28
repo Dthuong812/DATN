@@ -1,6 +1,6 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { PERMISSION_KEY, PermissionMeta } from "../decorators";
+import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { PERMISSION_KEY, PermissionMeta } from '../decorators/permission.decorator';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -19,72 +19,40 @@ export class PermissionGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
 
     if (!user) {
-      return false; 
+      throw new ForbiddenException('Không tìm thấy thông tin người dùng.');
     }
 
-    if (Array.isArray(user.RoleCode) && user.RoleCode.includes("SUPPER_ADMIN")) {
-      return true;
+    if (Array.isArray(user.Projects)) {
+      const isSuperAdmin = user.Projects.some((project) =>
+        project.Roles.some((role) => role.Code === 'SUPPER_ADMIN')
+      );
+      if (isSuperAdmin) {
+        return true;
+      }
     }
 
-    if (!user.permissions || !Array.isArray(user.permissions)) {
-      return false; 
-    }
-
-    return user.permissions.some((perm: any) =>
-      perm.FunctionCode === required.Func &&
-      perm.PermissionsCode?.includes(required.Permission),
+    const hasPermission =
+    user.Projects.some(project =>
+      project.Roles.some(role =>
+        role.Functions.some(func =>
+          func.Code.toUpperCase() === required.Func.toUpperCase() &&
+          func.Permissions.some(p => p.Code.toUpperCase() === required.Permission.toUpperCase())
+        )
+      )
+    ) ||
+    user.Projects.some(project =>
+      project.UserFunctions?.some(func =>
+        func.Code.toUpperCase() === required.Func.toUpperCase() &&
+        func.Permissions.some(p => p.Code.toUpperCase() === required.Permission.toUpperCase())
+      )
     );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        `Không có quyền truy cập: ${required.Func}.${required.Permission}`
+      );
+    }
+
+    return true;
   }
 }
-
-
-// import {
-//   Injectable,
-//   CanActivate,
-//   ExecutionContext,
-//   ForbiddenException,
-// } from '@nestjs/common';
-// import { Reflector } from '@nestjs/core';
-// import { JwtService } from '@nestjs/jwt';
-// import { PERMISSION_KEY, PermissionMeta } from '../decorators';
-
-// @Injectable()
-// export class PermissionGuard implements CanActivate {
-//   constructor(
-//     private reflector: Reflector,
-//     private jwtService: JwtService,
-//     // private roleFunctionService: RoleFunctionPermissionService,
-//   ) {}
-
-//   async canActivate(context: ExecutionContext): Promise<boolean> {
-//     const meta = this.reflector.get<PermissionMeta>(
-//       PERMISSION_KEY,
-//       context.getHandler(),
-//     );
-
-//     if (!meta) return true;
-
-//     const request = context.switchToHttp().getRequest();
-//     const token = request.headers.authorization?.split(' ')[1];
-//     if (!token) throw new ForbiddenException('Missing token');
-
-//     const payload = this.jwtService.decode(token) as any;
-//     const roleCode = payload.RoleCode;
-//     const projectId = payload.ProjectId;
-
-//     // Query DB lấy quyền theo Role + Project + Function
-//     const permissions = await this.roleFunctionService.getPermissions(
-//       roleCode,
-//       projectId,
-//       meta.Func,
-//     );
-
-//     if (!permissions.includes(meta.Permission)) {
-//       throw new ForbiddenException(
-//         `No permission: ${meta.Func}.${meta.Permission}`,
-//       );
-//     }
-
-//     return true;
-//   }
-// }

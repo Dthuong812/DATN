@@ -9,7 +9,8 @@ import {
   ForgotPassWordDto,
   ResetPasswordDto,
 } from "../Domain/Dtos/users.dto";
-import { GetCurrentUserId, Public } from "src/common/decorators";
+import { GetCurrentUserId, Public, RequirePermission } from "src/common/decorators";
+import { EnumQuyen } from "src/common/EnumQuyen";
 
 @Controller("auth")
 export class AuthController {
@@ -18,8 +19,11 @@ export class AuthController {
   @Public()
   @Post("/signin")
   @ApiOperation({ summary: "Đăng nhập" })
-  async signIn(@Body() payload: AuthDto , @Req() req: Request): Promise<ResultResponse> {
-    return await this.authService.signIn(payload,req);
+  async signIn(
+    @Body() payload: AuthDto,
+    @Req() req: Request
+  ): Promise<ResultResponse> {
+    return await this.authService.signIn(payload, req);
   }
 
   @Public()
@@ -32,6 +36,7 @@ export class AuthController {
   @Patch("/reset-password/:Id")
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Reset mật khẩu" })
+  @RequirePermission({ Func: "FUNC_AUTH", Permission: EnumQuyen.UPDATE })
   async resetPassword(
     @Param("Id") Id: number,
     @Body() payload: ResetPasswordDto,
@@ -42,12 +47,11 @@ export class AuthController {
 
   @Patch("/change-password")
   @ApiOperation({ summary: "Đặt lại mật khẩu" })
-  @ApiBearerAuth("JWT")
+  @Public()
   async changePassword(
     @Body() payload: ChangePasswordDto,
-    @GetCurrentUserId() authId: number
   ) {
-    return await this.authService.ChangePassword(payload, authId);
+    return await this.authService.ChangePassword(payload);
   }
   @Public()
   @Patch("/forgot-password")
@@ -64,12 +68,14 @@ export class AuthController {
   @Patch("/lock-user/:Id")
   @ApiOperation({ summary: "Khóa tài khoản" })
   @ApiBearerAuth("JWT")
+  @RequirePermission({ Func: "FUNC_AUTH", Permission: EnumQuyen.UPDATE })
   async LockUser(@Param("Id") Id: number, @GetCurrentUserId() authId: number) {
     return await this.authService.LockUser(Id, authId);
   }
   @Patch("/unlock-user/:Id")
   @ApiOperation({ summary: "Mở khóa tài khoản" })
   @ApiBearerAuth("JWT")
+  @RequirePermission({ Func: "FUNC_AUTH", Permission: EnumQuyen.UPDATE })
   async UnLockUser(
     @Param("Id") Id: number,
     @GetCurrentUserId() authId: number

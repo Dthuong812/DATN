@@ -23,6 +23,8 @@ import { firstValueFrom } from "rxjs";
 import { UserFunctionPermissionDto } from "../../Domain/Dtos/user_function_permission.dto";
 import { UserFunctionPermissionRepository } from "../../Infrastructure/Repository/UserFunctionPermissionRepository";
 import { In } from "typeorm";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService extends CoreServiceBase<UserEntity, UserDto> {
@@ -35,7 +37,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
     private readonly PermissionsRepository: PermissionsRepository,
     private readonly userFuncPerRepository : UserFunctionPermissionRepository,
     @Inject("Version2") private dataClient: ClientProxy,
-    @Inject(REQUEST) readonly request: Request
+    @Inject(REQUEST) readonly request: Request,
   ) {
     super(userRepository);
   }
@@ -322,7 +324,7 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
       }
       await this.userRoleAssignmentsRepository.delete({ UserId: Id });
       await this.userFuncPerRepository.delete({UserId: Id});
-      await this.userRepository.delete({ Id });
+      await this.userRepository.softDelete({ Id });
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Xóa thành công";
     } catch (error) {
@@ -493,7 +495,259 @@ export class UserService extends CoreServiceBase<UserEntity, UserDto> {
     return res;
   }
   
-  async getPayloadByName(username: string) {
-    return this.userRepository.getPayloadByName(username);
+  async getPayloadByName(username: string) : Promise<ResultResponse> {
+    const res = new ResultResponse(ErrorCode.EXCEPTION, "", null);
+    try {
+      const userData = await this.userRepository.getAll({where: {UserName: username}});
+      const user = userData.length ? userData[0] : null;
+      if (!user) {
+        res.Status = ErrorCode.NOT_FOUND_ID;
+        res.Message = "Không tìm thấy người dùng";
+        return res;
+      }
+      const proRoleMappings = await this.userRoleAssignmentsRepository.getAll({
+        where: { UserId: user.Id },
+      });
+  
+      if (!proRoleMappings.length) {
+        res.Data = { ...user, Projects: [] };
+        res.Status = ErrorCode.SUCCESS;
+        res.Message = "Xử lý thành công";
+        return res;
+      }
+  
+      const proIds = proRoleMappings.map((p) => p.ProjectId);
+  
+
+      const projects = await firstValueFrom(
+        this.dataClient.send("message_getAll_projects", {})
+      );
+      const projectList = Array.isArray(projects?.Data) ? projects.Data : [];
+      const userProjects = projectList.filter((p: any) =>
+        proIds.includes(p.Id)
+      );
+  
+      const roleIds = proRoleMappings.map((p) => p.RoleId);
+      const roles = await this.roleRepository.getAll({
+        where: { Id: In(roleIds) },
+      });
+
+      const roleFuncPerms = await this.RoleFunPerRepository.getAll({
+        where: { RoleId: In(roleIds), ProjectId: In(proIds) },
+      });
+
+      const userFuncPerms = await this.userFuncPerRepository.getAll({
+        where: { UserId: user.Id, ProjectId: In(proIds) },
+      });
+  
+      const funcIds = [
+        ...roleFuncPerms.map((rfp) => rfp.FunctionId),
+        ...userFuncPerms.map((ufp) => ufp.FunctionId),
+      ];
+      const permIds = [
+        ...roleFuncPerms.map((rfp) => rfp.PermissionId),
+        ...userFuncPerms.map((ufp) => ufp.PermissionId),
+      ];
+  
+      const funcs = await this.FunctionsRepository.getAll({
+        where: { Id: In(funcIds) },
+      });
+      const perms = await this.PermissionsRepository.getAll({
+        where: { Id: In(permIds) },
+      });
+  
+      const funcMap = new Map<number, any>();
+      funcs.forEach((f) => funcMap.set(f.Id, f));
+  
+      const permMap = new Map<number, any>();
+      perms.forEach((p) => permMap.set(p.Id, p));
+
+      const projectWithRoles = userProjects.map((project: any) => {
+        const roleIdsOfProject = proRoleMappings
+          .filter((m) => m.ProjectId === project.Id)
+          .map((m) => m.RoleId);
+  
+        const rolesOfProject = roles.filter((r) =>
+          roleIdsOfProject.includes(r.Id)
+        );
+  
+        const roleWithFunctions = rolesOfProject.map((role) => {
+          const rfpOfRole = roleFuncPerms.filter(
+            (rfp) => rfp.RoleId === role.Id && rfp.ProjectId === project.Id
+          );
+  
+          const funcPermMap = new Map<number, any>();
+  
+          for (const rfp of rfpOfRole) {
+            const func = funcMap.get(rfp.FunctionId);
+            const perm = permMap.get(rfp.PermissionId);
+  
+            if (!func || !perm) continue;
+  
+            if (!funcPermMap.has(func.Id)) {
+              funcPermMap.set(func.Id, {
+                Code: func.Code,
+                Permissions: [],
+              });
+            }
+  
+            funcPermMap.get(func.Id).Permissions.push({
+              Code: perm.Code,
+            });
+          }
+  
+          return {
+            Id: role.Id,
+            Code: role.Code,
+            Functions: Array.from(funcPermMap.values()),
+          };
+        });
+  
+        const ufpOfProject = userFuncPerms.filter(
+          (ufp) => ufp.ProjectId === project.Id
+        );
+  
+        const userFuncMap = new Map<number, any>();
+        for (const ufp of ufpOfProject) {
+          const func = funcMap.get(ufp.FunctionId);
+          const perm = permMap.get(ufp.PermissionId);
+  
+          if (!func || !perm) continue;
+  
+          if (!userFuncMap.has(func.Id)) {
+            userFuncMap.set(func.Id, {
+              Id: func.Id,
+              Code: func.Code,
+              Permissions: [],
+            });
+          }
+  
+          userFuncMap.get(func.Id).Permissions.push({
+            Id: perm.Id,
+            Code: perm.Code,
+          });
+        }
+  
+        return {
+          Id: project.Id,
+          Code: project.Code,
+          Roles: roleWithFunctions,
+          UserFunctions: Array.from(userFuncMap.values()),
+        };
+      });
+  
+      res.Data = {
+        ...user,
+        Projects: projectWithRoles,
+      };
+      res.Status = ErrorCode.SUCCESS;
+      res.Message = "Xử lý thành công";
+    } catch (error) {
+      res.Status = ErrorCode.EXCEPTION;
+      res.Message = error.message;
+    }
+    return res;
   }
+  
+  async getPermissionsByUserId(userId: number): Promise<any> {
+    const user = await this.userRepository.getById(userId);
+    if (!user) {
+      throw new Error("Không tìm thấy người dùng.");
+    }
+  
+    const roleAssignments = await this.userRoleAssignmentsRepository.getAll({
+      where: { UserId: userId },
+    });
+  
+    const roleIds = roleAssignments.map((ra) => ra.RoleId);
+    const projectIds = roleAssignments.map((ra) => ra.ProjectId);
+  
+    // Lấy các role
+    const roles = await this.roleRepository.getAll({
+      where: { Id: In(roleIds) },
+    });
+  
+    // Lấy các function và permission theo role
+    const roleFunctionPermissions = await this.RoleFunPerRepository.getAll({
+      where: { RoleId: In(roleIds), ProjectId: In(projectIds) },
+    });
+  
+    const functionIds = roleFunctionPermissions.map((rfp) => rfp.FunctionId);
+    const permissionIds = roleFunctionPermissions.map((rfp) => rfp.PermissionId);
+  
+    // Lấy các function
+    const functions = await this.FunctionsRepository.getAll({
+      where: { Id: In(functionIds) },
+    });
+  
+    // Lấy các permission
+    const permissions = await this.PermissionsRepository.getAll({
+      where: { Id: In(permissionIds) },
+    });
+  
+    // Map function với permission
+    const functionMap = new Map<number, any>();
+    functions.forEach((func) => {
+      functionMap.set(func.Id, {
+        Id: func.Id,
+        Code: func.Code,
+        Name: func.Name,
+        Permissions: [],
+      });
+    });
+  
+    permissions.forEach((perm) => {
+      roleFunctionPermissions.forEach((rfp) => {
+        if (rfp.PermissionId === perm.Id && functionMap.has(rfp.FunctionId)) {
+          functionMap.get(rfp.FunctionId).Permissions.push({
+            Id: perm.Id,
+            Code: perm.Code,
+            Name: perm.Name,
+          });
+        }
+      });
+    });
+  
+    // Map role với function
+    const roleMap = new Map<number, any>();
+    roles.forEach((role) => {
+      roleMap.set(role.Id, {
+        Id: role.Id,
+        Code: role.Code,
+        Name: role.Name,
+        Description: role.Description,
+        Functions: [],
+      });
+    });
+  
+    roleFunctionPermissions.forEach((rfp) => {
+      if (roleMap.has(rfp.RoleId) && functionMap.has(rfp.FunctionId)) {
+        roleMap.get(rfp.RoleId).Functions.push(functionMap.get(rfp.FunctionId));
+      }
+    });
+  
+    const projectMap = new Map<number, any>();
+    const projects = await firstValueFrom(
+      this.dataClient.send("message_getAll_projects", {})
+    );
+  
+    const projectList = Array.isArray(projects?.Data) ? projects.Data : [];
+    projectList.forEach((project) => {
+      projectMap.set(project.Id, {
+        Id: project.Id,
+        Code: project.Code,
+        Name: project.Name,
+        Roles: [],
+      });
+    });
+  
+    roleAssignments.forEach((ra) => {
+      if (projectMap.has(ra.ProjectId) && roleMap.has(ra.RoleId)) {
+        projectMap.get(ra.ProjectId).Roles.push(roleMap.get(ra.RoleId));
+      }
+    });
+  
+    return Array.from(projectMap.values());
+  }
+  
 }

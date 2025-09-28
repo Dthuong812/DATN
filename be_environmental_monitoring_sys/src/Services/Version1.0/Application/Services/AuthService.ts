@@ -54,7 +54,6 @@ export class AuthService {
 
   async signIn(payload: AuthDto,req: Request): Promise<ResultResponse> {
     const res = new ResultResponse(0, "", null);
-
     try {
       // CAPTCHA
       if (payload.recaptchaToken) {
@@ -66,7 +65,10 @@ export class AuthService {
         }
       }
       //validate
-      const user = await this.userService.getPayloadByName(payload.UserName);
+
+      const userData = await this.userService.getPayloadByName(payload.UserName);
+
+      const user = userData.Data;
       if (!user) {
         res.Status = ErrorCode.USER_NOT_FOUND;
         res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
@@ -97,21 +99,20 @@ export class AuthService {
 
       // tạo token
       const tokens = await this.getTokens(
-        user.UserId,
+        user.Id,
         user.UserName,
         user.Organization_Id,
         user.Department_Id,
-        user.RoleCodes,
-        user.Permissions
+        user.Projects
       );
       const { access_token, refresh_token, exp_refresh } = tokens;
       
       const item = {
-        UserId: user.UserId,
+        UserId: user.Id,
         UserName: user.UserName,
         Organization_Id: user.Organization_Id,
         Department_Id: user.Department_Id,
-        RoleCode: user.RoleCodes,
+        Projects: user.Projects,
         access_token,
         refresh_token,
         exp_refresh,
@@ -132,10 +133,9 @@ export class AuthService {
     username: string,
     Organization_Id: number,
     Department_Id: number,
-    RoleCode: any[],
-    Permissions: any[],
+    Projects?: string[]
   ) {
-    const payload = { sub: userId, username, Organization_Id, Department_Id ,RoleCode, Permissions};
+    const payload = { sub: userId, username, Organization_Id, Department_Id, Projects };
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -192,8 +192,7 @@ export class AuthService {
         user.UserName,
         user.Organization_Id,
         user.Department_Id,
-        user.RoleCode,
-        user.Permission
+        user.Projects
       );
       const { access_token, refresh_token, exp_refresh } = tokens;
       const item = {
@@ -201,10 +200,12 @@ export class AuthService {
         UserName: user.UserName,
         Organization_Id: user.Organization_Id,
         Department_Id: user.Department_Id,
+        Projects: user.Projects,
         access_token,
         refresh_token,
         exp_refresh,
       };
+      console.log(item);
       res.Data = item;
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Refresh token thành công";
@@ -244,7 +245,7 @@ export class AuthService {
     }
     return res;
   }
-  async ChangePassword(payload: ChangePasswordDto, userId: number) {
+  async ChangePassword(payload: ChangePasswordDto) {
     const res = new ResultResponse(0, "", null);
 
     if (!payload) {
@@ -252,8 +253,7 @@ export class AuthService {
       res.Message = ErrorManage.getErrorMessage(ErrorCode.NOT_DTO);
       return res;
     }
-    // 2. Tìm người dùng
-    const userupdate = await this.userRepository.getById(userId);
+    const userupdate = await this.userRepository.getById(payload.Id);
     if (!userupdate) {
       res.Status = ErrorCode.USER_NOT_FOUND;
       res.Message = ErrorManage.getErrorMessage(ErrorCode.USER_NOT_FOUND);
@@ -285,7 +285,7 @@ export class AuthService {
 
     const password_hash = await argon2.hash(payload.PassWord);
     user.PassWord = password_hash;
-    user.UpdatedBy = userId;
+    user.UpdatedBy = user.Id;
     user.ChangePasswordAt = new Date();
     user.UpdatedAt = new Date();
 

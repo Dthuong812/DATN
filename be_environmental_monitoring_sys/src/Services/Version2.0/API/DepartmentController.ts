@@ -12,7 +12,7 @@ export class DepartmentController {
   constructor(private readonly DepartmentService: DepartmentService) {}
   @MessagePattern('message_get_all_dept')
   @Get()
-  @RequirePermission({ Func: "FUNC_DEPT", Permission: EnumQuyen.CREATE })
+  @RequirePermission({ Func: "FUNC_DEPT", Permission: EnumQuyen.READ})
   @ApiOperation({ summary: "Lấy tất cả phòng ban" })
   async getAll(@Query() query: PayloadFilterDepartmentDto) {
     return this.DepartmentService.getAll(query);

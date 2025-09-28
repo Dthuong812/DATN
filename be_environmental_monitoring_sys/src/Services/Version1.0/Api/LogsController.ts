@@ -1,3 +1,4 @@
+import { Public } from './../../../common/decorators/public.decorator';
 import { Controller, Get, Query } from "@nestjs/common";
 import { ResultResponse } from "src/common/ResultResponse";
 import { LogsService } from "../Application/Services/LogsService";
@@ -12,7 +13,7 @@ export class LogsController {
   constructor(private readonly LogsService: LogsService) {}
 
   @Get()
-  @RequirePermission({ Func: "FUNC_LOGS", Permission: EnumQuyen.READ })
+  @RequirePermission({ Func: "FUNC_LOG", Permission: EnumQuyen.READ })
   async getAllLogs(@Query() filter: FilterLogsDto): Promise<ResultResponse> {
     return await this.LogsService.getAllLogs(filter);
   }

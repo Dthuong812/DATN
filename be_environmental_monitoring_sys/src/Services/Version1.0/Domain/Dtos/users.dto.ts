@@ -224,6 +224,7 @@ export class ResetPasswordDto {
   UpdatedAt?: Date = new Date();
 }
 export class ChangePasswordDto {
+  Id: number;
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: "Mật khẩu cũ" })
@@ -233,7 +234,7 @@ export class ChangePasswordDto {
   @IsNotEmpty()
   @IsStrongPassword(
     {
-      minLength: 12,
+      minLength: 6,
       minLowercase: 1,
       minUppercase: 1,
       minNumbers: 1,
