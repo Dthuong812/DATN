@@ -95,7 +95,7 @@ export default function Header() {
                     </DropdownMenuLabel>
                     <hr />
                     <DropdownMenuSeparator />
-                    <Link to={"/profile"}>
+                    <Link to={"/admin/profile"}>
                     <DropdownMenuItem className="flex items-center gap-2 p-1 focus:outline-none cursor-pointer">
                       <User className="h-4 w-4" /> Trang cá nhân
                     </DropdownMenuItem>

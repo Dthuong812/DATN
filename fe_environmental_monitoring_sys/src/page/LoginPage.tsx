@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Leaf, Loader2 } from "lucide-react";
+import { Leaf, Loader2, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
@@ -27,6 +27,7 @@ export function LoginPage({
   const auth = useSelector((state: RootState) => state.auth);
   const [UserName, setUserName] = useState("");
   const [PassWord, setPassWord] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +43,7 @@ export function LoginPage({
       toast.success(auth.user.Message);
       navigate("/");
     } else if (auth.isError) {
-      toast.error(auth.error || "Đăng nhập thất bại! Vui lòng thử lại.");
+      toast.error(auth.error);
     }
   }, [auth.isSuccess, auth.isError, auth.user, auth.error, navigate]);
   return (
@@ -53,7 +54,7 @@ export function LoginPage({
           className="flex items-center gap-2 self-center font-medium"
         >
           <Leaf className="h-8 w-8 text-green-600" />
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-xl font-bold text-green-900 dark:text-white">
             EcoMonitor
           </h1>
         </Link>
@@ -74,7 +75,6 @@ export function LoginPage({
                         placeholder="thuongkute"
                         onChange={(e) => setUserName(e.target.value)}
                         disabled={auth.isLoading}
-                      
                       />
                     </div>
                     <div className="grid gap-3">
@@ -87,15 +87,28 @@ export function LoginPage({
                           Quên mật khẩu?
                         </Link>
                       </div>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Nhập mật khẩu"
-                        onChange={(e) => setPassWord(e.target.value)}
-                        disabled={auth.isLoading}
-                      />
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Nhập mật khẩu"
+                          onChange={(e) => setPassWord(e.target.value)}
+                          disabled={auth.isLoading}
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5 text-gray-500 cursor-pointer" />
+                          ) : (
+                            <Eye className="h-5 w-5 text-gray-500 cursor-pointer" />
+                          )}
+                        </button>
+                      </div>
                     </div>
-                    <Button type="submit" disabled={auth.isLoading}>
+                    <Button type="submit" disabled={auth.isLoading}  className="bg-green-800 hover:bg-green-700 cursor-pointer">
                       {auth.isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />

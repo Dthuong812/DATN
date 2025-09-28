@@ -3,17 +3,24 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../../services/auth.service";
 
 export const loginUser = createAsyncThunk<
-  LoginResponse,
-  LoginPayload,
-  { rejectValue: string }
->("auth/signin", async (payload, { rejectWithValue }) => {
-  try {
-    const result = await authService.login(payload);
-    return result;
-  } catch {
-    return rejectWithValue("Đăng nhập thất bại!");
+  LoginResponse,       
+  LoginPayload,        
+  { rejectValue: string } 
+>(
+  "auth/loginUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await authService.login(payload); 
+      if (res.Status !== 0) {
+
+        return rejectWithValue(res.Message);
+      }
+      return res;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.Message || err.message);
+    }
   }
-});
+);
 
 export const forgotPassword = createAsyncThunk<
   ForgotResponse,

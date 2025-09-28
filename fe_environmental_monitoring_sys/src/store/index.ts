@@ -11,6 +11,7 @@ import useReducer from "./slices/userSlice";
 import LogReducer from "./slices/logSlice";
 import objectReducer from "./slices/objectSlice";
 import deviceReducer from "./slices/deviceSlice";
+import deviceDataReducer from "./slices/deviceDataSlice";
 import deviceTypeReducer from "./slices/deviceTypeSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { projectsApi } from "@/services/project.service";
@@ -25,6 +26,7 @@ import { LogsApi } from "@/services/log.service";
 import { objectApi } from "@/services/object.service";
 import { deviceApi } from "@/services/device.service";
 import { deviceTypeApi } from "@/services/devicetype.service";
+import { deviceDataApi } from "@/services/devicedata.service";
 
 export const store = configureStore({
   reducer: {
@@ -54,6 +56,8 @@ export const store = configureStore({
     [deviceApi.reducerPath]: deviceApi.reducer,
     deviceType:deviceTypeReducer,
     [deviceTypeApi.reducerPath]: deviceTypeApi.reducer,
+    deviceData:deviceDataReducer,
+    [deviceDataApi.reducerPath]: deviceDataApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -68,7 +72,8 @@ export const store = configureStore({
       LogsApi.middleware,
       objectApi.middleware,
       deviceApi.middleware,
-      deviceTypeApi.middleware
+      deviceTypeApi.middleware,
+      deviceDataApi.middleware
     ),
 });
 setupListeners(store.dispatch);

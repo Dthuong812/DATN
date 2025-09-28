@@ -10,7 +10,6 @@ import LogsPage from "./page/LogsPage";
 import UserPage from "./page/UserPage";
 import { LoginPage } from "./page/LoginPage";
 import DashboardPage from "./page/DashboardPage";
-import SettingsPage from "./page/SettingPage";
 import HelpPage from "./page/HelpPage";
 import ProfilePage from "./page/ProfilePage";
 import { ForgotPasswordPage } from "./page/ForgotPassWordPage";
@@ -37,10 +36,7 @@ const router = createBrowserRouter([
         path: "map",
         element: <MapPage />,
       },
-      {
-        path: "profile",
-        element: <ProfilePage/>,
-      },
+
       {
         path: "report",
         element: <ReportPage/>,
@@ -66,10 +62,6 @@ const router = createBrowserRouter([
                 element: <UserPage/>,
               },
               {
-                path: "settings",
-                element: <SettingsPage/>,
-              },
-              {
                 path: "help",
                 element: <HelpPage/>,
               },
@@ -84,6 +76,10 @@ const router = createBrowserRouter([
               {
                 path: "device",
                 element: <DevicePage/>,
+              },
+              {
+                path: "profile",
+                element: <ProfilePage/>,
               },
         ]
       },

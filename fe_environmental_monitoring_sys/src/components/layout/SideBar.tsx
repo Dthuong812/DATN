@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   FolderOpenDot,
   Crosshair,
+  User,
 } from "lucide-react";
 
 
@@ -35,7 +36,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   ];
 
   const bottomNavItems = [
-    { href: "/admin/settings", label: "Cài đặt", icon: Settings },
+    { href: "/admin/profile", label: "Trang cá nhân", icon: User },
     { href: "/admin/help", label: "Trợ giúp", icon: HelpCircle },
   ];
 

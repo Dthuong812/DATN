@@ -47,9 +47,17 @@ export interface JWT {
 export interface ForgotPayload {
   Email: string;
 }
+
 export interface ForgotResponse {
   Status: number;
   Message: string;
+}
+
+export interface ChangePasswordPayload {
+  Id:number
+  OldPassWord: string,
+  PassWord: string,
+  PassWordAgain: string
 }
 export interface Project {
   Id: number;
@@ -350,4 +358,31 @@ export interface DeviceTypeResponse {
 export interface DeviceTypeFormValue {
   Code: string;
   Name: string;
+}
+export interface DataJson {
+  temperature?: number; 
+  humidity?: number;
+  pressure?: number;
+  gas?: number;
+  distance?: number;
+  sound_level?: number;
+  [key: string]: number | undefined; 
+}
+export interface DeviceData {
+  Id: number;
+  Devices_Code: string;
+  Project_Code: string;
+  Object_Code: string;
+  Times: Date;
+  Longitude: number;
+  Latitude: number;
+  Speed: number;
+  DataType: number;
+  DataJson: DataJson;
+}
+
+export interface DeviceDataResponse {
+  Status: number;
+  Message: string;
+  Data: DeviceData[];
 }
