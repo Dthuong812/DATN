@@ -1,27 +1,48 @@
-import { useState } from "react";
-import StationList from "../StationList";
-import StationDetail from "../StationDetail";
-import StationChart from "../StationChart";
+import { useEffect, useState } from "react";
+import StationDetail from "./StationDetail";
+import StationChart from "./StationChart";
+import { useGetObjectQuery } from "@/services/object.service";
+import type { Object } from "@/types/types";
+import { useSearchParams } from "react-router-dom";
+import ObjectList from "./StationList";
 
 export default function StationDashboard() {
-  const stations: Station[] = [
-    { name: "Trạm Trung tâm Hà Nội", location: "Hoàn Kiếm, Hà Nội", status: "Hoạt động", aqi: 102.35 },
-    { name: "Trạm Cầu Giấy", location: "Cầu Giấy, Hà Nội", status: "Hoạt động", aqi: 85.1 },
-    { name: "Trạm 2", location: "Cầu Giấy, Hà Nội", status: "Hoạt động", aqi: 85.1 },
-    { name: "Trạm 3", location: "Cầu Giấy, Hà Nội", status: "Hoạt động", aqi: 85.1 },
-    { name: "Trạm Thanh Xuân", location: "Thanh Xuân, Hà Nội", status: "Bảo trì", aqi: 70.0 },
-  ];
+  const [searchParams] = useSearchParams();
+  const [filter, setFilter] = useState({
+    Name: searchParams.get("Name") || "",
+  });
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10000;
+  const { data} = useGetObjectQuery( {...filter,page,pageSize}, {
+    refetchOnMountOrArgChange: true,
+  });
 
-  const [selectedStation, setSelectedStation] = useState<Station | null>(stations[0]); 
+  const stations: Object[] = data?.Data?.data || [];
+  const [selectedStation, setSelectedStation] = useState<Object | null>(null);
+
+  useEffect(() => {
+    if (stations.length > 0 && !selectedStation) {
+      setSelectedStation(stations[0]); 
+    }
+  }, [stations, selectedStation]);
+
+  const handleFilter = (filterValue: string) => {
+    setFilter({ Name: filterValue }); 
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 pt-4 mb-6">
       <div className="col-span-1 space-y-4">
-        <StationList stations={stations} onSelect={setSelectedStation} />
-        <StationDetail station={selectedStation} />
+        <ObjectList
+          objects={stations}
+          selectedStation={selectedStation}
+          onSelect={setSelectedStation}
+          onFilter={handleFilter}
+        />
+        <StationDetail object={selectedStation} />
       </div>
       <div className="lg:col-span-2">
-        <StationChart station={selectedStation} />
+        <StationChart object={selectedStation} />
       </div>
     </div>
   );

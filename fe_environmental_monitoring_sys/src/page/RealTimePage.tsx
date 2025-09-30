@@ -47,7 +47,6 @@ export default function RealTimePage() {
 
   useEffect(() => {
     if (filters.DataType === "1") {
-      // Chỉ thiết lập WebSocket khi DataType = 1
       const s: Socket = io(import.meta.env.VITE_SOCKET_URL, {
         transports: ["websocket"],
         reconnection: true,
@@ -125,7 +124,7 @@ export default function RealTimePage() {
       Devices_Code: "",
       Object_Code: "",
       Project_Code: "",
-      DataType: "1", // Reset DataType về mặc định là 1
+      DataType: "1",
     });
     setSearchParams({ page: "1", pageSize: pageSize.toString() });
   };
@@ -206,7 +205,7 @@ export default function RealTimePage() {
           </div>
           <div className="mt-6 flex justify-end gap-2">
             <Button
-              className={`px-4 py-2 mx-2 rounded ${
+              className={`px-4 py-2 rounded-md ${
                 viewMode === "chart"
                   ? "bg-green-800 hover:bg-green-700 cursor-pointer text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"

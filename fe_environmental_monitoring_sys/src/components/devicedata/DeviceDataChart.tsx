@@ -24,7 +24,7 @@ export default function DeviceDataChart({ deviceDatas }: Props) {
   }, {} as Record<string, { time: string; temperature: number | null; humidity: number | null; pressure: number | null; iqa: number | null; sound_level: number | null; distance: number | null }[]>);
 
   return (
-    <div className="grid grid-cols-3 gap-4 mx-6">
+    <div className="grid 2xl:grid-cols-2 3xl:grid-cols-3 gap-4 mx-6">
       {Object.keys(groupedData).map((deviceCode) => (
         <div key={deviceCode} className="border rounded-lg p-4 shadow">
           <h4 className="text-center text-lg font-semibold mb-4">Thiết bị: {deviceCode}</h4>

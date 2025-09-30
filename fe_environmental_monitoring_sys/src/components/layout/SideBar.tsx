@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Users,
-  Settings,
   HelpCircle,
   ChartCandlestick,
   ScanEye,
@@ -44,7 +43,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
 
   return (
     <div
-      className={`h-[95vh] border-r flex flex-col z-[100]
+      className={`h-[95vh] border-r flex flex-col z-[10]
           bg-white dark:bg-gray-900 pb-6 fixed shadow-sm
           transition-all duration-300 ease-in-out
           ${isCollapsed ? "w-20" : "w-72"} px-4`}
@@ -58,7 +57,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
           onClick={() => setIsCollapsed(!isCollapsed)}
           variant="ghost"
           size="icon"
-          className="absolute -right-4 top-4 z-[100] bg-white dark:bg-gray-800 shadow-md border rounded-full w-8 h-8"
+          className="absolute -right-4 top-4 z-[11] bg-white dark:bg-gray-800 shadow-md border rounded-full w-8 h-8"
         >
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </Button>
