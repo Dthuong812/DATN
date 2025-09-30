@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-@Entity("ProjectFunctions",{schema:"eco_monitoring"})
+@Entity("projectfunctions",{schema:"eco_monitoring"})
 export class ProjectFunctionsEntity {
     @PrimaryGeneratedColumn({ type: 'int', })
     Id?: number;

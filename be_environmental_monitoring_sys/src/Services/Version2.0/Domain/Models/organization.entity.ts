@@ -1,6 +1,6 @@
 import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("Organization", { schema: "ecomonitor_data" })
+@Entity("organization", { schema: "ecomonitor_data" })
 export class OrganizationEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   Id?: number;

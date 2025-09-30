@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-@Entity("Local", { schema: "ecomonitor_data" })
+@Entity("local", { schema: "ecomonitor_data" })
 export class LocalEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   Id?: number;

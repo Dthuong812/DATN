@@ -18,6 +18,8 @@ export class ObjectService extends CoreServiceBase<ObjectEntity, ObjectDto> {
       const where: any = {};
       if (filter.Project_Code)
         where.Project_Code = Like(`%${filter.Project_Code}%`);
+      if (filter.Name)
+        where.Name = Like(`%${filter.Name}%`);
       if (filter.Organization_Code)
         where.Organization_Code = Like(`%${filter.Organization_Code}%`);
       if (filter.Status) where.Status = Like(`%${filter.Status}%`);
@@ -35,7 +37,7 @@ export class ObjectService extends CoreServiceBase<ObjectEntity, ObjectDto> {
       const skip = (page - 1) * pageSize;
       const take = pageSize;
 
-      const object = await this.objectRepository.getAll({ where, skip, take });
+      const object = await this.objectRepository.getAll({ where, skip, take,order: { CreatedAt: "DESC" } });
       const total = await this.objectRepository.getAll(where);
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Lấy dữ liệu thành công";
@@ -51,4 +53,5 @@ export class ObjectService extends CoreServiceBase<ObjectEntity, ObjectDto> {
     }
     return res;
   }
+
 }

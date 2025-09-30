@@ -1,6 +1,6 @@
 import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("Users",{schema:"eco_monitoring"})
+@Entity("users",{schema:"eco_monitoring"})
 export class UserEntity {
     @PrimaryGeneratedColumn({ type: 'int', })
     Id?: number;

@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("RoleFunctionPermission", { schema: "eco_monitoring" })
+@Entity("rolefunctionpermission", { schema: "eco_monitoring" })
 export class RoleFunctionPermissionEntity {
     @PrimaryGeneratedColumn({ type: 'int', name: 'Id' })    
     Id: number;

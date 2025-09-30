@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-@Entity("Devices", { schema: "ecomonitor_data" })
+@Entity("devices", { schema: "ecomonitor_data" })
 export class DeviceEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   Id?: number;
