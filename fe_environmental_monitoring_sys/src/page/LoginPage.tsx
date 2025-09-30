@@ -29,21 +29,28 @@ export function LoginPage({
   const [PassWord, setPassWord] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!UserName || !PassWord) {
       toast.error("Vui lòng nhập đầy đủ thông tin đăng nhập.");
       return;
     }
-
-    dispatch(loginUser({ UserName, PassWord }));
+  
+    try {
+      const response = await dispatch(loginUser({ UserName, PassWord })).unwrap(); 
+      toast.success(response.Message); 
+  
+      // Chuyển hướng đến trang chủ
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error || "Đăng nhập thất bại! Vui lòng thử lại."); 
+    }
   };
   useEffect(() => {
     if (auth.isSuccess && auth.user) {
-      toast.success(auth.user.Message);
-      navigate("/");
+      navigate("/"); 
     } else if (auth.isError) {
-      toast.error(auth.error);
+      toast.error(auth.error || "Đăng nhập thất bại!"); 
     }
   }, [auth.isSuccess, auth.isError, auth.user, auth.error, navigate]);
   return (

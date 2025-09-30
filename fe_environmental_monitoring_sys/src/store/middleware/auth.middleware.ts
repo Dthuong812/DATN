@@ -11,13 +11,9 @@ export const loginUser = createAsyncThunk<
   async (payload, { rejectWithValue }) => {
     try {
       const res = await authService.login(payload); 
-      if (res.Status !== 0) {
-
-        return rejectWithValue(res.Message);
-      }
       return res;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.Message || err.message);
+      return rejectWithValue(err.message);
     }
   }
 );

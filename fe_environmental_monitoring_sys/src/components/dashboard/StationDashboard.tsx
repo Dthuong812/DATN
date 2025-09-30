@@ -1,8 +1,7 @@
 import { useState } from "react";
-import StationList from "./StationList";
-import StationDetail from "./StationDetail";
-import StationChart from "./StationChart";
-import type { Station } from "@/types/types";
+import StationList from "../StationList";
+import StationDetail from "../StationDetail";
+import StationChart from "../StationChart";
 
 export default function StationDashboard() {
   const stations: Station[] = [

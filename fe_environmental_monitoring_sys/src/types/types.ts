@@ -366,6 +366,7 @@ export interface DataJson {
   gas?: number;
   distance?: number;
   sound_level?: number;
+  iqa?: number;
   [key: string]: number | undefined; 
 }
 export interface DeviceData {
