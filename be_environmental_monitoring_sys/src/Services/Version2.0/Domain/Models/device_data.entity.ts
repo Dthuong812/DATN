@@ -30,9 +30,9 @@ export class DeviceDataEntity {
   @Column({ type: "int", nullable: true })
   DataType?: number
 
-  @Column({ type: "decimal", precision: 10, scale: 8 })
+  @Column({ type: "double"})
   Latitude?: number;
 
-  @Column({ type: "decimal", precision: 10, scale: 8 })
+  @Column({ type: "double"})
   Longitude?: number;
 }

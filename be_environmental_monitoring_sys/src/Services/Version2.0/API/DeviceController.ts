@@ -61,4 +61,5 @@ export class DeviceController {
   async deleteDevice(@Param("Id") Id: number) {
     return await this.DeviceService.deleteDevice(Id);
   }
+  
 }

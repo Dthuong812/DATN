@@ -44,10 +44,14 @@ import { LocalRepository } from "./Infrastructure/Repository/LocalRepository";
 import { LocalDao } from "./Infrastructure/Dao/LocalDao";
 import { LocalService } from "./Application/Services/LocalService";
 import { LocalController } from "./API/LocalController";
-
+import { ScheduleModule } from "@nestjs/schedule";
+import { DeviceDataGateway } from "./websocket/device-data.gateway";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "15m" },
@@ -62,7 +66,6 @@ import { LocalController } from "./API/LocalController";
         },
       },
     ]),
-    
   ],
   controllers: [ProjectController, 
     OrganizationController,
@@ -71,7 +74,8 @@ import { LocalController } from "./API/LocalController";
     DeviceTypeController,
     DeviceController,
     DeviceDataController,
-    LocalController
+    LocalController,
+
   ],
   providers: [
     ProjectService,
@@ -108,6 +112,8 @@ import { LocalController } from "./API/LocalController";
     LocalService,
     LocalRepository,
     LocalDao,
+
+    DeviceDataGateway,
     {
       provide: APP_GUARD,
       useClass: AccessGuard,
