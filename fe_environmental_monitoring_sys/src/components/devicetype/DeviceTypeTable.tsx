@@ -11,7 +11,7 @@ import { FileText, Pencil} from "lucide-react";
 import type { DeviceType } from "@/types/types";
 import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import { useState } from "react";
 import AddDeviceTypeModal from "./AddDeviceTypeModal";
 import UpdateDeviceTypeModal from "./UpdateDeviceTypeModal";

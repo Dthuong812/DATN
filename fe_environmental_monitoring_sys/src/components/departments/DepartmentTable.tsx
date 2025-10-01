@@ -21,7 +21,7 @@ import {
 } from "../ui/table";
 import { Pencil } from "lucide-react";
 import { useGetDepartmentsQuery } from "@/services/department.service";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import DeleteDepartmentButton from "./DeleteDepartmentButton";
 import AddDepartmentDraw from "./AddDepartmentDraw";
 import UpdateDepartmentDraw from "./UpdateDepartmentDraw";

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Pencil } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/common/Pagination";
 import { useGetUsersQuery, useLockUserMutation, useUnlockUserMutation } from "@/services/user.service"; 
 import type { User } from "@/types/types";
 import { useState } from "react";

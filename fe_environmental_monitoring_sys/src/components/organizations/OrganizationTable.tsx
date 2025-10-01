@@ -1,7 +1,7 @@
 import { Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import { useState } from "react";
 import { useGetOrganizationsQuery } from "@/services/organization.service";
 import type { Organization } from "@/types/types";

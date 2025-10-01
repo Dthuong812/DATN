@@ -61,13 +61,13 @@ export default function StationChart({ object }: StationChartProps) {
           (record) => record.Object_Code === object.Code
         );
         setDataPoints((prev) => {
-          const updatedData = [...latestRecords, ...prev].slice(0, 20); 
+          const updatedData = [...latestRecords, ...prev].slice(0, 20).reverse(); 
           return updatedData;
         });
       } else {
         if (data.Object_Code === object.Code) {
           setDataPoints((prev) => {
-            const updatedData = [data, ...prev].slice(0, 20); 
+            const updatedData = [data, ...prev].slice(0, 20).reverse(); 
             return updatedData;
           });
         }

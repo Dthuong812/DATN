@@ -11,7 +11,7 @@ import { Pencil } from "lucide-react";
 import type { Device, Sensor } from "@/types/types";
 import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import DeleteDeviceButton from "./DeleteDeviceButton";
 import UpdateDeviceDraw from "./UpdateDeviceDraw";
 import { useState } from "react";

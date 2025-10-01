@@ -1,4 +1,4 @@
-import PollutionMap from "@/components/PollutionMap";
+import PollutionMap from "@/components/map/PollutionMap";
 
 export default function MapPage() {
     return (

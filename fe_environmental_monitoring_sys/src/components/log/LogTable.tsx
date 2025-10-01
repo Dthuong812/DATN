@@ -10,7 +10,7 @@ import type { Log } from "@/types/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, FileText, Server } from "lucide-react";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 
 interface LogTableProps {
   logs: Log[];

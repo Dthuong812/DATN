@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "../ui/table";
 import type { Object } from "@/types/types";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import DeleteObjectButton from "./DeleteObjectButton";

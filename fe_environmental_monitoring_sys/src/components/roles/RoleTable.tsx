@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import { useGetRolesQuery } from "@/services/role.service";
 import type { Role } from "@/types/types";
 import { useState } from "react";

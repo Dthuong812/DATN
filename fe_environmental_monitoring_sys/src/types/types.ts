@@ -1,21 +1,4 @@
-export interface PollutionStation {
-  name: string;
-  lat: number;
-  lng: number;
-  aqi: number;
-}
-export interface SensorData {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  aqi: number;
-  temperature: number;
-  humidity: number;
-  timestamp: string;
-  stationId: string;
-}
-///
+
 export interface AsyncState {
   isLoading: boolean;
   isSuccess: boolean;

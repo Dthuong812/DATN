@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 
 interface Props {
   deviceDatas: DeviceData[];

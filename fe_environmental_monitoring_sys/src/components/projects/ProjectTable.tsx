@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import Pagination from "../Pagination";
+import Pagination from "../common/Pagination";
 import { useGetProjectsQuery } from "@/services/project.service";
 import type { Project } from "@/types/types";
 import { useState } from "react";
