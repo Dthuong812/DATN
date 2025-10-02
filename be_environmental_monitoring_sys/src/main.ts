@@ -133,8 +133,8 @@ async function bootstrap() {
   const PORT_1 = process.env.PORT_1 || 4000;
   const PORT_2 = process.env.PORT_2 || 5000;
   await Promise.all([app.listen(PORT_1), Version2.listen(PORT_2)]);
-  console.log(`Service version 1.0 is running on http://localhost:${PORT_1}/api`);
-  console.log(`Service version 2.0 is running on http://localhost:${PORT_2}/api`); 
+  console.log(`Service version 1.0 is running on http://localhost:${PORT_1}/v1/api`);
+  console.log(`Service version 2.0 is running on http://localhost:${PORT_2}/v2/api`); 
 
 }
 bootstrap();
