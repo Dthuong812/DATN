@@ -52,10 +52,6 @@ async function bootstrap() {
       },
       'JWT', 
     ) 
-    if(process.env.NODE_ENV !== 'dev'){
-      config.addServer('/v1');
-    }
-
   const document = SwaggerModule.createDocument(app, config.build());
   SwaggerModule.setup('api', app, document); 
   app.enableCors({
@@ -124,9 +120,6 @@ async function bootstrap() {
       },
       'JWT', 
     )
-    if(process.env.NODE_ENV !== 'dev'){
-      ver2 = ver2.addServer('/v2');
-    }
   const documentV2 = SwaggerModule.createDocument(Version2, ver2.build());
   SwaggerModule.setup('api', Version2, documentV2);
 
