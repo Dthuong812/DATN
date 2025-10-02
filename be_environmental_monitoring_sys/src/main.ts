@@ -16,6 +16,7 @@ import { LogsService } from './Services/Version1.0/Application/Services/LogsServ
 import { Version2Module } from './Services/Version2.0/module';
 import { DeviceDataEntity } from './Services/Version2.0/Domain/Models/device_data.entity';
 import { LocalEntity } from './Services/Version2.0/Domain/Models/local.entity';
+import { DeviceEntity } from './Services/Version2.0/Domain/Models/devices.entity';
 dotenv.config();
 
 async function bootstrap() {
@@ -23,8 +24,8 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '0.0.0.0',
-      port: parseInt(process.env.TCP_PORT_1, 10),
+      host: '127.0.0.1',
+      port: parseInt(process.env.TCP_PORT_1) || 6000,
     },
   });
 
@@ -74,13 +75,13 @@ async function bootstrap() {
   const Version2 = await NestFactory.create(Version2Module);
   const db = await DataContext.getInstance(
     process.env.DATABASE_URL_VER_2,
-    [DeviceDataEntity,LocalEntity],
+    [DeviceDataEntity,LocalEntity,DeviceEntity],
   );
   Version2.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '0.0.0.0',
-      port: parseInt(process.env.TCP_PORT_2, 10),
+      host: '127.0.0.1',
+      port: parseInt(process.env.TCP_PORT_2) || 7000,
     },
   });
   // Version2.connectMicroservice<MicroserviceOptions>({
@@ -130,7 +131,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', Version2, documentV2);
 
   const PORT_1 = process.env.PORT_1 || 4000;
-  const PORT_2 = process.env.PORT_1 || 5000;
+  const PORT_2 = process.env.PORT_2 || 5000;
   await Promise.all([app.listen(PORT_1), Version2.listen(PORT_2)]);
   console.log(`Service version 1.0 is running on http://localhost:${PORT_1}/api`);
   console.log(`Service version 2.0 is running on http://localhost:${PORT_2}/api`); 
