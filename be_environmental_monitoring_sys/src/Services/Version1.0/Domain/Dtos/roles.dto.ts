@@ -1,4 +1,3 @@
-import { Function } from './../../../../../../fe_environmental_monitoring_sys/src/types/types';
 import { ApiProperty } from "@nestjs/swagger";
 import {
   IsArray,
