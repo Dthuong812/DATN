@@ -1,6 +1,6 @@
-import AssignRoleComponent from "@/components/AssignRoleComponent";
-import PermissionManagementComponent from "@/components/PermissionManagementComponent";
-import UserTable from "@/components/UserTable";
+
+import AssignRoleComponent from "@/components/roles/RoleTable";
+import UserTable from "@/components/users/UserTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 
 const tabs = [
@@ -13,11 +13,6 @@ const tabs = [
     key: "role",
     label: "Vai trò",
     content: <AssignRoleComponent />,
-  },
-  {
-    key: "permission-management",
-    label: "Quản lý quyền",
-    content: <PermissionManagementComponent />,
   },
 ];
 

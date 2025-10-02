@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import Pagination from "./Pagination";
+import Pagination from "./common/Pagination";
 
 interface Station {
   id: string;

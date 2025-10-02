@@ -1,15 +1,15 @@
 import {
   LayoutDashboard,
   Users,
-  Settings,
   HelpCircle,
-  UtilityPole,
   ChartCandlestick,
-  FilePlus2,
   ScanEye,
   ChartColumnIncreasing,
   ChevronRight,
   ChevronLeft,
+  FolderOpenDot,
+  Crosshair,
+  User,
 } from "lucide-react";
 
 
@@ -26,15 +26,16 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const navItems = [
     { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
     { href: "/admin/realtime", label: "Giám sát", icon: ChartColumnIncreasing },
-    { href: "/admin/station", label: "Trạm cảm biến", icon: UtilityPole },
-    { href: "/admin/sensors", label: "Thiết bị", icon: ChartCandlestick },
-    { href: "/admin/report", label: "Báo cáo", icon: FilePlus2 },
-    { href: "/admin/logs", label: "Logs", icon: ScanEye },
+    { href: "/admin/device", label: "Thiết bị", icon: ChartCandlestick },
+    { href: "/admin/object", label: "Đối tượng", icon: Crosshair },
+    { href: "/admin/project_organization", label: "Dự án - Tổ chức", icon: FolderOpenDot },
     { href: "/admin/user", label: "Người dùng", icon: Users },
+    { href: "/admin/logs", label: "Logs", icon: ScanEye },
+
   ];
 
   const bottomNavItems = [
-    { href: "/admin/settings", label: "Cài đặt", icon: Settings },
+    { href: "/admin/profile", label: "Trang cá nhân", icon: User },
     { href: "/admin/help", label: "Trợ giúp", icon: HelpCircle },
   ];
 
@@ -42,7 +43,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
 
   return (
     <div
-      className={`h-[95vh] border-r flex flex-col z-[100]
+      className={`h-[95vh] border-r flex flex-col z-[10]
           bg-white dark:bg-gray-900 pb-6 fixed shadow-sm
           transition-all duration-300 ease-in-out
           ${isCollapsed ? "w-20" : "w-72"} px-4`}
@@ -56,7 +57,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
           onClick={() => setIsCollapsed(!isCollapsed)}
           variant="ghost"
           size="icon"
-          className="absolute -right-4 top-4 z-[100] bg-white dark:bg-gray-800 shadow-md border rounded-full w-8 h-8"
+          className="absolute -right-4 top-4 z-[11] bg-white dark:bg-gray-800 shadow-md border rounded-full w-8 h-8"
         >
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </Button>
@@ -67,7 +68,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
           <Link to={item.href} key={item.href}>
             <Button
               variant="ghost"
-              className={`w-full text-[16px] h-11 transition-all rounded-lg flex  items-center px-4 
+              className={`w-full text-[16px] h-11 transition-all rounded-lg flex  items-center px-4 !cursor-pointer 
                   ${isCollapsed ? "justify-center my-3" : "justify-start my-3"} 
                   ${
                     isActive(item.href)

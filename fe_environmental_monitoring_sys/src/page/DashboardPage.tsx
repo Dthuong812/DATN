@@ -1,7 +1,5 @@
 import ActivityAlert from "@/components/ActivityAlert";
-import EnvironmentOverview from "@/components/EnvironmentOverview";
-import InfoCard from "@/components/InfoCard";
-import StationDashboard from "@/components/StationDashboard";
+import StationDashboard from "@/components/dashboard/StationDashboard";
 import { useOutletContext } from "react-router-dom";
 
 interface AdminContextType {
@@ -26,13 +24,9 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col h-full overflow-auto scrollbar-hide px-6">
-      <InfoCard isCollapsed={false} />
+    <div className="flex flex-col h-full overflow-auto scrollbar-hide px-6 mt-6">
       <div className="py-4">
         <ActivityAlert alerts={alerts} />
-      </div>
-      <div className="space-y-4 py-4">
-        <EnvironmentOverview />
       </div>
       <StationDashboard />
     </div>

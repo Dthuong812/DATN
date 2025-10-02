@@ -3,24 +3,27 @@ import App from "./App";
 import HomePage from "./page/HomePage";
 import MapPage from "./page/MapPage";
 import NotFoundPage from "./page/NotFoundPage";
-import AboutPage from "./page/AboutPage";
-import ContactPage from "./page/ContactPage";
 import AdminPage from "./page/AdminPage";
 import RealTimePage from "./page/RealTimePage";
-import StationPage from "./page/StationPage";
-import SernsorsPage from "./page/SersorsPage";
 import ReportPage from "./page/ReportPage";
 import LogsPage from "./page/LogsPage";
 import UserPage from "./page/UserPage";
 import { LoginPage } from "./page/LoginPage";
 import DashboardPage from "./page/DashboardPage";
-import SettingsPage from "./page/SettingPage";
 import HelpPage from "./page/HelpPage";
+import ProfilePage from "./page/ProfilePage";
+import { ForgotPasswordPage } from "./page/ForgotPassWordPage";
+import Project_Organization from "./page/Project_Organization";
+import ObjectPage from "./page/ObjectPage";
+import DevicePage from "./page/DevicePage";
+
 
 
 const router = createBrowserRouter([
     {path: "/login",
         element: <LoginPage />, },
+    {path: "/forgot-password",
+        element: <ForgotPasswordPage />, },
   {
     path: "/",
     element: <App />, 
@@ -33,15 +36,11 @@ const router = createBrowserRouter([
         path: "map",
         element: <MapPage />,
       },
+
       {
-        path: "about",
-        element: <AboutPage/>,
+        path: "report",
+        element: <ReportPage/>,
       },
-      {
-        path: "contact",
-        element: <ContactPage/>,
-      },
-     
       {
         path: "admin",
         element: <AdminPage/>,
@@ -55,18 +54,6 @@ const router = createBrowserRouter([
                 element: <RealTimePage/>,
               },
               {
-                path: "station",
-                element: <StationPage/>,
-              },
-              {
-                path: "sensors",
-                element: <SernsorsPage/>,
-              },
-              {
-                path: "report",
-                element: <ReportPage/>,
-              },
-              {
                 path: "logs",
                 element: <LogsPage/>,
               },
@@ -75,12 +62,24 @@ const router = createBrowserRouter([
                 element: <UserPage/>,
               },
               {
-                path: "settings",
-                element: <SettingsPage/>,
-              },
-              {
                 path: "help",
                 element: <HelpPage/>,
+              },
+              {
+                path: "project_organization",
+                element: <Project_Organization/>,
+              },
+              {
+                path: "object",
+                element: <ObjectPage/>,
+              },
+              {
+                path: "device",
+                element: <DevicePage/>,
+              },
+              {
+                path: "profile",
+                element: <ProfilePage/>,
               },
         ]
       },

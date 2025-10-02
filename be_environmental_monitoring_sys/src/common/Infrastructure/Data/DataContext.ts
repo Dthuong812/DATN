@@ -26,10 +26,15 @@ export class DataContext {
       this.instances[DATABASE_URL] = new DataSource({
         type: 'mysql',
         url: DATABASE_URL,
-        logging: true,
+        logging: false,
         entities: this.entities[DATABASE_URL],
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         driver: require('mysql2'),
+        extra:{
+          connectionLimit:10,
+          waitForConnections: true,
+          queueLimit: 100
+        }
       });
 
       try {

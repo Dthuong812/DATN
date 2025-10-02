@@ -6,5 +6,7 @@ export enum EnumQuyen
     DELETE="DELETE",
     APPROVE="APPROVE",
     CANCEL="CANCEL",
-    CONFIRM="CONFIRM"
+    IMPORT ="IMPORT",
+    CONFIRM="CONFIRM",
+    EXPORT="EXPORT",
 }

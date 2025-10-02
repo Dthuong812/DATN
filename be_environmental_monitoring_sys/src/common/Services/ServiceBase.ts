@@ -203,4 +203,46 @@ export class ServiceBase<TEntity, TDto> implements IServiceBase<TEntity, TDto> {
     }
     return res;
   }
+
+  async markAsDeleted(condition: { Id: number }, deletedBy: number): Promise<ResultResponse> {
+    const res = new ResultResponse(0, "", null);
+  
+    const findOne = await this._repository.getById(condition.Id);
+    if (!findOne) {
+      res.Status = ErrorCode.NOT_FOUND_ID;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.NOT_FOUND_ID);
+      return res;
+    }
+  
+    const result = await this._repository.markAsDeleted(condition, deletedBy);
+  
+    if (result) {
+      res.Status = ErrorCode.DELETE_SUCCESS;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.DELETE_SUCCESS);
+    } else {
+      res.Status = ErrorCode.DELETE_FAIL;
+      res.Message = ErrorManage.getErrorMessage(ErrorCode.DELETE_FAIL);
+    }
+  
+    return res;
+  }
+  
+  async markManyAsDeleted(conditions: { Id: number }[], deletedBy: number): Promise<boolean> {
+    try {
+      for (const condition of conditions) {
+        const item = await this._repository.getById(condition.Id);
+        if (!item) continue;
+
+        (item as any).DeletedAt = new Date();
+        (item as any).DeletedBy = deletedBy;
+        await this._repository.update({ Id: condition.Id }, item);
+        await this._repository.markAsDeleted(condition, deletedBy);
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+  
 }
