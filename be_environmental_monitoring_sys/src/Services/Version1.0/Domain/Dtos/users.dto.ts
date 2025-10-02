@@ -1,7 +1,3 @@
-import {
-  Project,
-  FuncPers,
-} from "./../../../../../../fe_environmental_monitoring_sys/src/types/types";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {

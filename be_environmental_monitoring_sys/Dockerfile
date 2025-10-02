@@ -1,4 +1,4 @@
-FROM node:18-alpine AS development
+FROM node:20-alpine AS development
 
 # Set timezone for Vietnam
 ENV TZ=Asia/Ho_Chi_Minh
@@ -22,7 +22,7 @@ COPY . .
 
 RUN yarn run build
 
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # Set timezone for Vietnam
 ENV TZ=Asia/Ho_Chi_Minh
