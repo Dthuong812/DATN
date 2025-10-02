@@ -1,4 +1,3 @@
-import { Project } from './../../../../fe_environmental_monitoring_sys/src/types/types';
 import { RoleFunctionPermissionRepository } from './Infrastructure/Repository/RoleFunctionPermissionRepository';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
