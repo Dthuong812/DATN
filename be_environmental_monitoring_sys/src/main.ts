@@ -24,7 +24,7 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: '0.0.0.0',
-      port: 6000,
+      port: parseInt(process.env.TCP_PORT_1, 10),
     },
   });
 
@@ -80,7 +80,7 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: '0.0.0.0',
-      port: 7000,
+      port: parseInt(process.env.TCP_PORT_2, 10),
     },
   });
   // Version2.connectMicroservice<MicroserviceOptions>({
