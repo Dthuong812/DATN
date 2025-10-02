@@ -52,6 +52,10 @@ async function bootstrap() {
       },
       'JWT', 
     ) 
+    if(process.env.NODE_ENV !== 'dev'){
+      config.addServer('/v1');
+    }
+
   const document = SwaggerModule.createDocument(app, config.build());
   SwaggerModule.setup('api', app, document); 
   app.enableCors({
@@ -120,14 +124,17 @@ async function bootstrap() {
       },
       'JWT', 
     )
+    if(process.env.NODE_ENV !== 'dev'){
+      ver2 = ver2.addServer('/v2');
+    }
   const documentV2 = SwaggerModule.createDocument(Version2, ver2.build());
   SwaggerModule.setup('api', Version2, documentV2);
 
   const PORT_1 = process.env.PORT_1 || 4000;
   const PORT_2 = process.env.PORT_2 || 5000;
   await Promise.all([app.listen(PORT_1), Version2.listen(PORT_2)]);
-  console.log(`Service version 1.0 is running on http://localhost:${PORT_1}/api`);
-  console.log(`Service version 2.0 is running on http://localhost:${PORT_2}/api`); 
+  console.log(`Service version 1.0 is running on http://localhost:${PORT_1}/v1/api`);
+  console.log(`Service version 2.0 is running on http://localhost:${PORT_2}/v2/api`); 
 
 }
 bootstrap();
