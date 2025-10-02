@@ -23,7 +23,7 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '127.0.0.1',
+      host: '0.0.0.0',
       port: 6000,
     },
   });
@@ -51,9 +51,11 @@ async function bootstrap() {
       },
       'JWT', 
     ) 
-    .build();
+    if(process.env.NODE_ENV !== 'dev'){
+      config.addServer('/v1');
+    }
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config.build());
   SwaggerModule.setup('api', app, document); 
   app.enableCors({
       origin: '*',
@@ -77,7 +79,7 @@ async function bootstrap() {
   Version2.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '127.0.0.1',
+      host: '0.0.0.0',
       port: 7000,
     },
   });
@@ -121,13 +123,17 @@ async function bootstrap() {
       },
       'JWT', 
     )
-    .build();
-  const documentV2 = SwaggerModule.createDocument(Version2, ver2);
+    if(process.env.NODE_ENV !== 'dev'){
+      ver2 = ver2.addServer('/v2');
+    }
+  const documentV2 = SwaggerModule.createDocument(Version2, ver2.build());
   SwaggerModule.setup('api', Version2, documentV2);
 
-  await Promise.all([app.listen(4000), Version2.listen(5000)]);
-  console.log(`Service version 1.0 is running on http://localhost:4000/api`);
-  console.log(`Service version 2.0 is running on http://localhost:5000/api`); 
+  const PORT_1 = process.env.PORT_1 || 4000;
+  const PORT_2 = process.env.PORT_1 || 5000;
+  await Promise.all([app.listen(PORT_1), Version2.listen(PORT_2)]);
+  console.log(`Service version 1.0 is running on http://localhost:${PORT_1}/api`);
+  console.log(`Service version 2.0 is running on http://localhost:${PORT_2}/api`); 
 
 }
 bootstrap();
