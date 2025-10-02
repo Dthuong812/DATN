@@ -61,7 +61,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
         name: 'app',
         transport: Transport.TCP,
         options: {
-          host: '0.0.0.0',
+          host: '127.0.0.1',
           port: parseInt(process.env.MICRO_PORT_2) || 6000,
         },
       },

@@ -60,7 +60,7 @@ import { UserFunctionPermissionRepository } from './Infrastructure/Repository/Us
         name: 'Version2',
         transport: Transport.TCP,
         options: {
-          host: '0.0.0.0',
+          host: '127.0.0.1',
           port: parseInt(process.env.MICRO_PORT_1) || 6000,
         },
       },
