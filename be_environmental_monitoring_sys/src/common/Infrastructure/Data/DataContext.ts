@@ -35,9 +35,6 @@ export class DataContext {
           waitForConnections: true,
           queueLimit: 100
         },
-        ssl: {
-          rejectUnauthorized: false  
-        }
       });
 
       try {

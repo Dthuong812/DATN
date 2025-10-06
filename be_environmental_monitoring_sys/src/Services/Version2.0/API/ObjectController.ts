@@ -1,7 +1,7 @@
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ObjectService } from "../Application/Services/ObjectService";
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
-import { GetCurrentUserId, RequirePermission } from "src/common/decorators";
+import { GetCurrentUserId, Public, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
 import { CreateObjectDto, FilterObjectDto, UpdateObjectDto } from "../Domain/Dto/object.dto";
 
@@ -10,8 +10,9 @@ import { CreateObjectDto, FilterObjectDto, UpdateObjectDto } from "../Domain/Dto
 export class ObjectController {
     constructor(private readonly ObjectService:ObjectService
     ){}
-    
+   
     @Get()
+    @Public()
     @RequirePermission({ Func: "FUNC_OBJECT", Permission: EnumQuyen.READ })
     @ApiOperation({ summary: "Lấy tất cả đối tượng quan trắc" })
     async getAll(@Query() filter: FilterObjectDto){

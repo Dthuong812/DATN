@@ -13,6 +13,7 @@ import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { Between, Like } from "typeorm";
 import { ObjectRepository } from "../../Infrastructure/Repository/ObjectRepository";
+import { group } from "console";
 
 @Injectable()
 export class DeviceDataService extends CoreServiceBase<
@@ -31,21 +32,20 @@ export class DeviceDataService extends CoreServiceBase<
   async processMqttPayload(data: any) {
     const mac = data.devices_code;
     if (!mac) {
-      console.warn("⚠️ No devices_code (MAC) in payload, skip");
+      console.warn("No devices_code (MAC) in payload, skip");
       return null;
     }
 
     const object_code = await this.DeviceRepository.getAll({
       where: { Code: mac },
     });
-
     const entity: Partial<DeviceDataEntity> = {
       Devices_Code: mac,
       Project_Code: data.project_code || null,
       Object_Code: object_code.length > 0 ? object_code[0].Object_Code : null,
       Times: data.times ? new Date(data.times) : new Date(),
-      Longitude: data.longitude ?? null,
-      Latitude: data.latitude ?? null,
+      Longitude: object_code.length > 0 ? object_code[0].Longitude : null,
+      Latitude: object_code.length > 0 ? object_code[0].Latitude : null,
       Speed: data.speed ?? null,
       DataType: data.datatype || 1,
       DataJson: data.data ?? {},
@@ -69,50 +69,53 @@ export class DeviceDataService extends CoreServiceBase<
     }
   
 
-    this.eventEmitter.emit("device.data.saved", savedEntity);
+    this.eventEmitter.emit("device.data.saved", entity);
 
     return savedEntity;
   }
 
-  @Cron("*/5 * * * * *") 
-  async generateMockData() {
-    const devices = await this.DeviceRepository.getAll();
-    if (!devices || devices.length === 0) {
-      console.warn("No devices found in the repository.");
-      return;
-    }
+  // @Cron("*/5 * * * * *") 
+  // async generateMockData() {
+  //   const devices = await this.DeviceRepository.getAll();
+  //   if (!devices || devices.length === 0) {
+  //     console.warn("No devices found in the repository.");
+  //     return;
+  //   }
 
-    for (const device of devices) {
-      const mockData = {
-        devices_code: device.Code,
-        project_code: "EcoMonitor",
-        times: new Date().toISOString(),
-        longitude: device.Longitude,
-        latitude: device.Latitude,
-        speed: 1,
-        datatype: 1,
-        data: {
-          temperature: this.generateRandomValue(20, 40),
-          humidity: this.generateRandomValue(30, 90),
-          pressure: this.generateRandomValue(950, 1050),
-          iaq: this.generateRandomValue(0, 500),
-          sound_level: this.generateRandomValue(30, 120),
-          distance: this.generateRandomValue(0, 400),
-        },
-      };
+  //   for (const device of devices) {
+  //     const mockData = {
+  //       devices_code: device.Code,
+  //       project_code: "EcoMonitor",
+  //       times: new Date().toISOString(),
+  //       longitude: device.Longitude,
+  //       latitude: device.Latitude,
+  //       speed: 1,
+  //       datatype: 1,
+  //       data: {
+  //         temperature: this.generateRandomValue(20, 40),
+  //         humidity: this.generateRandomValue(30, 90),
+  //         pressure: this.generateRandomValue(950, 1050),
+  //         iaq: this.generateRandomValue(0, 500),
+  //         sound_level: this.generateRandomValue(30, 120),
+  //         distance: this.generateRandomValue(0, 400),
+  //       },
+  //     };
 
-      await this.processMqttPayload(mockData);
-    }
-  }
+  //     await this.processMqttPayload(mockData);
+  //   }
+  // }
 
-  private generateRandomValue(min: number, max: number): number {
-    return parseFloat((Math.random() * (max - min) + min).toFixed(2));
-  }
+  // private generateRandomValue(min: number, max: number): number {
+  //   return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+  // }
 
   async getLatestDeviceData() {
     return await this.deviceDataRepository.getAll({
       order: { Times: "DESC" },
     });
+  }
+  async getLatestDeviceDatas() {
+    return await this.deviceDataRepository.getLatestAll();
   }
 
   async getAll(filter: FilterDeviceDataDto): Promise<ResultResponse> {
@@ -152,7 +155,6 @@ export class DeviceDataService extends CoreServiceBase<
 
   @Cron("5 * * * *") 
   async aggregateHourlyData() {
-    console.log("Starting hourly data aggregation...");
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
@@ -179,11 +181,9 @@ export class DeviceDataService extends CoreServiceBase<
         await this.deviceDataRepository.create(aggregatedEntity);
       }
     }
-    console.log("Hourly data aggregation complete.");
   }
   @Cron("0 1 * * *")
   async aggregateDailyData() {
-    console.log("Starting daily data aggregation...");
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -211,7 +211,6 @@ export class DeviceDataService extends CoreServiceBase<
         await this.deviceDataRepository.create(aggregatedEntity);
       }
     }
-    console.log("Daily data aggregation complete.");
   }
   private calculateAverageData(dataArray: DeviceDataEntity[]): Record<string, any> {
     if (!dataArray || dataArray.length === 0) {

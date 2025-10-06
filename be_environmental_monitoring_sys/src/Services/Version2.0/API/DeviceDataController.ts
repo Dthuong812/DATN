@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Query } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { DeviceDataService } from "../Application/Services/DeviceDataService";
-import { RequirePermission } from "src/common/decorators";
+import { Public, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
 import { Ctx, MessagePattern, MqttContext, Payload } from "@nestjs/microservices";
 import { FilterDeviceDataDto } from "../Domain/Dto/device_data.dto";
@@ -10,13 +10,15 @@ import { FilterDeviceDataDto } from "../Domain/Dto/device_data.dto";
 @Controller("device-data")
 export class DeviceDataController {
   constructor(private readonly DeviceDataService: DeviceDataService) {}
+
   @Get()
+  @Public()
   @ApiOperation({ summary: "Lấy tất cả dữ liệu thiết bị" })
-  @RequirePermission({ Func: "FUNC_DEVICEDATA", Permission: EnumQuyen.READ})
+  // @RequirePermission({ Func: "FUNC_DEVICEDATA", Permission: EnumQuyen.READ})
   async getAllDeviceDatas(@Query() filter:FilterDeviceDataDto) {
     return this.DeviceDataService.getAll(filter);
   }
-  @MessagePattern("iot/sensors")
+  @MessagePattern("esp32/telemetry/data")
   async handleSensorData(@Payload() payload: any, @Ctx() context: MqttContext) {
     const rawPacket = context.getPacket();
     try {
@@ -26,5 +28,11 @@ export class DeviceDataController {
     } catch (e) {
       console.error("Error parsing full payload:", e);
     }
+  }
+  @Get("latest")
+  @Public()
+  @ApiOperation({ summary: "Lấy dữ liệu thiết bị mới nhất" })
+  async getLatestDeviceDatas() {
+    return this.DeviceDataService.getLatestDeviceDatas();
   }
 }
