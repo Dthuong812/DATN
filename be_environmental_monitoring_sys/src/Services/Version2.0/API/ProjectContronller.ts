@@ -12,6 +12,7 @@ export class ProjectController {
   constructor(private readonly ProjectService: ProjectService) {}
   @MessagePattern('message_getAll_projects')
   @Get()
+  @RequirePermission({ Func: "FUNC_PROJECT", Permission: EnumQuyen.READ })
   async getAllProjects() {
     return this.ProjectService.getAll();
   }

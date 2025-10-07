@@ -24,6 +24,7 @@ export class OrganizationController {
   @MessagePattern('message_get_all_org')
   @Get()
   @ApiOperation({ summary: "Lấy tất cả dự án mới" })
+  @RequirePermission({ Func: "FUNC_ORG", Permission: EnumQuyen.READ })
   async getAll() {
     return this.OrganizationService.getAll();
   }

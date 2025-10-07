@@ -24,6 +24,7 @@ export class UserController {
 
   @Get()
   @ApiBearerAuth("JWT")
+  @RequirePermission({ Func: "FUNC_USER", Permission: EnumQuyen.READ })
   @ApiOperation({ summary: "Lấy danh sách tất cả người dùng" })
   async getAll(): Promise<ResultResponse> {
     return await this.userService.getAllUsers();
@@ -63,6 +64,7 @@ export class UserController {
   @Get("/:Id")
   @ApiBearerAuth("JWT")
   @ApiOperation({ summary: "Lấy thông tin người dùng theo Id" })
+  @RequirePermission({ Func: "FUNC_USER", Permission: EnumQuyen.READ })
   async getUserById(@Param("Id") Id: number): Promise<ResultResponse> {
     return await this.userService.getUserById(Id);
   }
