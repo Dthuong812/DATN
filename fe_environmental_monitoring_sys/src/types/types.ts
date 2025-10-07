@@ -1,4 +1,3 @@
-
 export interface AsyncState {
   isLoading: boolean;
   isSuccess: boolean;
@@ -283,7 +282,9 @@ export interface SensorUnits {
   temperature?: string; 
   humidity?: string;
   pressure?: string;
-  gas?: string;
+  iaq?: string;
+  voc?: string;
+  co2?:string;
   distance?: string;
   sound_level?: string;
   [key: string]: string | undefined; 
@@ -369,4 +370,65 @@ export interface DeviceDataResponse {
   Status: number;
   Message: string;
   Data: DeviceData[];
+}
+
+export interface SensorConfigType  {
+  Id:number
+  Code: string;
+  Label: string;
+  Unit: string;
+  Thresholds: number[];
+  Colors: string[];
+  Descriptions: string[];
+  Field: string;
+};
+
+export interface ConfigResponse{
+  Status: number;
+  Message: string;
+  Data: SensorConfigType[];
+}
+
+export interface DeviceDataReport {
+  Id: number;
+  Devices_Code: string;
+  Project_Code: string;
+  Object_Code: string;
+  Times: Date;
+  temperature?: number; 
+  humidity?: number;
+  pressure?: number;
+  gas?: number;
+  distance?: number;
+  sound_level?: number;
+  iaq?: number;
+  voc?:number;
+  co2?:number;
+  Temperature?: number; 
+  Humidity?: number;
+  Pressure?: number;
+  Noise?: number;
+  AQI?: number;
+  VOC?:number;
+  CO2?:number;
+}
+export type PermissionCode = "CREATE" | "READ" | "UPDATE" | "DELETE" | "APPROVE" | "CANCEL" | "CONFIRM" | "IMPORT" | "EXPORT";
+
+export interface Token {
+  sub: number;
+  username: string;
+  Organization_Id: number;
+  Department_Id: number;
+  Projects: {
+    Id: number;
+    Code: string;
+    Roles: {
+      Id: number;
+      Code: string;
+      Functions: {
+        Code: string;
+        Permissions: { Code: PermissionCode }[];
+      }[];
+    }[];
+  }[];
 }

@@ -37,6 +37,11 @@ export const deviceDataApi = createApi({
       keepUnusedDataFor: 0,
       providesTags: ["DeviceData"],
     }),
+    getLatestDeviceDatas: builder.query({
+      query: () => `/device-data/latest`,
+      keepUnusedDataFor: 0,
+      providesTags: ["DeviceData"],
+    }),
   }),
 });
-export const { useGetDeviceDatasQuery } = deviceDataApi;
+export const { useGetDeviceDatasQuery,useGetLatestDeviceDatasQuery } = deviceDataApi;

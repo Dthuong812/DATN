@@ -44,8 +44,8 @@ export default function AddProjectModal({
       toast.success("Lưu thành công!");
       onClose();
       if (onSuccess) onSuccess();
-    } catch (error) {
-      console.error("Failed to add project:", error);
+    } catch  {
+      toast.error("Lưu thất bại, vui lòng kiểm tra quyền!")
     }
   };
 

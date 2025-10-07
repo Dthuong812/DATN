@@ -20,7 +20,6 @@ export default function ObjectList({
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log(value)
     setFilter(value);
     onFilter(value);
   };
@@ -55,13 +54,18 @@ export default function ObjectList({
             <div>
               <div className="font-semibold">{station.Name}</div>
               <div className="text-sm text-muted-foreground">
-                {station.Details_Value.Address}
+                {station.Details_Value.Address.split(" ")
+                          .slice(0,8)
+                          .join(" ")}{" "}
+                          <br></br>
+                {station.Details_Value.Address.split(" ").slice(8)
+                          .join(" ")}{" "}
               </div>
             </div>
             <span
-              className={`px-3 py-1 text-xs rounded-md font-medium ${
+              className={`px-3 py-1 text-xs rounded-md font-medium  ${
                 station.Status === 1
-                  ? "bg-green-100 text-green-700"
+                  ? "bg-green-100 text-green-700 "
                   : "bg-gray-900 text-white"
               }`}
             >

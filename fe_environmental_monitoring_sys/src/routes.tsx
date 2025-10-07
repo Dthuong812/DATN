@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import HomePage from "./page/HomePage";
 import MapPage from "./page/MapPage";
 import NotFoundPage from "./page/NotFoundPage";
 import AdminPage from "./page/AdminPage";
@@ -30,7 +29,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true, 
-        element: <HomePage />,
+        element: <MapPage />,
       },
       {
         path: "map",
