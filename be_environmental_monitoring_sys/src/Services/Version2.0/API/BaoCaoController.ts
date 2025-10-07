@@ -3,8 +3,9 @@ import { Response } from "express";
 import { BaoCaoService } from "../Application/Services/BaoCaoService";
 import { Public, RequirePermission } from "src/common/decorators";
 import { EnumQuyen } from "src/common/EnumQuyen";
-import { ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 
+@ApiBearerAuth("JWT")
 @Controller("baocao")
 export class BaoCaoController {
   constructor(private readonly baoCaoService: BaoCaoService) {}
@@ -49,6 +50,7 @@ export class BaoCaoController {
   }
   @Get("view")
   @RequirePermission({ Func: "FUNC_BAOCAO", Permission: EnumQuyen.READ })
+  @Public()
   @ApiOperation({ summary: "xem bao cao" })
   async viewVuotNguong(
     @Query("startTime") startTime: Date,

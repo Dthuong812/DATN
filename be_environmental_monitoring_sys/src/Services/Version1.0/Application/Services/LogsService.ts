@@ -33,7 +33,7 @@ export class LogsService extends CoreServiceBase<
       Action:  Action,
       Method: method,
       Content: message,
-      Data: JSON.stringify(data),
+      Data: data ? JSON.stringify(data) : "Download",
       CreatedBy: authId,
       CreatedAt: new Date()
     });

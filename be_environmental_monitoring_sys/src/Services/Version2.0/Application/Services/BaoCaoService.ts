@@ -130,8 +130,9 @@ export class BaoCaoService {
       const row: any = {
         Times: item.Times,
         Object_Code: item.Object_Code,
-        Device_Code: item.Devices_Code,
-      };
+        Devices_Code: item.Devices_Code,
+        Project_Code: item.Project_Code,
+      };  
 
       for (const cfg of configs) {
         const value = json[cfg.Field];
@@ -185,7 +186,7 @@ export class BaoCaoService {
     const headers = [
       { label: "Thời gian", property: "Times", width: 120 },
       { label: "Đối tượng", property: "Object_Code", width: 80 },
-      { label: "Thiết bị", property: "Device_Code", width: 100 },
+      { label: "Thiết bị", property: "Devices_Code", width: 100 },
       ...configs.map((cfg) => ({
         label: `${cfg.Label} (${cfg.Unit})`,
         property: cfg.Code,
@@ -197,7 +198,7 @@ export class BaoCaoService {
       const obj: any = {
         Times: new Date(row.Times).toLocaleString("vi-VN"),
         Object_Code: row.Object_Code,
-        Device_Code: row.Device_Code,
+        Devices_Code: row.Devices_Code,
       };
       configs.forEach((cfg) => {
         obj[cfg.Code] = row[cfg.Code];
@@ -215,27 +216,19 @@ export class BaoCaoService {
       },
       {
         prepareHeader: () => doc.font("Roboto").fontSize(8),
-        prepareRow: (row, i) => {
+        prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
           doc.font("Roboto").fontSize(8);
           configs.forEach((cfg) => {
             const value = row[cfg.Code];
             if (typeof value === "string") {
-              if (value.includes("Nguy hiểm")) {
-                doc.fillColor("red"); 
-              } else if (value.includes("Tốt")) {
-                doc.fillColor("green"); 
-              } else if (value.includes("Vượt ngưỡng tốt")) {
-                doc.fillColor("yellow"); 
-              } else {
-                doc.fillColor("black"); 
-              }
+              doc.fillColor("black");
             }
           });
           return doc;
         },
       }
     );
-  
+   doc.addPage()
 
   
     // --- Bảng màu ---
