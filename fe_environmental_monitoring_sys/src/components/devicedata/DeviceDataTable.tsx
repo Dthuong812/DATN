@@ -1,5 +1,3 @@
-"use client";
-
 import type { DeviceData } from "@/types/types";
 import {
   Table,
@@ -48,8 +46,10 @@ export default function DeviceDataTable({
               <TableHead>Áp suất (hPa)</TableHead>
               <TableHead>Độ ẩm (%)</TableHead>
               <TableHead>IAQ</TableHead>
-              <TableHead>Mức ngập (cm)</TableHead>
               <TableHead>Độ ồn (dB)</TableHead>
+              <TableHead>CO2</TableHead>
+              <TableHead>VOC</TableHead>
+              <TableHead>Mức ngập (cm)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,8 +77,10 @@ export default function DeviceDataTable({
                   <TableCell>{data.DataJson?.pressure ?? "-"}</TableCell>
                   <TableCell>{data.DataJson?.humidity ?? "-"}</TableCell>
                   <TableCell>{data.DataJson?.iaq ?? "-"}</TableCell>
-                  <TableCell>{data.DataJson?.distance ?? "-"}</TableCell>
                   <TableCell>{data.DataJson?.sound_level ?? "-"}</TableCell>
+                  <TableCell>{data.DataJson?.voc ?? "-"}</TableCell>
+                  <TableCell>{data.DataJson?.co2 ?? "-"}</TableCell>
+                  <TableCell>{data.DataJson?.distance ?? "-"}</TableCell>
                 </TableRow>
               ))
             ) : (

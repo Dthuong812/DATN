@@ -1,4 +1,4 @@
-import { Bell, Leaf, LogOut, User } from "lucide-react";
+import { Leaf, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
@@ -14,6 +14,7 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "@/store/slices/authSlice";
 import { toast } from "sonner";
+import AlertDropdown from "@/components/common/AlertDropdown";
 
 export default function Header() {
   const location = useLocation();
@@ -32,6 +33,7 @@ export default function Header() {
   const navItems = [
     { href: "/map", label: "Quan Trắc" },
     { href: "/report", label: "Thống kê" },
+    { href: "/admin", label: "Quản lý" },
   ];
 
   return (
@@ -49,38 +51,25 @@ export default function Header() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "px-3 py-2 rounded-md text-[16px] font-medium",
-                  pathname === item.href
-                    ? "text-green-600 dark:text-green-400 font-semibold"
-                    : "text-gray-700 hover:text-green-600"
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-
             {token ? (
               <div className="flex items-center gap-3">
-                <Link
-                  to="/admin"
-                  className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-semibold"
-                  title="Admin"
-                >
-                  Quản lý
-                </Link>
-
-                <Link
-                  to="/notifications"
-                  className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"
-                  title="Thông báo"
-                >
-                  <Bell className="w-5 h-5" />
-                </Link>
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={cn(
+                      "px-3 py-2 rounded-md text-[16px] font-medium",
+                      pathname === item.href
+                        ? "text-green-600 dark:text-green-400 font-semibold"
+                        : "text-gray-700 hover:text-green-600"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                <div className="relative mt-2">
+                  <AlertDropdown />
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger className="focus:outline-none rounded-full">
                     <Avatar className="cursor-pointer w-8 h-8">
@@ -96,12 +85,15 @@ export default function Header() {
                     <hr />
                     <DropdownMenuSeparator />
                     <Link to={"/admin/profile"}>
-                    <DropdownMenuItem className="flex items-center gap-2 p-1 focus:outline-none cursor-pointer">
-                      <User className="h-4 w-4" /> Trang cá nhân
-                    </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center gap-2 p-1 focus:outline-none cursor-pointer">
+                        <User className="h-4 w-4" /> Trang cá nhân
+                      </DropdownMenuItem>
                     </Link>
 
-                    <DropdownMenuItem className="text-destructive flex items-center gap-2 p-1 focus:outline-none cursor-pointer" onClick={handleLogout}>
+                    <DropdownMenuItem
+                      className="text-destructive flex items-center gap-2 p-1 focus:outline-none cursor-pointer"
+                      onClick={handleLogout}
+                    >
                       <LogOut className="h-4 w-4" /> Đăng xuất
                     </DropdownMenuItem>
                   </DropdownMenuContent>

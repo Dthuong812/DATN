@@ -161,19 +161,35 @@ export default function StationChart({ object }: StationChartProps) {
                   strokeWidth={2}
                   dot={false}
                 />
-                <Line
+                {/* <Line
                   type="monotone"
                   dataKey="DataJson.distance"
                   name="Mức ngập"
                   stroke="#910ee9"
                   strokeWidth={2}
                   dot={false}
-                />
+                /> */}
                 <Line
                   type="monotone"
                   dataKey="DataJson.sound_level"
                   name="Độ ồn"
                   stroke="#ef86ba"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="DataJson.co2"
+                  name="CO2"
+                  stroke="#405040"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="DataJson.voc"
+                  name="Khí VOC"
+                  stroke="#444eac"
                   strokeWidth={2}
                   dot={false}
                 />

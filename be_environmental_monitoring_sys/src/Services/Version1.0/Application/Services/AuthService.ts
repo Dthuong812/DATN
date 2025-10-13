@@ -205,7 +205,6 @@ export class AuthService {
         refresh_token,
         exp_refresh,
       };
-      console.log(item);
       res.Data = item;
       res.Status = ErrorCode.SUCCESS;
       res.Message = "Refresh token thành công";

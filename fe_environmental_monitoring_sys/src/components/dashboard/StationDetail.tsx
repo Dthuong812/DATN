@@ -97,11 +97,17 @@ export default function StationDetail({ object }: ObjectDetailProps) {
           <div>
            IAQ: <strong>{latestData.DataJson.iaq ?? "N/A"}</strong>
           </div>
-          <div>
+          {/* <div>
           Mức ngập: <strong>{latestData.DataJson.distance ?? "N/A"}cm</strong>
-          </div>
+          </div> */}
           <div>
             Độ ồn: <strong>{latestData.DataJson.sound_level ?? "N/A"} dB</strong>
+          </div>
+          <div>
+            Khí VOC: <strong>{latestData.DataJson.voc ?? "N/A"}</strong>
+          </div>
+          <div>
+            CO2: <strong>{latestData.DataJson.co2 ?? "N/A"}</strong>
           </div>
         </div>
       ) : (

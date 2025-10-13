@@ -17,7 +17,12 @@ import UpdateProjectModal from "./UpdateProjectModal";
 import DeleteProjectButton from "./DeleteProjectButton";
 
 export default function ProjectTable() {
-  const { data, isFetching, refetch } = useGetProjectsQuery({});
+  const { data, isFetching, refetch } = useGetProjectsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: 30000, 
+  });
   const projects = data?.Data ?? [];
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;

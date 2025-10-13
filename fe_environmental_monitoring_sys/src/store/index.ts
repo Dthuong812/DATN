@@ -13,6 +13,9 @@ import objectReducer from "./slices/objectSlice";
 import deviceReducer from "./slices/deviceSlice";
 import deviceDataReducer from "./slices/deviceDataSlice";
 import deviceTypeReducer from "./slices/deviceTypeSlice";
+import configReducer from "./slices/sensor-configSlice";
+import baoCaoReducer from "./slices/baocaoSlice";
+import alertReducer from "./slices/alertSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { projectsApi } from "@/services/project.service";
 import { organizationApi } from "@/services/organization.service";
@@ -27,6 +30,9 @@ import { objectApi } from "@/services/object.service";
 import { deviceApi } from "@/services/device.service";
 import { deviceTypeApi } from "@/services/devicetype.service";
 import { deviceDataApi } from "@/services/devicedata.service";
+import { configApi } from "@/services/senser-config.service";
+import { baoCaoApi } from "@/services/baocao.service";
+import { alertApi } from "@/services/alert.service";
 
 export const store = configureStore({
   reducer: {
@@ -58,6 +64,12 @@ export const store = configureStore({
     [deviceTypeApi.reducerPath]: deviceTypeApi.reducer,
     deviceData:deviceDataReducer,
     [deviceDataApi.reducerPath]: deviceDataApi.reducer,
+    config: configReducer,
+    [configApi.reducerPath]: configApi.reducer,
+    baocao: baoCaoReducer,
+    [baoCaoApi.reducerPath]: baoCaoApi.reducer,
+    alert: alertReducer,
+    [alertApi.reducerPath]: alertApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -73,7 +85,10 @@ export const store = configureStore({
       objectApi.middleware,
       deviceApi.middleware,
       deviceTypeApi.middleware,
-      deviceDataApi.middleware
+      deviceDataApi.middleware,
+      configApi.middleware,
+      baoCaoApi.middleware,
+      alertApi.middleware
     ),
 });
 setupListeners(store.dispatch);

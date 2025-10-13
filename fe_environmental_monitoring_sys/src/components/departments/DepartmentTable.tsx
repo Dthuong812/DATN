@@ -31,11 +31,16 @@ export default function DepartmentTable() {
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isFetching, refetch } = useGetDepartmentsQuery(
-    {
-      page: currentPage,
-      pageSize: itemsPerPage,
+    { 
+      page: currentPage, 
+      pageSize: itemsPerPage 
     },
-    { skip: !organizationId }
+    { 
+      skip: !organizationId,
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    }
   );
   const list  = data?.Data?.data ?? [];
   const departments = list.filter((dept: Department) => dept.Organization_Id === organizationId);

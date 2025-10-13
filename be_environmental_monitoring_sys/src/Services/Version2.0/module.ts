@@ -47,6 +47,19 @@ import { LocalController } from "./API/LocalController";
 import { ScheduleModule } from "@nestjs/schedule";
 import { DeviceDataGateway } from "./websocket/device-data.gateway";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { BaoCaoController } from "./API/BaoCaoController";
+import { BaoCaoRepository } from "./Infrastructure/Repository/BaoCaoRepository";
+import { BaoCaoService } from "./Application/Services/BaoCaoService";
+import { BaoCaoDao } from "./Infrastructure/Dao/BaoCaoDao";
+import { SensorConfigService } from "./Application/Services/SensorConfigService";
+import { SensorConfigRepository } from "./Infrastructure/Repository/SensorConfigRepository";
+import { SensorConfigDao } from "./Infrastructure/Dao/SensorConfigDao";
+import { SensorConfigController } from "./API/SensorConfigController";
+import { AlertController } from "./API/AlertController";
+import { AlertService } from "./Application/Services/AlertService";
+import { AlertDao } from "./Infrastructure/Dao/AlertDao";
+import { AlertRepository } from "./Infrastructure/Repository/AlertRepository";
+import { AlertGateway } from "./websocket/alert.gateway";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -75,7 +88,9 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
     DeviceController,
     DeviceDataController,
     LocalController,
-
+    BaoCaoController,
+    SensorConfigController,
+    AlertController,
   ],
   providers: [
     ProjectService,
@@ -114,6 +129,17 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
     LocalDao,
 
     DeviceDataGateway,
+    BaoCaoService,
+    BaoCaoRepository,
+    BaoCaoDao,
+    SensorConfigService,
+    SensorConfigRepository,
+    SensorConfigDao,
+
+    AlertGateway,
+    AlertService,
+    AlertDao,
+    AlertRepository,
     {
       provide: APP_GUARD,
       useClass: AccessGuard,

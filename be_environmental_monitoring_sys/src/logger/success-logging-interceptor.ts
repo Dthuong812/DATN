@@ -31,17 +31,17 @@ export class SuccessLoggingInterceptor implements NestInterceptor {
         const action = actionMap[request.method] || Action.READ;
 
         // Lấy message từ data nếu có
-        const message =
-          data && typeof data === "object" && "Message" in data
-            ? (data as any).Message
-            : "Success";
+        const message =" "
+          // data && typeof data === "object" && "Message" in data
+          //   ? (data as any).Message
+          //   : "Success";
 
         this.logsService.sendLog(
           LogTypeId.Xu_Ly_Thanh_Cong,
           this.serviceName,
           action,
           request.method as Method,
-          message,
+          "Success",
           data,
           request["user"]?.sub || 0
         );

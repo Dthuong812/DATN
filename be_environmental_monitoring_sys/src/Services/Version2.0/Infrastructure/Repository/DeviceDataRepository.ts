@@ -11,4 +11,7 @@ export class DeviceDataRepository extends CoreRepositoryBase<DeviceDataEntity, D
     ) {
         super([DeviceDataDao]);
     }
+    async getLatestAll() {
+      return await this.DeviceDataDao.getLatestAll();
+    }
 }

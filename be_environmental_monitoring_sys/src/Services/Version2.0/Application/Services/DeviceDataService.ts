@@ -13,6 +13,8 @@ import { ResultResponse } from "src/common/ResultResponse";
 import { ErrorCode } from "src/common/ErrorCode/EnumCode";
 import { Between, Like } from "typeorm";
 import { ObjectRepository } from "../../Infrastructure/Repository/ObjectRepository";
+import { group } from "console";
+import { AlertService } from "./AlertService";
 
 @Injectable()
 export class DeviceDataService extends CoreServiceBase<
@@ -24,6 +26,7 @@ export class DeviceDataService extends CoreServiceBase<
     private readonly DeviceRepository: DeviceRepository,
     private readonly eventEmitter: EventEmitter2,
     private readonly ObjectRepository: ObjectRepository,
+    private readonly alertService: AlertService 
   ) {
     super(deviceDataRepository);
   }
@@ -31,21 +34,20 @@ export class DeviceDataService extends CoreServiceBase<
   async processMqttPayload(data: any) {
     const mac = data.devices_code;
     if (!mac) {
-      console.warn("⚠️ No devices_code (MAC) in payload, skip");
+      console.warn("No devices_code (MAC) in payload, skip");
       return null;
     }
 
     const object_code = await this.DeviceRepository.getAll({
       where: { Code: mac },
     });
-
     const entity: Partial<DeviceDataEntity> = {
       Devices_Code: mac,
       Project_Code: data.project_code || null,
       Object_Code: object_code.length > 0 ? object_code[0].Object_Code : null,
       Times: data.times ? new Date(data.times) : new Date(),
-      Longitude: data.longitude ?? null,
-      Latitude: data.latitude ?? null,
+      Longitude: object_code.length > 0 ? object_code[0].Longitude : null,
+      Latitude: object_code.length > 0 ? object_code[0].Latitude : null,
       Speed: data.speed ?? null,
       DataType: data.datatype || 1,
       DataJson: data.data ?? {},
@@ -66,53 +68,125 @@ export class DeviceDataService extends CoreServiceBase<
         { Code: entity.Object_Code }, 
         { Status: 1, Details_Value: updatedDetailsValue } 
       );
+            const object = existingObject[0];
+            await this.alertService.generateAlert(savedEntity, object.Name);
     }
   
 
-    this.eventEmitter.emit("device.data.saved", savedEntity);
+    this.eventEmitter.emit("device.data.saved", entity);
 
     return savedEntity;
   }
 
-  @Cron("*/5 * * * * *") 
-  async generateMockData() {
-    const devices = await this.DeviceRepository.getAll();
-    if (!devices || devices.length === 0) {
-      console.warn("No devices found in the repository.");
-      return;
-    }
 
-    for (const device of devices) {
-      const mockData = {
-        devices_code: device.Code,
-        project_code: "EcoMonitor",
-        times: new Date().toISOString(),
-        longitude: device.Longitude,
-        latitude: device.Latitude,
-        speed: 1,
-        datatype: 1,
-        data: {
-          temperature: this.generateRandomValue(20, 40),
-          humidity: this.generateRandomValue(30, 90),
-          pressure: this.generateRandomValue(950, 1050),
-          iaq: this.generateRandomValue(0, 500),
-          sound_level: this.generateRandomValue(30, 120),
-          distance: this.generateRandomValue(0, 400),
-        },
-      };
+  // async processMqttPayload(data: any) {
+  //   try {
+  //     const mac = data.devices_code;
+  //     if (!mac) {
+  //       console.warn("[processMqttPayload] Thiếu devices_code (MAC) trong payload, bỏ qua");
+  //       return null;
+  //     }
 
-      await this.processMqttPayload(mockData);
-    }
-  }
+  //     const deviceRecords = await this.DeviceRepository.getAll({ where: { Code: mac } });
+  //     const deviceInfo = deviceRecords.length > 0 ? deviceRecords[0] : null;
+  
+  //     if (!deviceInfo) {
+  //       console.warn(`[processMqttPayload] Không tìm thấy thiết bị có MAC: ${mac}`);
+  //     }
+  
+  //     // 2️⃣ Tạo dữ liệu DeviceDataEntity để lưu
+  //     const entity: Partial<DeviceDataEntity> = {
+  //       Devices_Code: mac,
+  //       Project_Code: data.project_code || null,
+  //       Object_Code: deviceInfo?.Object_Code || null,
+  //       Times: data.times ? new Date(data.times) : new Date(),
+  //       Longitude: deviceInfo?.Longitude || null,
+  //       Latitude: deviceInfo?.Latitude || null,
+  //       Speed: data.speed ?? null,
+  //       DataType: data.datatype || 1,
+  //       DataJson: data.data ?? {},
+  //     };
+  
+  //     // 3️⃣ Lưu dữ liệu vào device_data
+  //     const savedEntity = await this.deviceDataRepository.create(entity);
+  
+  //     // 4️⃣ Nếu có dữ liệu và có Object_Code → cập nhật trạng thái Object tương ứng
+  //     if (Object.keys(entity.DataJson || {}).length > 0 && entity.Object_Code) {
+  //       const existingObjects = await this.ObjectRepository.getAll({
+  //         where: { Code: entity.Object_Code },
+  //       });
+  
+  //       if (existingObjects.length > 0) {
+  //         const object = existingObjects[0];
+  //         const updatedDetailsValue = {
+  //           ...(object.Details_Value || {}),
+  //           Note: "Trạm đang hoạt động",
+  //         };
+  
+  //         await this.ObjectRepository.update(
+  //           { Code: entity.Object_Code },
+  //           { Status: 1, Details_Value: updatedDetailsValue }
+  //         );
+  //         // await this.alertService.generateAlert(savedEntity, object.Name);
+  //       } else {
+  //         console.warn(`[processMqttPayload] Không tìm thấy Object để cập nhật cho Object_Code: ${entity.Object_Code}`);
+  //       }
+  //     }
+  
+  //     // 5️⃣ Emit event cho các service khác xử lý
+  //     this.eventEmitter.emit("device.data.saved", entity);
+  
+  //     return savedEntity;
+  //   } catch (error) {
+  //     console.error("[processMqttPayload] Lỗi xử lý payload:", error);
+  //     return null;
+  //   }
+  // }
+  
 
-  private generateRandomValue(min: number, max: number): number {
-    return parseFloat((Math.random() * (max - min) + min).toFixed(2));
-  }
+  // @Cron("*/5 * * * * *") 
+  // async generateMockData() {
+  //   const devices = await this.DeviceRepository.getAll();
+  //   if (!devices || devices.length === 0) {
+  //     console.warn("No devices found in the repository.");
+  //     return;
+  //   }
+
+  //   for (const device of devices) {
+  //     const mockData = {
+  //       devices_code: device.Code,
+  //       project_code: "EcoMonitor",
+  //       times: new Date().toISOString(),
+  //       longitude: device.Longitude,
+  //       latitude: device.Latitude,
+  //       speed: 1,
+  //       datatype: 1,
+  //       data: {
+  //         temperature: this.generateRandomValue(20, 40),
+  //         humidity: this.generateRandomValue(30, 90),
+  //         pressure: this.generateRandomValue(9.5, 11.5),
+  //         iaq: this.generateRandomValue(0, 500),
+  //         sound_level: this.generateRandomValue(30, 120),
+  //         co2: this.generateRandomValue(500, 5000),
+  //         voc: this.generateRandomValue(0.3, 1),
+  //       },
+  //     };
+
+  //     await this.processMqttPayload(mockData);
+  //   }
+  // }
+
+  // private generateRandomValue(min: number, max: number): number {
+  //   return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+  // }
 
   async getLatestDeviceData() {
     return await this.deviceDataRepository.getAll({
       order: { Times: "DESC" },
     });
+  }
+  async getLatestDeviceDatas() {
+    return await this.deviceDataRepository.getLatestAll();
   }
 
   async getAll(filter: FilterDeviceDataDto): Promise<ResultResponse> {
@@ -152,7 +226,6 @@ export class DeviceDataService extends CoreServiceBase<
 
   @Cron("5 * * * *") 
   async aggregateHourlyData() {
-    console.log("Starting hourly data aggregation...");
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
@@ -179,11 +252,9 @@ export class DeviceDataService extends CoreServiceBase<
         await this.deviceDataRepository.create(aggregatedEntity);
       }
     }
-    console.log("Hourly data aggregation complete.");
   }
   @Cron("0 1 * * *")
   async aggregateDailyData() {
-    console.log("Starting daily data aggregation...");
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -211,7 +282,6 @@ export class DeviceDataService extends CoreServiceBase<
         await this.deviceDataRepository.create(aggregatedEntity);
       }
     }
-    console.log("Daily data aggregation complete.");
   }
   private calculateAverageData(dataArray: DeviceDataEntity[]): Record<string, any> {
     if (!dataArray || dataArray.length === 0) {
