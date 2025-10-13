@@ -55,6 +55,11 @@ import { SensorConfigService } from "./Application/Services/SensorConfigService"
 import { SensorConfigRepository } from "./Infrastructure/Repository/SensorConfigRepository";
 import { SensorConfigDao } from "./Infrastructure/Dao/SensorConfigDao";
 import { SensorConfigController } from "./API/SensorConfigController";
+import { AlertController } from "./API/AlertController";
+import { AlertService } from "./Application/Services/AlertService";
+import { AlertDao } from "./Infrastructure/Dao/AlertDao";
+import { AlertRepository } from "./Infrastructure/Repository/AlertRepository";
+import { AlertGateway } from "./websocket/alert.gateway";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -85,6 +90,7 @@ import { SensorConfigController } from "./API/SensorConfigController";
     LocalController,
     BaoCaoController,
     SensorConfigController,
+    AlertController,
   ],
   providers: [
     ProjectService,
@@ -129,6 +135,11 @@ import { SensorConfigController } from "./API/SensorConfigController";
     SensorConfigService,
     SensorConfigRepository,
     SensorConfigDao,
+
+    AlertGateway,
+    AlertService,
+    AlertDao,
+    AlertRepository,
     {
       provide: APP_GUARD,
       useClass: AccessGuard,

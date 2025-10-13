@@ -81,12 +81,12 @@ async function bootstrap() {
       port: parseInt(process.env.TCP_PORT_2) || 7000,
     },
   });
-  // Version2.connectMicroservice<MicroserviceOptions>({
-  //   transport : Transport.MQTT,
-  //   options: {
-  //     url: 'mqtt://192.168.32.100:1883',
-  //   }
-  // });
+  Version2.connectMicroservice<MicroserviceOptions>({
+    transport : Transport.MQTT,
+    options: {
+      url: 'mqtt://192.168.32.107:1883',
+    }
+  });
   await Version2.startAllMicroservices();
   Version2.useGlobalFilters(new ValidationExceptionFilter(), new HttpExceptionFilter());
   Version2.useGlobalFilters(new AllExceptionsFilter(logsService, 'Version2.0')); 
