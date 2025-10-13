@@ -52,8 +52,6 @@ const PollutionMap: React.FC = () => {
       s.disconnect();
     };
   }, []);
-  if (isLoading) return <div className="flex justify-center items-center">Đang tải dữ liệu cấu hình...</div>;
-  if (isError || !configs.length) return <div>Lỗi tải dữ liệu cấu hình!</div>;
 
   const configMap = Object.fromEntries(
     configs.map((cfg: SensorConfigType) => [
@@ -141,7 +139,19 @@ const PollutionMap: React.FC = () => {
         <ZoomControlTopRight />
         {currentCfg && <LegendControl config={currentCfg} />}
       </MapContainer>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-sm z-[2000]">
+          <div className="text-lg font-semibold">Đang tải dữ liệu cấu hình...</div>
+        </div>
+      )}
+
+      {(isError || (!configs.length && !isLoading)) && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-sm z-[2000]">
+          <div className="text-red-600 font-semibold">Lỗi tải dữ liệu cấu hình!</div>
+        </div>
+      )}
     </div>
+    
   );
 };
 

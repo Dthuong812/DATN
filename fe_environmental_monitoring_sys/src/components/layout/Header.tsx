@@ -1,4 +1,4 @@
-import { Bell, Leaf, LogOut, User } from "lucide-react";
+import { Leaf, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
@@ -14,7 +14,7 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "@/store/slices/authSlice";
 import { toast } from "sonner";
-import { useState } from "react";
+import AlertDropdown from "@/components/common/AlertDropdown";
 
 export default function Header() {
   const location = useLocation();
@@ -35,10 +35,7 @@ export default function Header() {
     { href: "/report", label: "Thống kê" },
     { href: "/admin", label: "Quản lý" },
   ];
-  const [notifications] = useState([
-    { id: 1, message: "Có 1 cảnh báo mới về chất lượng không khí" },
-    { id: 2, message: "Hệ thống vừa cập nhật dữ liệu quan trắc" },
-  ]);
+
   return (
     <nav className="fixed top-0 w-full bg-white shadow-sm border-b z-1000000">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,36 +67,9 @@ export default function Header() {
                     {item.label}
                   </Link>
                 ))}
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="relative focus:outline-none">
-                    <Bell className="h-6 w-6 text-gray-600 hover:text-green-600 cursor-pointer " />
-                    {notifications.length > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] text-white">
-                        {notifications.length}
-                      </span>
-                    )}
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-80 bg-white shadow-lg rounded-lg p-2 mr-15 my-4">
-                    <DropdownMenuLabel className="font-semibold text-gray-700">
-                      Thông báo
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {notifications.length > 0 ? (
-                      notifications.map((n) => (
-                        <DropdownMenuItem
-                          key={n.id}
-                          className="text-sm text-gray-700 hover:bg-gray-100 rounded-md p-2 cursor-pointer"
-                        >
-                          {n.message}
-                        </DropdownMenuItem>
-                      ))
-                    ) : (
-                      <p className="text-center text-sm text-gray-500 py-2">
-                        Không có thông báo nào
-                      </p>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="relative mt-2">
+                  <AlertDropdown />
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger className="focus:outline-none rounded-full">
                     <Avatar className="cursor-pointer w-8 h-8">

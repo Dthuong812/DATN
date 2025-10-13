@@ -432,3 +432,28 @@ export interface Token {
     }[];
   }[];
 }
+
+export interface Alert {
+  Id: number;
+  Object_Code: string;
+  Object_Name: string;
+  Type: string;
+  Level: "Cảnh báo" | "Nguy hiểm";
+  Message: string;
+  Value: number;
+  Unit: string;
+  IsRead: boolean;
+  CreatedAt: string;
+  UpdatedAt?: string;
+}
+
+export interface AlertResponse {
+  Status: number;
+  Message: string;
+  Data: {
+    data: Alert[];
+    total: number;
+    page: number;
+    pageSize: number;
+  };
+}
