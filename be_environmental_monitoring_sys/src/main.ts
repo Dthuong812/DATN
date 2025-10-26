@@ -72,7 +72,7 @@ async function bootstrap() {
   const Version2 = await NestFactory.create(Version2Module);
   const db = await DataContext.getInstance(
     process.env.DATABASE_URL_VER_2,
-    [DeviceDataEntity,LocalEntity],
+    [DeviceDataEntity,LocalEntity,DeviceEntity],
   );
   Version2.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,

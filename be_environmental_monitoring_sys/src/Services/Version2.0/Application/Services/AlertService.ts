@@ -17,17 +17,16 @@ export class AlertService extends CoreServiceBase<AlertEntity, AlertDto> {
     super(alertRepository);
   }
 
-
   async generateAlert(data: any, objectName: string): Promise<AlertEntity[]> {
     try {
       const configs = await this.sensorConfigRepository.getAll();
-      const alerts: AlertEntity[] = [];
-
+      const alertsToCreate: any[] = [];
+  
       const dataJson =
         typeof data.DataJson === "string"
           ? JSON.parse(data.DataJson)
           : data.DataJson;
-
+  
       for (const cfg of configs) {
         const value = dataJson?.[cfg.Field];
         if (value === undefined) {
@@ -36,49 +35,50 @@ export class AlertService extends CoreServiceBase<AlertEntity, AlertDto> {
           );
           continue;
         }
-
+  
         const max = Math.max(...cfg.Thresholds);
         const min = Math.min(...cfg.Thresholds);
-
+  
         if (value > max) {
-          const alert = await this.alertRepository.create({
+          // Tạo object alert mức nguy hiểm
+          alertsToCreate.push({
             Object_Code: data.Object_Code,
             Object_Name: objectName,
             Type: cfg.Label,
             Level: "Nguy hiểm",
-            Message: `${cfg.Label} tại trạm ${objectName} đã vượt ngưỡng cảnh báo (${value.toFixed(
-              1
-            )} ${cfg.Unit})`,
+            Message: `${cfg.Label} tại trạm ${objectName} đã vượt ngưỡng cảnh báo (${value.toFixed(1)} ${cfg.Unit})`,
             Value: value,
             Unit: cfg.Unit,
+            IsRead: false,
           });
-          alerts.push(alert);
         }
-        else if (value > min * 1.2) {
-          const alert = await this.alertRepository.create({
+        else if (value > min * 30) {
+          // Tạo object alert mức cảnh báo
+          alertsToCreate.push({
             Object_Code: data.Object_Code,
             Object_Name: objectName,
             Type: cfg.Label,
             Level: "Cảnh báo",
-            Message: `${cfg.Label} tại trạm ${objectName} đang ở mức cao (${value.toFixed(
-              1
-            )} ${cfg.Unit})`,
+            Message: `${cfg.Label} tại trạm ${objectName} đang ở mức cao (${value.toFixed(1)} ${cfg.Unit})`,
             Value: value,
             Unit: cfg.Unit,
+            IsRead: false,
           });
-          alerts.push(alert);
         }
       }
-
-      if (alerts.length > 0) {
-        const savedAlerts = [].concat(await this.alertRepository.create(Mapper.mapDtoToEntity(alerts, AlertEntity)));
-        const alertCount = savedAlerts.length;
-        this.logger.log(
-          `Đã tạo ${alertCount} cảnh báo cho trạm ${objectName}`
-        );
+  
+      if (alertsToCreate.length > 0) {
+        // Lưu tất cả alerts vào database
+        const savedAlerts = [];
+        for (const alertData of alertsToCreate) {
+          const savedAlert = await this.alertRepository.create(alertData);
+          savedAlerts.push(savedAlert);
+        }
+  
+        this.logger.log(`Đã tạo ${savedAlerts.length} cảnh báo cho trạm ${objectName}`);
         return savedAlerts;
       }
-
+  
       return [];
     } catch (error) {
       this.logger.error("Lỗi khi tạo cảnh báo", error.stack);
@@ -117,7 +117,7 @@ export class AlertService extends CoreServiceBase<AlertEntity, AlertDto> {
   
       let updatedCount = 0;
       for (const alert of unreadAlerts) {
-        if (alert && alert.Id) {
+        if (alert && alert?.Id) {
           try {
             await this.alertRepository.markAsRead(alert.Id);
             updatedCount++;

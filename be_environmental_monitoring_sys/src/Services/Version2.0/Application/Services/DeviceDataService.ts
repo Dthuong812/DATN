@@ -310,7 +310,7 @@ export class DeviceDataService extends CoreServiceBase<
     return averages;
   }
 
-  @Cron("*/5 * * * *") 
+  @Cron("*/20 * * * *") 
   async checkInactiveObjects() {
     const now = new Date();
     const fiveSecondsAgo = new Date(now.getTime() - 5 * 1000);

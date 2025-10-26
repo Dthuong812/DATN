@@ -26,6 +26,17 @@ export class AlertEntity {
   Unit?: string;
   @Column({ default: false })
   IsRead?: boolean;
-  @CreateDateColumn()
+  @CreateDateColumn({ 
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: string) => {
+        const date = new Date(value);
+        date.setHours(date.getHours() + 7);
+        return date;
+      }
+    }
+  })
   CreatedAt?: Date;
 }

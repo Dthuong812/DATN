@@ -44,7 +44,7 @@ export class AlertController {
     await this.alertService.markAsRead(Id);
   }
 
-  @Patch("read-all")
+  @Patch("readall")
   @RequirePermission({ Func: "FUNC_ALERT", Permission: EnumQuyen.UPDATE })
   @ApiOperation({ summary: "Đánh dấu tất cả đã đọc" })
   @HttpCode(HttpStatus.NO_CONTENT)
