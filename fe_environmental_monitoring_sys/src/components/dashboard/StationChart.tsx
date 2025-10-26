@@ -202,7 +202,7 @@ export default function StationChart({ object }: StationChartProps) {
       </div>
 
       <div className="text-xs text-center text-muted-foreground pt-3">
-        Dữ liệu được cập nhật tự động mỗi 5 giây • Hiển thị 20 điểm dữ liệu gần
+        Dữ liệu được cập nhật tự động mỗi 20 giây • Hiển thị 20 điểm dữ liệu gần
         nhất
       </div>
     </div>

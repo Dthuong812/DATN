@@ -197,7 +197,7 @@ export default function RealTimePage() {
                 onChange={(e) => handleFilterChange("DataType", e.target.value)}
                 className="w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm focus:border-gray-50 focus:ring-2 focus:ring-gray-50 cursor-pointer"
               >
-                <option value="1">5 giây</option>
+                <option value="1">20 giây</option>
                 <option value="2">1 giờ</option>
                 <option value="3">1 ngày</option>
               </select>
